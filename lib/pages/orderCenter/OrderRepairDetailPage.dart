@@ -75,9 +75,6 @@ class _OrderRepairDetailPageState extends State<OrderRepairDetailPage> {
           EQUNR,
           KTEXT,
           null, (res) {
-        setState(() {
-          this._loading = false;
-        });
         return true;
       }, (err) {
         setState(() {

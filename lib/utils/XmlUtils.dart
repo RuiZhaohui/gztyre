@@ -302,6 +302,8 @@ class XmlUtils {
         order.ENMG = '';
         order.ERDAT = item.findAllElements("Erdat").first.text;
         order.ERTIM = item.findAllElements("Ertim").first.text;
+        order.KTEXT2 = item.findAllElements("Ktext2").first.text;
+        order.PERNR1 = item.findAllElements("Pernr1").first.text;
         order.APPSTATUS = item.findAllElements("Appstatus").first.text;
         list.add(order);
       });
@@ -319,6 +321,8 @@ class XmlUtils {
         RepairHistory order = new RepairHistory();
         order.PERNR =  '';
         order.KTEXT = "";
+        order.KTEXT2 = "";
+        order.PERNR1 = "";
         order.MAKTX = item.findAllElements("Maktx").first.text;
         order.ENMG = item.findAllElements("Enmg").first.text;
         order.ERDAT = item.findAllElements("Erdat").first.text;

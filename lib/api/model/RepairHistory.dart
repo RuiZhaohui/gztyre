@@ -6,4 +6,6 @@ class RepairHistory {
   String ENMG;
   String ERDAT;
   String ERTIM;
+  String KTEXT2;
+  String PERNR1;
 }

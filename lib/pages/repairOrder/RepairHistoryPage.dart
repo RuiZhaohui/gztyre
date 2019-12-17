@@ -73,6 +73,20 @@ class _RepairHistoryPageState extends State<RepairHistoryPage> {
               ),
             ) : Container(),
             Text("${this._repairOrderList[i].APPSTATUS}"),
+            this._repairOrderList[i].PERNR1 != '' ? GestureDetector(
+              onTap: () async {
+                Navigator.of(context)
+                    .push(CupertinoPageRoute(builder: (BuildContext context) {
+                  return UserInfoPage(
+                    PERNR: this._repairOrderList[i].PERNR1,
+                  );
+                }));
+              },
+              child: Text(
+                  this._repairOrderList[i].KTEXT2,
+                  style: TextStyle(color: Color.fromRGBO(36, 98, 204, 1)),
+                ),
+            ) : Container(),
             this._repairOrderList[i].MAKTX != '' ? Padding(
               padding: EdgeInsets.only(left: 10),
               child: Text(

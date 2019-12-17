@@ -1428,7 +1428,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                             )
                           : Container(),
                       widget.itemStatus == "协助单"
-                          ? (widget.order.APPSTATUS == "呼叫协助"
+                          ? ((widget.order.APPSTATUS == "呼叫协助" || widget.order.APPSTATUS == "加入")
                               ? Align(
                                   alignment: Alignment.bottomCenter,
                                   child: ButtonBarWidget(

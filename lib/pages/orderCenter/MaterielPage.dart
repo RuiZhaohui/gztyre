@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gztyre/api/HttpRequest.dart';
+import 'package:gztyre/api/HttpRequestRest.dart';
 import 'package:gztyre/api/model/Device.dart';
 import 'package:gztyre/api/model/Materiel.dart';
 import 'package:gztyre/api/model/SubmitMateriel.dart';
@@ -35,6 +36,14 @@ class _MaterielPageState extends State<MaterielPage> {
   TextEditingController _editMaterielController = new TextEditingController();
   TextEditingController _editSearchMaterielController =
       new TextEditingController();
+
+  Future<bool> _isMaterielExist(String code) async {
+    return await HttpRequestRest.isMaterielExist(code, (success) {
+      return success;
+    }, (err) {
+      return false;
+    });
+  }
 
   List<Widget> _buildList(List<Materiel> list) {
     List<Widget> widgetList = new List();
@@ -92,7 +101,7 @@ class _MaterielPageState extends State<MaterielPage> {
     }
     for (int i = 0; i < list.length; i++) {
       Widget listItem = ListItemShopChartWidget(
-        title: Text(list[i].MAKTX),
+        title: Text(list[i].MAKTX != "" ? list[i].MAKTX : list[i].MATNR),
         onTap: (val) {
           list[i].MENGE = val;
         },
@@ -250,14 +259,14 @@ class _MaterielPageState extends State<MaterielPage> {
                                     builder: (BuildContext context) {
                                       return CupertinoAlertDialog(
                                         content: CupertinoTextField(
-                                          controller: _editMaterielController,
+                                          controller: _editSearchMaterielController,
                                           placeholder: "请输入物料编码",
                                         ),
                                         actions: <Widget>[
                                           CupertinoDialogAction(
                                             onPressed: () {
                                               this
-                                                  ._editMaterielController
+                                                  ._editSearchMaterielController
                                                   .text = null;
                                               Navigator.of(context).pop();
                                             },
@@ -266,20 +275,45 @@ class _MaterielPageState extends State<MaterielPage> {
                                           CupertinoDialogAction(
                                             onPressed: () {
                                               SubmitMateriel submitMateriel =
-                                                  new SubmitMateriel();
-                                              submitMateriel.MAKTX = this
-                                                  ._editSearchMaterielController
-                                                  .text;
+                                              new SubmitMateriel();
+                                              submitMateriel.MAKTX = "";
+                                              submitMateriel.MATNR = _editSearchMaterielController.text;
                                               submitMateriel.AUFNR =
                                                   widget.AUFNR;
                                               submitMateriel.MENGE = 0;
-                                              this
-                                                  ._requireMaterielList
-                                                  .add(submitMateriel);
-                                              this
-                                                  ._editMaterielController
-                                                  .text = null;
-                                              Navigator.of(context).pop();
+                                              this._isMaterielExist(submitMateriel.MATNR).then((success) {
+                                                if (success) {
+                                                  this
+                                                      ._requireMaterielList
+                                                      .add(submitMateriel);
+                                                  this
+                                                      ._editSearchMaterielController
+                                                      .text = null;
+                                                  Navigator.of(context).pop();
+                                                } else {
+                                                  Navigator.of(context).pop();
+                                                  showCupertinoDialog(
+                                                      context: context,
+                                                      builder: (BuildContext ctx) {
+                                                        return CupertinoAlertDialog(
+                                                          content: Text(
+                                                            "未找到物料",
+                                                            style:
+                                                            TextStyle(fontSize: 18),
+                                                          ),
+                                                          actions: <Widget>[
+                                                            CupertinoDialogAction(
+                                                              onPressed: () {
+                                                                Navigator.of(ctx)
+                                                                    .pop();
+                                                              },
+                                                              child: Text("好"),
+                                                            ),
+                                                          ],
+                                                        );
+                                                      });
+                                                }
+                                              });
                                             },
                                             child: Text("确定"),
                                           ),

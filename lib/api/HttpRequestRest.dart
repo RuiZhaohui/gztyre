@@ -302,4 +302,15 @@ class HttpRequestRest {
       return await onError(e);
     }
   }
+
+  static isMaterielExist(String code, Function(bool success) onSuccess,
+      Function(DioError err) onError) async {
+    try {
+      Response response = await getHttp().get("/api/sap/materials/${code}");
+      print(response.data);
+      return await onSuccess(response.data['data']);
+    } on DioError catch (e) {
+      return await onError(e);
+    }
+  }
 }

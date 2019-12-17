@@ -280,7 +280,7 @@ class _TextareaWithPicAndVideoWidgetState
 
   @override
   void dispose() {
-    this._controller.dispose();
+//    this._controller.dispose();
     this._audioPlayerStateSubscription = null;
     super.dispose();
   }

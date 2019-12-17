@@ -39,8 +39,8 @@ class ProblemReportHomePage extends StatefulWidget {
 
 class _ProblemReportHomePageState extends State<ProblemReportHomePage> {
   bool _isStop = false;
-  TextEditingController _description = TextEditingController();
-  TextEditingController _remark = TextEditingController();
+  TextEditingController _description;
+  TextEditingController _remark;
   ListController _list = ListController(list: []);
 
   Device _device;
@@ -77,6 +77,22 @@ class _ProblemReportHomePageState extends State<ProblemReportHomePage> {
       placeholder: "补充故障描述...",
       lines: 3,
     );
+  }
+
+
+  @override
+  void initState() {
+    _description = TextEditingController();
+    _remark = TextEditingController();
+super.initState();
+  }
+
+
+  @override
+  void dispose() {
+    _description.dispose();
+    _remark.dispose();
+    super.dispose();
   }
 
   @override

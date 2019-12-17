@@ -35,7 +35,7 @@ class _HelpPageState extends State<HelpPage> {
       if (i == 0) {
         itemList.add(new GestureDetector(
           child: ListItemSelectWidget(
-              title: Text(list[i].ENAME),
+              title: Text("${list[i].ENAME}（${list[i].SORTT}）"),
               item: list[i],
               selectedItemList: this._selectItemList,),
           onTap: () {
@@ -51,7 +51,7 @@ class _HelpPageState extends State<HelpPage> {
         ));
         itemList.add(new GestureDetector(
           child: ListItemSelectWidget(
-              title: Text(list[i].ENAME),
+              title: Text("${list[i].ENAME}（${list[i].SORTT}）"),
               item: list[i],
               selectedItemList: this._selectItemList,),
           onTap: () {
