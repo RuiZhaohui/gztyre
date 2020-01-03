@@ -235,13 +235,13 @@ class _RepairDetailPageState extends State<RepairDetailPage> {
     return imgList;
   }
 
-  String _buildBomInfo(RepairOrder repairOrder) {
-    String info = "";
-    if (repairOrder.materielList == null) return info;
+  List<Widget> _buildBomInfo(RepairOrder repairOrder) {
+    List<Widget> list = [];
+    if (repairOrder.materielList == null) return [];
     repairOrder.materielList.forEach((item) {
-      info = info + item.MAKTX + "(" + item.MATNR + ")" + " X " + item.ENMNG.toString() + "  ";
+      list.add(Text(item.MAKTX + "(" + item.MATNR + ")" + " x " + item.ENMNG.toString() + "  ", style: TextStyle(fontSize: 14)));
     });
-    return info;
+    return list;
   }
 
 
@@ -265,6 +265,14 @@ class _RepairDetailPageState extends State<RepairDetailPage> {
         });
   }
 
+
+  @override
+  void dispose() {
+    if (this._controller != null) {
+      this._controller.dispose();
+    }
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -318,9 +326,14 @@ class _RepairDetailPageState extends State<RepairDetailPage> {
                       child: Padding(
                         padding: EdgeInsets.only(
                             top: 20, bottom: 20, left: 10, right: 10),
-                        child: Text(
-                          _buildBomInfo(this._repairOrder) == "" ? "无" : _buildBomInfo(this._repairOrder),
+                        child: _buildBomInfo(this._repairOrder).length == 0 ? Text(
+                           "无",
                           style: TextStyle(fontSize: 14),
+                        ) : Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            ..._buildBomInfo(this._repairOrder)
+                          ],
                         ),
                       ),
                     ),
@@ -336,7 +349,7 @@ class _RepairDetailPageState extends State<RepairDetailPage> {
                             padding: EdgeInsets.only(
                                 top: 20, bottom: 20, left: 10, right: 10),
                             child: Text(
-                              this._repairOrder.FETXT ?? "",
+                              this._repairOrder.KTEXT_AUFNR ?? "",
                               style: TextStyle(fontSize: 14),
                             ),
                           ),

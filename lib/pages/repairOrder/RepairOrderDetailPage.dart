@@ -129,7 +129,7 @@ class _RepairOrderDetailPageState extends State<RepairOrderDetailPage> {
                             }
                             if (index != null) {
                               if (list[index - 1].endsWith("mp4")) {
-                                this._controller = null;
+                                this._controller.initialize();
                               }
 //                              widget.callback(this.list);
                             }
@@ -210,7 +210,7 @@ class _RepairOrderDetailPageState extends State<RepairOrderDetailPage> {
               }
               if (index != null) {
                 if (list[index - 1].endsWith("mp4")) {
-                  this._controller = null;
+                  this._controller.initialize();
                 }
               }
             });
@@ -244,7 +244,9 @@ class _RepairOrderDetailPageState extends State<RepairOrderDetailPage> {
   @override
   void dispose() {
     super.dispose();
-    this._controller.dispose();
+    if (this._controller != null) {
+      this._controller.dispose();
+    }
   }
 
   @override

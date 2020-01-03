@@ -4,8 +4,8 @@ import 'package:gztyre/components/ButtonBarWidget.dart';
 import 'package:gztyre/components/ButtonWidget.dart';
 import 'package:gztyre/components/ListItemSelectWidget.dart';
 import 'package:gztyre/components/ListItemWidget.dart';
-import 'package:gztyre/pages/orderCenter/MaterielCompanyPage.dart';
-import 'package:gztyre/pages/orderCenter/SubstituteMaterialPage.dart';
+import 'package:gztyre/pages/orderCenter/planOrder/MaterielCompanyPage.dart';
+import 'package:gztyre/pages/orderCenter/planOrder/SubstituteMaterialPage.dart';
 
 class MaterielDetailPage extends StatelessWidget {
   MaterielDetailPage({Key key, @required this.materiel, @required this.materielList}) : super(key: key);

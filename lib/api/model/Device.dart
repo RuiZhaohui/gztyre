@@ -1,12 +1,9 @@
 class Device {
-//  String EQUNR;
-//  String EQKTX;
   int id;
   String parentCode;
   String positionCode;
   String deviceCode;
   String deviceName;
-//  List<Device> childrenDevice;
   List<Device> children;
 
   Device();
@@ -20,4 +17,13 @@ class Device {
         children = json['children'].length == 0 ? [] : List<Device>.from(json['children'].map((item) {
           return Device.formJson(item);
         }).toList());
+
+  Map<String, dynamic> toJson() => <String, dynamic>{
+    "id": id,
+    "parentCode": parentCode,
+    "positionCode": positionCode,
+    "deviceCode": deviceCode,
+    "deviceName": deviceName,
+    "children": []
+  };
 }

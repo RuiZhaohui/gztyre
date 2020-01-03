@@ -209,6 +209,81 @@ class XmlUtils {
    }
   }
 
+  static xml.XmlNode buildPlanOrderXml(String PERNR, String CPLGR, String MATYP,
+      String SORTB, String WCTYPE, String ASTTX, String AUART, List<String> ItWxfz) {
+    var builder = new xml.XmlBuilder();
+    builder.element("Envelope",
+        attributes: {"xmlns": "http://schemas.xmlsoap.org/soap/envelope/"},
+        nest: () {
+          builder.element("Body", nest: () {
+            builder.element("ZpmSearchOrderZpm1", attributes: {
+              "xmlns": "urn:sap-com:document:sap:soap:functions:mc-style"
+            }, nest: () {
+              builder.element("IAppData", attributes: {"xmlns": ""}, nest: () {
+                builder.element("Pernr", nest: PERNR);
+                builder.element("Cplgr", nest: CPLGR);
+                builder.element("Matyp", nest: MATYP);
+                builder.element("Sortb", nest: SORTB);
+                builder.element("Wctype", nest: WCTYPE);
+                builder.element("Asttx", nest: ASTTX);
+                builder.element("Auart", nest: AUART);
+              });
+              builder.element("ItOrder", attributes: {"xmlns": ""});
+              builder.element("ItWxfz", attributes: {"xmlns": ""}, nest: () {
+                ItWxfz.map((item) {
+                  return builder.element("item", nest: () {
+                    builder.element("Wxfz", nest: item);
+                  });
+                }).toList();
+              });
+            });
+          });
+        });
+    return builder.build();
+  }
+
+  static List<Order> readPlanOrderXml(String stringXml) {
+    var document = xml.parse(stringXml);
+    try {
+      List<Order> list = document.findAllElements("item").map((e) {
+        Order order = new Order();
+        order.PERNR = e.findElements("Pernr").first.text;
+        order.KTEXT = e.findElements("Ktext").first.text;
+        order.CPLTX = e.findElements("Cpltx").first.text;
+        order.QMNUM = e.findElements("Qmnum").first.text;
+        order.QMTXT = e.findElements("Qmtxt").first.text;
+        order.PERNR1 = e.findElements("Pernr1").first.text;
+        order.AUFNR = e.findElements("Aufnr").first.text;
+        order.AUFTEXT = e.findElements("Auftext").first.text;
+        order.EQUNR = e.findElements("Equnr").first.text;
+        order.EQKTX = e.findElements("Eqktx").first.text;
+        order.TPLNR = e.findElements("Tplnr").first.text;
+        order.PLTXT = e.findElements("Pltxt").first.text;
+        order.BAUTL = e.findElements("Bautl").first.text;
+        order.MAKTX = e.findElements("Maktx").first.text;
+        order.ASTTX = e.findElements("Asttx").first.text;
+        order.CPLGR = e.findElements("Cplgr").first.text;
+        order.COLORS = e.findElements("Colors").first.text;
+        order.WCPLGR = e.findElements("Wcplgr").first.text;
+        order.WCPLTX = e.findElements("Wcpltx").first.text;
+        order.WXFZ = e.findElements("Wxfz").first.text;
+        order.APPSTATUS = e.findElements("Appstatus").first.text;
+        order.ILART = e.findAllElements("Ilart").first.text;
+        order.ILATX = e.findAllElements("Ilatx").first.text;
+        order.ERDAT = e.findElements("Erdat").first.text;
+        order.ERTIM = e.findElements("Ertim").first.text;
+        order.ERDAT2 = e.findElements("Erdat2").first.text;
+        order.ERTIM2 = e.findElements("Ertim2").first.text;
+        order.ERDAT3 = e.findElements("Erdat3").first.text;
+        order.ERTIM3 = e.findElements("Ertim3").first.text;
+        return order;
+      }).toList();
+      return list;
+    } catch (e) {
+      throw DioError();
+    }
+  }
+
   static xml.XmlNode buildRepairTypeXml() {
     var builder = new xml.XmlBuilder();
     builder.element("Envelope",

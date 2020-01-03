@@ -11,7 +11,6 @@ import 'package:gztyre/pages/login/DefaultPasswordAndPhoneNumberChangePage.dart'
 import 'package:gztyre/pages/login/MaintenanceGroupSelectionPage.dart';
 import 'package:gztyre/pages/login/WorkShiftSelectionPage.dart';
 import 'package:gztyre/utils/screen_utils.dart';
-import 'package:jpush_flutter/jpush_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
@@ -248,7 +247,7 @@ class _LoginPageState extends State<LoginPage> {
                   await HttpRequest.searchUserInfo(_usernameController.text,
                           (UserInfo userInfo) async {
                         if (userInfo.PERNR == "" || userInfo.PERNR == null) {
-                          _buildError("账号错误");
+                          _buildError("未找到账号，请确认账号信息或联系管理员重置密码");
                           return null;
                         } else {
                           return userInfo;
@@ -282,7 +281,7 @@ class _LoginPageState extends State<LoginPage> {
 //                                  }
                                 }
                               }, (err) {
-                                _buildError("账号错误");
+                                _buildError("未找到账号，请确认账号信息或联系管理员重置密码");
                                 return false;
                               }).then((success) async {
                                 if (success != null && success) {

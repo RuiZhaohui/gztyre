@@ -42,7 +42,7 @@ class _TextareaWithPicAndVideoWidgetState
     extends State<TextareaWithPicAndVideoWidget> {
   VideoPlayerController _controller;
   Future<void> _initializeVideoPlayerFuture;
-  AudioPlayer audioPlayer = new AudioPlayer();
+  AudioPlayer audioPlayer;
   var icon = Icon(Icons.play_arrow);
   var _audioPlayerStateSubscription;
   bool _hasRecord = false;
@@ -144,7 +144,7 @@ class _TextareaWithPicAndVideoWidgetState
                             }
                             if (index != null) {
                               if (list[index - 1].endsWith("mp4")) {
-                                this._controller = null;
+                                this._controller.initialize();
                               }
                               widget.listController.value.removeAt(index - 1);
 //                              widget.callback(this.list);
@@ -261,7 +261,10 @@ class _TextareaWithPicAndVideoWidgetState
               }
               if (index != null) {
                 if (list[index - 1].endsWith("mp4")) {
-                  this._controller = null;
+                  this._controller.initialize();
+                  setState(() {
+
+                  });
                 }
                 widget.listController.value.removeAt(index - 1);
 //                widget.callback(this.list);
@@ -280,14 +283,16 @@ class _TextareaWithPicAndVideoWidgetState
 
   @override
   void dispose() {
-//    this._controller.dispose();
+    if (this._controller != null) this._controller.dispose();
     this._audioPlayerStateSubscription = null;
+//    widget.textEditingController.dispose();
     super.dispose();
   }
 
 
   @override
   void initState() {
+    audioPlayer = new AudioPlayer();
     _audioPlayerStateSubscription = audioPlayer.onPlayerStateChanged.listen((s) {
       if (s == AudioPlayerState.PLAYING) {
         setState(() => icon = Icon(Icons.pause));
@@ -301,7 +306,9 @@ class _TextareaWithPicAndVideoWidgetState
         icon = Icon(Icons.play_arrow);
       });
     });
-    if (widget.listController.value.length == 0) this._hasRecord = false;
+    if (widget.listController.value.length == 0) setState(() {
+      this._hasRecord = false;
+    });
     super.initState();
   }
 
@@ -337,25 +344,6 @@ class _TextareaWithPicAndVideoWidgetState
                 crossAxisCount: 3,
                 children: <Widget>[
                   ..._buildPic(widget.listController.value),
-//                  widget.listController.value.length < 6
-//                      ? TakePhotoAndVideoWidget(
-//                          canShoot: this._controller == null,
-//                          takePhotoCallback: (path) {
-//                            if (path.endsWith('mp4')) {
-//                              print(path);
-//                              this._controller =
-//                                  VideoPlayerController.file(File(path));
-//                              this._initializeVideoPlayerFuture =
-//                                  this._controller.initialize();
-//                              this._controller.setLooping(true);
-//                              this.appendList(widget.listController.value, path);
-//                            } else {
-//                              this.appendList(widget.listController.value, path);
-//                            }
-//                            setState(() {});
-//                          },
-//                        )
-//                      : Container()
                 ],
               ),
             ),
@@ -368,7 +356,9 @@ class _TextareaWithPicAndVideoWidgetState
                   ),
                   Container(
                     child: widget.listController.value.length < 6 ? TakePhotoAndVideoWidget(
-                      canShoot: this._controller == null,
+                      canShoot: !widget.listController.value.any((item) {
+                        return item.endsWith('mp4');
+                      }),
                       takePhotoCallback: (path) {
                         if (path.endsWith('mp4')) {
                           print(path);

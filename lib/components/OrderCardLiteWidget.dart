@@ -441,9 +441,13 @@ class _OrderCardLiteWidgetState extends State<OrderCardLiteWidget> {
     } else {
       this._completeTime = this._getDateTime(widget.order.ERDAT3, widget.order.ERTIM3);
     }
-    if (this._reportTime != null) this.report = this._getTime(this._reportTime, DateTime.now(), true);
+    if (this._reportTime != null && this._completeTime == null) {
+      this.report = this._getTime(this._reportTime, DateTime.now(), true);
+    } else if (this._reportTime != null && this._completeTime != null) {
+      this.report = this._getTime(this._reportTime, this._completeTime, true);
+    }
     if (this._acceptTime != null && this._completeTime != null) {
-      this.wait = this._getTime(this._reportTime, this._completeTime, false);
+      this.wait = this._getTime(this._acceptTime, this._completeTime, false);
     } else if (this._acceptTime !=null && this._completeTime == null) {
       this.wait = this._getTime(this._acceptTime, DateTime.now(), false);
     }

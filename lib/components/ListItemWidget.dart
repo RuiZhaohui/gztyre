@@ -42,7 +42,8 @@ class _ListItemWidgetState extends State<ListItemWidget> {
       onTap: widget.onTap,
       child: Container(
         decoration: BoxDecoration(color: _color),
-        height: widget.height ?? 50.0,
+        constraints: BoxConstraints(minHeight: widget.height ?? 50.0),
+//        height: widget.height ?? 50.0,
         child: Row(
           children: <Widget>[
             Expanded(

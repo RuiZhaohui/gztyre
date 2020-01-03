@@ -9,20 +9,20 @@ import 'package:gztyre/components/Badge.dart';
 import 'package:gztyre/components/DividerBetweenIconListItem.dart';
 import 'package:gztyre/components/ListItemWidget.dart';
 import 'package:gztyre/components/ProgressDialog.dart';
-import 'package:gztyre/pages/orderCenter/OrderListPage.dart';
+import 'package:gztyre/pages/orderCenter/planOrder/OrderListPage.dart';
 
-class OrderCenterHomePage extends StatefulWidget {
-  OrderCenterHomePage({Key key, @required this.rootContext})
+class PlanOrderCenterHomePage extends StatefulWidget {
+  PlanOrderCenterHomePage({Key key, @required this.rootContext})
       : assert(rootContext != null),
         super(key: key);
 
   final BuildContext rootContext;
 
   @override
-  State createState() => _OrderCenterHomePageState();
+  State createState() => _PlanOrderCenterHomePageState();
 }
 
-class _OrderCenterHomePageState extends State<OrderCenterHomePage> {
+class _PlanOrderCenterHomePageState extends State<PlanOrderCenterHomePage> {
   var _listOrderFuture;
 
   bool _loading = false;
@@ -62,7 +62,7 @@ class _OrderCenterHomePageState extends State<OrderCenterHomePage> {
       list.forEach((item) {
         if (item.QMNUM != null &&
             item.QMNUM != '' &&
-            (isManager ? true : item.PERNR1 == _userInfo.PERNR) &&
+            (isManager ? true : item.PERNR1 == _userInfo.PERNR) && item.ASTTX == "维修中" &&
             (item.APPSTATUS == "接单" ||
                 item.APPSTATUS == "转单" ||
                 (item.APPSTATUS == "呼叫协助") ||
@@ -121,8 +121,8 @@ class _OrderCenterHomePageState extends State<OrderCenterHomePage> {
     this._loading = true;
     this._list = [];
     if (this._userInfo.WCTYPE == "是") {
-      return await HttpRequest.listOrder(this._userInfo.PERNR, null, null, null,
-          "X", null, Global.maintenanceGroup, (List<Order> list) async {
+      return await HttpRequest.listPlanOrder(this._userInfo.PERNR, null, null, null,
+          "X", null, "ZPM1", Global.maintenanceGroup, (List<Order> list) async {
             list.forEach((item) {
               if (item.QMNUM != null &&
                   item.QMNUM != '') {
@@ -180,6 +180,10 @@ class _OrderCenterHomePageState extends State<OrderCenterHomePage> {
           loading: this._loading,
           child: CupertinoPageScaffold(
             navigationBar: CupertinoNavigationBar(
+              leading: CupertinoNavigationBarBackButton(
+                onPressed: () => Navigator.pop(context),
+                color: Color.fromRGBO(94, 102, 111, 1),
+              ),
               middle:
                   Text("订单中心", style: TextStyle(fontWeight: FontWeight.w500)),
             ),

@@ -341,8 +341,11 @@ class OrderCardWidgetState extends State<OrderCardWidget> {
       this._completeTime =
           this._getDateTime(widget.order.ERDAT3, widget.order.ERTIM3);
     }
-    if (this._reportTime != null)
+    if (this._reportTime != null && this._completeTime == null) {
       this.report = this._getTime(this._reportTime, DateTime.now());
+    }  else if (this._reportTime != null && this._completeTime != null) {
+      this.wait = this._getTime(this._acceptTime, this._completeTime);
+    }
     if (this._acceptTime != null && this._completeTime != null) {
       this.wait = this._getTime(this._reportTime, this._completeTime);
     } else if (this._acceptTime != null && this._completeTime == null) {

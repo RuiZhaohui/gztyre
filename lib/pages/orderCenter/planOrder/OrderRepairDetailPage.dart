@@ -28,7 +28,7 @@ class OrderRepairDetailPage extends StatefulWidget {
 }
 
 class _OrderRepairDetailPageState extends State<OrderRepairDetailPage> {
-  TextEditingController _description = TextEditingController();
+  TextEditingController _description = new TextEditingController();
   ListController _list = ListController(list: []);
   Map<String, String> _selectProblemDescription;
   ProblemDescription _problemDescription;
@@ -145,6 +145,24 @@ class _OrderRepairDetailPageState extends State<OrderRepairDetailPage> {
     });
   }
 
+
+  @override
+  void dispose() {
+    if (this._description != null) {
+      this._description.dispose();
+    }
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    this._device = new Device();
+    this._device.deviceCode = widget.order.EQUNR;
+    this._device.deviceName = widget.order.EQKTX;
+    this._device.positionCode = widget.order.TPLNR;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return ProgressDialog(
@@ -177,33 +195,37 @@ class _OrderRepairDetailPageState extends State<OrderRepairDetailPage> {
                               color: Color.fromRGBO(250, 175, 30, 1),
                               size: 16,
                             ),
-                            Padding(
-                              padding: EdgeInsets.only(left: 10),
-                              child: this._device == null
-                                  ? Text("报修对象")
-                                  : Text(
-                                      this._device.deviceName,
-                                      style: TextStyle(
-                                          color: Color.fromRGBO(
+                            Expanded(
+                              child: Padding(
+                                padding: EdgeInsets.only(left: 10),
+                                child: this._device == null
+                                    ? Text("报修对象")
+                                    : Text(
+                                  this._device.deviceName,
+                                  style: TextStyle(
+                                      color: Color.fromRGBO(
                                         52,
                                         115,
                                         178,
                                         1,
                                       )),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                            )
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                         onTap: () {
                           Navigator.of(context).push(CupertinoPageRoute(
                               builder: (BuildContext context) {
                             return DeviceSelectionPage(
-                              selectItem: this._device,
+                              selectItem: this._device ?? new Device(),
                             );
-                          })).then((value) {
-                            this._device = value;
+                          })).then((val) {
+                            if (val["isOk"]) {
+                              this._device = val["item"];
+                            }
                           });
                         },
                       ),
@@ -223,7 +245,7 @@ class _OrderRepairDetailPageState extends State<OrderRepairDetailPage> {
                               child: Padding(
                                 padding: EdgeInsets.only(left: 10),
                                 child: this._problemDescription == null
-                                    ? Text("故障原因")
+                                    ? Text("维修动作")
                                     : Text(
                                         this._selectProblemDescription["text"],
                                         style: TextStyle(

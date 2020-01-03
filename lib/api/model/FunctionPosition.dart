@@ -4,16 +4,12 @@ import 'package:gztyre/api/model/Device.dart';
 
 class FunctionPosition {
 
-//  String TPLNR;
-//  String PLTXT;
   int id;
   String parentId;
   String positionCode;
   String positionName;
   String branchCompanyCode;
   String branchCompanyName;
-//  List<Device> childrenDevice;
-//  List<FunctionPosition> childrenFunctionPosition;
   List<FunctionPosition> children;
   List<Device> deviceChildren;
 

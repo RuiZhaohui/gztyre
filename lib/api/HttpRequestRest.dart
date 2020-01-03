@@ -5,17 +5,12 @@ import 'package:gztyre/api/model/FunctionPosition.dart';
 import 'package:gztyre/commen/Global.dart';
 
 class HttpRequestRest {
-//  static Dio http = new Dio(BaseOptions(
-//      baseUrl: "http://127.0.0.1:8080",
-////      baseUrl: "http://139.196.79.230:8080",
-//      connectTimeout: 6000));
 
   static Dio getHttp() {
     Dio http = new Dio(BaseOptions(
-        baseUrl: "http://61.159.128.211:8080",
-//        baseUrl: "http://127.0.0.1:8080",
-//      baseUrl: "http://139.196.79.230:8080",
-        connectTimeout: 6000));
+//        baseUrl: "http://61.159.128.211:8080", // 生产
+      baseUrl: "http://192.168.6.211:8070", // 开发
+        connectTimeout: 300000));
     http.interceptors.add(InterceptorsWrapper(onRequest: (RequestOptions options) {
       if (Global.token != null) {
         options.headers.addEntries([
@@ -36,10 +31,9 @@ class HttpRequestRest {
 
   static Dio getFileHttp() {
     Dio http = new Dio(BaseOptions(
-        baseUrl: "http://61.159.128.211:8085",
-//        baseUrl: "http://127.0.0.1:8080",
-//      baseUrl: "http://139.196.79.230:8080",
-        connectTimeout: 6000));
+//        baseUrl: "http://61.159.128.211:8085", // 生产
+      baseUrl: "http://192.168.6.211:8070", // 开发
+        connectTimeout: 30000));
     http.interceptors.add(InterceptorsWrapper(onRequest: (RequestOptions options) {
       if (Global.token != null) {
         options.headers.addEntries([

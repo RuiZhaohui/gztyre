@@ -16,8 +16,10 @@ import 'package:gztyre/utils/XmlUtils.dart';
 
 class HttpRequest {
   static Dio http = new Dio(BaseOptions(
-    headers: {"Authorization": "Basic RGV2MDM6MTIzNDU2"},
-    baseUrl: "http://61.159.128.211:8000/sap/bc/srt/rfc/sap",
+//      headers: {"Authorization": "Basic UE1BUFAtRVJQOlBtYXBwKzY2Ng=="}, // 生产
+//    baseUrl: "http://61.159.128.211:8000/sap/bc/srt/rfc/sap", //生产
+        headers: {"Authorization": "Basic RGV2MDM6MTIzNDU2"}, // 开发
+      baseUrl: "http://61.159.128.211:8005/sap/bc/srt/rfc/sap", //开发
     connectTimeout: 30000
   ));
 
@@ -63,6 +65,21 @@ class HttpRequest {
           options: Options(contentType: 'text/xml')
       );
       return await onSuccess(XmlUtils.readOrderXml(response.data));
+    } on DioError catch(e) {
+      return await onError(e);
+    }
+  }
+
+  /// 列出所有计划性维修工单
+  static listPlanOrder(String PERNR, String CPLGR, String MATYP, String SORTB, String WCTYPE, String ASTTX, String AUART, List<String> ItWxfz, Function(List<Order> t) onSuccess, Function(DioError err) onError) async {
+    var xml = XmlUtils.buildPlanOrderXml(PERNR, CPLGR, MATYP, SORTB, WCTYPE, ASTTX, AUART, ItWxfz);
+    print(xml);
+    try {
+      Response response = await http.post("/zpm_search_order_zpm1/888/zpm_search_order_zpm1/zpm_search_order_zpm1",
+          data: xml,
+          options: Options(contentType: 'text/xml')
+      );
+      return await onSuccess(XmlUtils.readPlanOrderXml(response.data));
     } on DioError catch(e) {
       return await onError(e);
     }

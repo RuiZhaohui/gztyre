@@ -14,7 +14,7 @@ import 'package:gztyre/components/ListItemWidget.dart';
 import 'package:gztyre/components/OrderInfoWidget.dart';
 import 'package:gztyre/components/ProgressDialog.dart';
 import 'package:gztyre/pages/ContainerPage.dart';
-import 'package:gztyre/pages/orderCenter/WorkerPage.dart';
+import 'package:gztyre/pages/orderCenter/planOrder/WorkerPage.dart';
 import 'package:gztyre/pages/repairOrder/RepairDetailPage.dart';
 import 'package:gztyre/pages/repairOrder/RepairHistoryPage.dart';
 import 'package:gztyre/pages/repairOrder/RepairOrderDetailPage.dart';
@@ -425,8 +425,9 @@ class _RepairOrderPageState extends State<RepairOrderPage> {
                               ._controller
                               .text)
                           .then(
-                              (success) {
+                              (success) async {
                             if (success) {
+                              await HttpRequestRest.pushAlias([_controller.text], "", "", "${Global.userInfo.ENAME}转单", [], (success){}, (err){});
                               showCupertinoDialog(
                                   context:
                                   context,
@@ -501,7 +502,9 @@ class _RepairOrderPageState extends State<RepairOrderPage> {
 
   @override
   void dispose() {
-    this._controller.dispose();
+    if (this._controller != null) {
+      this._controller.dispose();
+    }
     super.dispose();
   }
 

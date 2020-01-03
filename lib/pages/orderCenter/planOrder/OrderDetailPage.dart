@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gztyre/api/HttpRequest.dart';
 import 'package:gztyre/api/HttpRequestRest.dart';
+import 'package:gztyre/api/model/Device.dart';
 import 'package:gztyre/api/model/Order.dart';
 import 'package:gztyre/api/model/ReportOrder.dart';
 import 'package:gztyre/api/model/Worker.dart';
@@ -14,9 +15,9 @@ import 'package:gztyre/components/ListItemWidget.dart';
 import 'package:gztyre/components/ProgressDialog.dart';
 import 'package:gztyre/components/TextButtonWidget.dart';
 import 'package:gztyre/components/ViewDialog.dart';
-import 'package:gztyre/pages/orderCenter/HelpPage.dart';
-import 'package:gztyre/pages/orderCenter/OrderRepairDetailPage.dart';
-import 'package:gztyre/pages/orderCenter/WorkerPage.dart';
+import 'package:gztyre/pages/orderCenter/planOrder/HelpPage.dart';
+import 'package:gztyre/pages/orderCenter/planOrder/OrderRepairDetailPage.dart';
+import 'package:gztyre/pages/orderCenter/planOrder/WorkerPage.dart';
 import 'package:gztyre/pages/problemReport/DeviceSelectionPage.dart';
 import 'package:gztyre/pages/repairOrder/RepairDetailPage.dart';
 import 'package:gztyre/pages/repairOrder/RepairHistoryPage.dart';
@@ -455,7 +456,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                             }
                             if (index != null) {
                               if (list[index - 1].endsWith("mp4")) {
-                                this._controller = null;
+                                this._controller.initialize();
                               }
 //                              widget.callback(this.list);
                             }
@@ -699,7 +700,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
           Navigator.of(context)
               .push(CupertinoPageRoute(builder: (BuildContext context) {
             return DeviceSelectionPage(
-              selectItem: null,
+              selectItem: new Device(),
               isAddMaterial: true,
               AUFNR: widget.order.AUFNR,
             );
@@ -1121,6 +1122,15 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
     );
   }
 
+
+  @override
+  void dispose() {
+    if (this._controller != null) {
+      _controller.dispose();
+    }
+    super.dispose();
+  }
+
   @override
   void initState() {
     this._reportOrderDetailFuture = this._reportOrderDetail();
@@ -1364,7 +1374,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                         ),
                       )
                           : Container(),
-                      widget.itemStatus == "维修中"
+                      widget.itemStatus == "维修中" && Global.userInfo.PERNR == widget.order.PERNR1
                           ? Align(
                               alignment: Alignment.bottomCenter,
                               child: ButtonBarWidget(

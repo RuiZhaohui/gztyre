@@ -23,7 +23,7 @@ class _VoiceWidgetState extends State<VoiceWidget> {
   bool isUp = false;
   bool isPress = false;
   String textShow = "按住说话";
-  String toastShow = "手指上滑,取消发送";
+  String toastShow = "长按录音删除";
   String voiceIco = "images/voice_volume_1.png";
   double time = 0.0;
 
@@ -147,7 +147,7 @@ class _VoiceWidgetState extends State<VoiceWidget> {
   showVoiceView() {
     setState(() {
       textShow = "松开结束";
-      toastShow = "手指上滑,取消发送";
+      toastShow = "长按录音删除";
 //      voiceState = false;
     });
     buildOverLayView(context);
@@ -178,7 +178,7 @@ class _VoiceWidgetState extends State<VoiceWidget> {
     setState(() {
       isUp = starty - offset > 60 ? true : false;
       if (isUp) {
-        textShow = "松开手指,取消发送";
+        textShow = "长按录音删除";
         toastShow = textShow;
       }
     });
@@ -219,13 +219,13 @@ class _VoiceWidgetState extends State<VoiceWidget> {
             moveVoiceView();
           }
         },
-        onTapDown: (details) {
+        onLongPressStart: (details) {
           isPress = true;
           this.isUp = false;
           print("1");
           showVoiceView();
         },
-        onTapUp: (details) {
+        onLongPressEnd: (details) {
           isPress = false;
           hideVoiceView();
         },

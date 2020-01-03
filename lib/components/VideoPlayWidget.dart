@@ -39,7 +39,7 @@ class _VideoPlayWidgetState extends State<VideoPlayWidget> {
   @override
   void dispose() {
     // Ensure disposing of the VideoPlayerController to free up resources.
-    _controller.dispose();
+    if (this._controller != null) _controller.dispose();
 
     super.dispose();
   }

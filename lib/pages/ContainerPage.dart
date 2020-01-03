@@ -1,9 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:gztyre/commen/Global.dart';
 import 'package:gztyre/components/TabBarIcon.dart';
-import 'package:gztyre/pages/orderCenter/OrderCenterHomePage.dart';
+import 'package:gztyre/pages/orderCenter/OrderCategory.dart';
 import 'package:gztyre/pages/problemReport/ProblemReportHomePage.dart';
 import 'package:gztyre/pages/repairOrder/RepairOrderHomePage.dart';
 import 'package:gztyre/pages/userCenter/UserCenterPage.dart';
@@ -28,7 +27,7 @@ class _ContainerPageState extends State<ContainerPage> {
   void initState() {
     super.initState();
     pages = _buildPages();
-    this._selectIndex = widget.selectIndex;
+//    this._selectIndex = widget.selectIndex;
     setState(() {
 
     });
@@ -39,7 +38,7 @@ class _ContainerPageState extends State<ContainerPage> {
       return [
         new RepairOrderHomePage(rootContext: widget.rootContext),
         new ProblemReportHomePage(rootContext: widget.rootContext),
-        new OrderCenterHomePage(rootContext: widget.rootContext,),
+        new OrderCategory(rootContext: widget.rootContext,),
         new UserCenterPage(rootContext: widget.rootContext),
       ];
 //    } else {
@@ -54,11 +53,6 @@ class _ContainerPageState extends State<ContainerPage> {
   Widget _buildTabBar() {
 //    if (isWorker) {
       return CupertinoTabBar(
-          onTap: (index) {
-            setState(() {
-              this._selectIndex = index;
-            });
-          },
           items: <BottomNavigationBarItem>[
         BottomNavigationBarItem(
             icon: TabBarIcon(
@@ -161,7 +155,7 @@ class _ContainerPageState extends State<ContainerPage> {
         tabBuilder: (BuildContext context, int index) {
           return CupertinoTabView(
             builder: (BuildContext context) {
-              return _buildPage(this._selectIndex);
+              return _buildPage(index);
             },
           );
         });

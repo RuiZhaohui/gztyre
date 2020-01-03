@@ -160,7 +160,7 @@ class _ProblemDescriptionPageState extends State<ProblemDescriptionPage> {
                     color: Color.fromRGBO(94, 102, 111, 1),
                   ),
                   middle: Text(
-                    "故障描述",
+                    widget.type == "5" ? "维修动作" : "故障描述",
                     style: TextStyle(fontWeight: FontWeight.w500),
                   ),
                   trailing: TextButtonWidget(

@@ -39,8 +39,8 @@ class ProblemReportHomePage extends StatefulWidget {
 
 class _ProblemReportHomePageState extends State<ProblemReportHomePage> {
   bool _isStop = false;
-  TextEditingController _description;
-  TextEditingController _remark;
+  TextEditingController _description = new TextEditingController();
+  TextEditingController _remark = new TextEditingController();
   ListController _list = ListController(list: []);
 
   Device _device;
@@ -82,17 +82,26 @@ class _ProblemReportHomePageState extends State<ProblemReportHomePage> {
 
   @override
   void initState() {
-    _description = TextEditingController();
-    _remark = TextEditingController();
 super.initState();
   }
 
 
   @override
   void dispose() {
-    _description.dispose();
-    _remark.dispose();
+    print('销毁');
+    if (this._description != null) {
+      _description.dispose();
+    }
+    if (this._remark != null) {
+      _remark.dispose();
+    }
     super.dispose();
+  }
+
+
+  @override
+  void deactivate() {
+    super.deactivate();
   }
 
   @override
@@ -144,11 +153,11 @@ super.initState();
                               CupertinoPageRoute(
                                   builder: (BuildContext context) {
                             return DeviceSelectionPage(
-                              selectItem: this._device,
+                              selectItem: this._device ?? new Device(),
                             );
-                          })).then((value) {
-                            if (value != null) {
-                              this._device = value;
+                          })).then((val) {
+                            if (val["isOk"]) {
+                              this._device = val["item"];
                             }
                           });
                         },
@@ -628,12 +637,11 @@ super.initState();
                                                         this._device = null;
                                                         this._repairType = null;
                                                         this._problemDescription = null;
-                                                        this._description =
-                                                        new TextEditingController();
-                                                        this._remark =
-                                                        new TextEditingController();
+                                                        this._description.text = "";
+                                                        this._remark.text = "";
                                                         this._list.value = new List();
                                                       });
+                                                      this.initState();
                                                     }, (err) {
                                                       setState(() {
                                                         this._loading = false;
