@@ -6,9 +6,11 @@ import 'package:gztyre/api/HttpRequest.dart';
 import 'package:gztyre/api/HttpRequestRest.dart';
 import 'package:gztyre/api/model/Order.dart';
 import 'package:gztyre/api/model/RepairOrder.dart';
+import 'package:gztyre/components/ListItemWidget.dart';
 import 'package:gztyre/components/ListTitleWidget.dart';
 import 'package:gztyre/components/ProgressDialog.dart';
 import 'package:gztyre/components/ViewDialog.dart';
+import 'package:gztyre/pages/repairOrder/OtherDevicePage.dart';
 import 'package:gztyre/utils/screen_utils.dart';
 import 'package:video_player/video_player.dart';
 
@@ -379,6 +381,17 @@ class _RepairDetailPageState extends State<RepairDetailPage> {
                         ),
                       ),
                     ),
+                    widget.order.ILART == "N06" ? ListTitleWidget(
+                      title: "",
+                    ) : Container(),
+                    widget.order.ILART == "N06" ? ListItemWidget(title: Text("其他设备"), onTap: () {
+                      Navigator.of(context).push(CupertinoPageRoute(
+                          builder: (BuildContext context) {
+                            return OtherDevicePage(
+                              AUFNR: this._repairOrder.AUFNR,
+                            );
+                          }));
+                    },) : Container()
                   ],
                 ),
 //        child: Column(

@@ -180,7 +180,7 @@ class _UserCenterPageState extends State<UserCenterPage> {
                             child: Icon(Icons.build, color: Colors.indigo,),
                           ),
                           Expanded(
-                            child: Global.maintenanceGroup == null ? Text(
+                            child: Global.userInfo.WCTYPE != "是" ? Text(
                               "工作班次：${Global.workShift.PLTXT}",
                               style: TextStyle(fontSize: 16),
                             ) : Text(

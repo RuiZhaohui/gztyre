@@ -39,13 +39,30 @@ class _RepairOrderPageState extends State<RepairOrderPage> {
   RepairOrder _repairOrder;
   TextEditingController _controller = TextEditingController();
 
+  List<String> _maintenanceWorker = ["A01", "A02", "A03"];
+  List<String> _monitorOrForeman = ["A04", "A05"];
+  List<String> _equipmentSupervisor = ["A06"];
+  List<String> _engineer = ["A07"];
+  List<String> _maintenanceManagementPersonnel = ["A08"];
+
   Future<String> _getAPPTRADENO(String sapNo) async {
     return await HttpRequestRest.getMalfunction(sapNo, (Map map) async {
       return map['tradeNo'];
     }, (err) async {
+      this._resetAPPTRANENO(widget.order);
       this._loading = false;
       throw Error();
     });
+  }
+
+  _resetAPPTRANENO(Order order) async {
+    String tradeNo = (new DateTime.now().millisecondsSinceEpoch.toString() + "000").substring(0, 16);
+    if (order.QMNUM != null || order.QMNUM != "") {
+      await HttpRequestRest.malfunction(tradeNo, order.QMNUM, 0, [], null, null, null, null, null, false, null, null, null, null, null, null, null, null, (s) {}, (e){});
+    }
+    if (order.AUFNR != null || order.AUFNR != "") {
+      await HttpRequestRest.malfunction(tradeNo, order.AUFNR, 0, [], null, null, null, null, null, false, null, null, null, null, null, null, null, null, (s) {}, (e){});
+    }
   }
 
   _orderDetail() async {
@@ -680,28 +697,25 @@ class _RepairOrderPageState extends State<RepairOrderPage> {
                               ],
                             ),
                           ),
-//                      Align(
-//                        alignment: Alignment.bottomCenter,
-//                        child: Stack(
-//                          children: <Widget>[
-
                         ],
                       ),
-                      widget.order.ASTTX == "新建" || widget.order.ASTTX == "新工单" ?
+                      widget.order.ASTTX == "新建" || widget.order.ASTTX == "新工单" &&
+                          ["N01", "N05"].contains(widget.order.ILART) ?
                       Align(
                         alignment: Alignment.bottomCenter,
                         child: ButtonBarWidget(
                           button: _transferToNextWorkShiftButton(),
                         ),
                       ) : Container(),
-                      widget.order.ASTTX == "维修中" || widget.order.ASTTX == "等待中" ?
+                      widget.order.ASTTX == "维修中" || widget.order.ASTTX == "等待中" &&
+                          ["N01", "N05"].contains(widget.order.ILART) ?
                       Align(
                         alignment: Alignment.bottomCenter,
                         child: ButtonBarWidget(
                           button: _transferToNextWorkShiftButton(),
                         ),
                       ) : Container(),
-                      widget.order.ASTTX == "已完工" ?
+                      widget.order.ASTTX == "已完工" && ["N01", "N05"].contains(widget.order.ILART) ?
                       Align(
                         alignment: Alignment.bottomCenter,
                         child: Container(
@@ -735,23 +749,6 @@ class _RepairOrderPageState extends State<RepairOrderPage> {
                                     ),
                                   ],
                                 ),
-//                                Expanded(
-//                                  child: Padding(
-//                                    padding: EdgeInsets.only(top: 10),
-//                                    child: Padding(
-//                                      padding: EdgeInsets.only(left: 10, right: 10),
-//                                      child: _completeButton(),
-//                                    ),
-//                                  ),
-//                                ),
-//                              Container(
-//                                width: ScreenUtils.screenW(context),
-//                                child: Padding(
-//                                  padding: EdgeInsets.only(top: 10, left: 10 , right: 10),
-//                                  child: _completeButton(),
-//                                ),
-//                              )
-//                              )
                               ],
                             ),
                           ),

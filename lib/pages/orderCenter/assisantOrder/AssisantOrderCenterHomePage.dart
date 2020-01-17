@@ -9,20 +9,20 @@ import 'package:gztyre/components/Badge.dart';
 import 'package:gztyre/components/DividerBetweenIconListItem.dart';
 import 'package:gztyre/components/ListItemWidget.dart';
 import 'package:gztyre/components/ProgressDialog.dart';
-import 'package:gztyre/pages/orderCenter/planOrder/OrderListPage.dart';
+import 'package:gztyre/pages/orderCenter/assisantOrder/OrderListPage.dart';
 
-class PlanOrderCenterHomePage extends StatefulWidget {
-  PlanOrderCenterHomePage({Key key, @required this.rootContext})
+class AssisantOrderCenterHomePage extends StatefulWidget {
+  AssisantOrderCenterHomePage({Key key, @required this.rootContext})
       : assert(rootContext != null),
         super(key: key);
 
   final BuildContext rootContext;
 
   @override
-  State createState() => _PlanOrderCenterHomePageState();
+  State createState() => _AssisantOrderCenterHomePageState();
 }
 
-class _PlanOrderCenterHomePageState extends State<PlanOrderCenterHomePage> {
+class _AssisantOrderCenterHomePageState extends State<AssisantOrderCenterHomePage> {
   var _listOrderFuture;
 
   bool _loading = false;
@@ -121,8 +121,8 @@ class _PlanOrderCenterHomePageState extends State<PlanOrderCenterHomePage> {
     this._loading = true;
     this._list = [];
     if (this._userInfo.WCTYPE == "是") {
-      return await HttpRequest.listPlanOrder(this._userInfo.PERNR, null, null, null,
-          "X", null, "ZPM2", Global.maintenanceGroup, (List<Order> list) async {
+      return await HttpRequest.listAssisantOrder(this._userInfo.PERNR, null, null, null,
+          "X", null, "ZPM3", Global.maintenanceGroup, (List<Order> list) async {
             list.forEach((item) {
               if (item.QMNUM != null &&
                   item.QMNUM != '') {

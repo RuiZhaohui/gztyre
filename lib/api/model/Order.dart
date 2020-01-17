@@ -96,6 +96,9 @@ class Order {
   /// 完成时间
   String ERTIM3;
 
+  /// 计划日期
+  String NPLDA;
+
   Order();
 
   Order.formJson(Map<String, dynamic> json)

@@ -28,11 +28,18 @@ class _RepairTypePageState extends State<RepairTypePage> {
 
   var _listRepairTypeFuture;
 
+//  List<String> repairPosition = [
+//    "N01","N02","N03","N13","N14","N15","N16","N17"
+//  ];
+//  List<String> producePosition = [
+//    "N01","N02","N03","N04","N07","N09","N10","N11","N12","N13","N14","N15","N16","N17","N18"
+//  ];
+
   List<String> repairPosition = [
-    "N01","N02","N03","N13","N14","N15","N16","N17"
+    "N01","N02","N03","N04","N07","N08","N09","N10","N11","N12","N13","N14","N15","N16","N17","N18","N19","N20","N21"
   ];
   List<String> producePosition = [
-    "N01","N02","N03","N04","N07","N09","N10","N11","N12","N13","N14","N15","N16","N17","N18"
+    "N01","N02","N03","N04"
   ];
 
   _listRepairType() async {

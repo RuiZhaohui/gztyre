@@ -6,7 +6,7 @@ import 'package:gztyre/api/model/UserInfo.dart';
 import 'package:gztyre/commen/Global.dart';
 import 'package:gztyre/components/OrderCardLiteWidget.dart';
 import 'package:gztyre/components/ProgressDialog.dart';
-import 'package:gztyre/pages/orderCenter/planOrder/OrderDetailPage.dart';
+import 'package:gztyre/pages/orderCenter/noPlanOrder/OrderDetailPage.dart';
 
 class OrderListPage extends StatefulWidget {
   OrderListPage({Key key, @required this.title}) : super(key: key);
@@ -55,8 +55,8 @@ class _OrderListPageState extends State<OrderListPage> {
   _listOrder(bool isManager) async {
     this._loading = true;
     this._list = [];
-    return await HttpRequest.listPlanOrder(
-        this._userInfo.PERNR, this._userInfo.CPLGR, this._userInfo.MATYP, this._userInfo.SORTB, "X", null, "ZPM2", Global.maintenanceGroup, (List<Order> list) {
+    return await HttpRequest.listNoPlanOrder(
+        this._userInfo.PERNR, this._userInfo.CPLGR, this._userInfo.MATYP, this._userInfo.SORTB, "X", null, "ZPM1", Global.maintenanceGroup, (List<Order> list) {
       this._isRepairing = false;
       list.forEach((item) {
         if (item.QMNUM != null &&
@@ -110,6 +110,16 @@ class _OrderListPageState extends State<OrderListPage> {
           }
         });
       }
+//      else if (widget.title == "历史单") {
+//        list.forEach((item) {
+//          if (item.QMNUM != null &&
+//              item.QMNUM != '' &&
+//              (item.APPSTATUS == "完工" || item.APPSTATUS == "确认")
+//          && (isManager ? true : item.PERNR1 == _userInfo.PERNR )) {
+//            this._list.add(item);
+//          }
+//        });
+//      }
       setState(() {
         this._loading = false;
       });
@@ -179,7 +189,6 @@ class _OrderListPageState extends State<OrderListPage> {
                                   isStop: true,
                                   order: this._list[index],
                                   isHistory: widget.title == "历史单",
-                                  isPlanOrder: true,
                                   onTap: () {
                                     Navigator.of(context).push(
                                         CupertinoPageRoute(

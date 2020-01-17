@@ -15,7 +15,6 @@ import 'package:gztyre/components/ProgressDialog.dart';
 import 'package:gztyre/components/TextareaWithPicAndVideoWidget.dart';
 import 'package:gztyre/pages/problemReport/DeviceSelectionPage.dart';
 import 'package:gztyre/pages/problemReport/ProblemDescriptionPage.dart';
-import 'package:gztyre/pages/repairOrder/OtherDevicePage.dart';
 import 'package:gztyre/utils/ListController.dart';
 
 class OrderRepairDetailPage extends StatefulWidget {
@@ -157,7 +156,6 @@ class _OrderRepairDetailPageState extends State<OrderRepairDetailPage> {
     });
   }
 
-
   @override
   void dispose() {
     if (this._description != null) {
@@ -213,30 +211,32 @@ class _OrderRepairDetailPageState extends State<OrderRepairDetailPage> {
                                 child: this._device == null
                                     ? Text("报修对象")
                                     : Text(
-                                  this._device.deviceName,
-                                  style: TextStyle(
-                                      color: Color.fromRGBO(
-                                        52,
-                                        115,
-                                        178,
-                                        1,
-                                      )),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
+                                        this._device.deviceName,
+                                        style: TextStyle(
+                                            color: Color.fromRGBO(
+                                          52,
+                                          115,
+                                          178,
+                                          1,
+                                        )),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
                               ),
                             ),
                           ],
                         ),
-                        actionArea: widget.order.ILART == "N01" ? Icon(CupertinoIcons.right_chevron, color: Color.fromRGBO(94, 102, 111, 1),) : Container(),
+                        actionArea: widget.order.ILART == "N01"
+                            ? Icon(CupertinoIcons.right_chevron, color: Color.fromRGBO(94, 102, 111, 1),)
+                            : Container(),
                         onTap: () {
                           if (widget.order.ILART == "N01") {
                             Navigator.of(context).push(CupertinoPageRoute(
                                 builder: (BuildContext context) {
-                                  return DeviceSelectionPage(
-                                    selectItem: this._device ?? new Device(),
-                                  );
-                                })).then((val) {
+                              return DeviceSelectionPage(
+                                selectItem: this._device ?? new Device(),
+                              );
+                            })).then((val) {
                               if (val["isOk"]) {
                                 this._device = val["item"];
                               }
@@ -244,10 +244,10 @@ class _OrderRepairDetailPageState extends State<OrderRepairDetailPage> {
                           }
                         },
                       ),
-                      widget.order.ILART != "N06" ? Divider(
+                      Divider(
                         height: 1,
-                      ) : Container(),
-                      widget.order.ILART != "N06" ? ListItemWidget(
+                      ),
+                      ListItemWidget(
                         title: Row(
                           children: <Widget>[
                             ImageIcon(
@@ -286,40 +286,11 @@ class _OrderRepairDetailPageState extends State<OrderRepairDetailPage> {
                             ;
                           });
                         },
-                      ) : Container(),
-                      widget.order.ILART == "N06" ? Divider(
-                        height: 1,
-                      ) : Container(),
-                      widget.order.ILART == "N06" ? ListItemWidget(
-                        title: Row(
-                          children: <Widget>[
-                            ImageIcon(
-                              AssetImage(
-                                  'assets/images/icon/icon_device.png'),
-                              color: Colors.deepOrangeAccent,
-                              size: 16,
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding: EdgeInsets.only(left: 10),
-                                child: Text("其他设备")
-                              ),
-                            )
-                          ],
-                        ),
-                        onTap: () {
-                          Navigator.of(context).push(CupertinoPageRoute(
-                              builder: (BuildContext context) {
-                                return OtherDevicePage(
-                                  AUFNR: widget.order.AUFNR,
-                                );
-                              }));
-                        },
-                      ) : Container(),
-                      widget.order.ILART != "N06" ? Padding(
+                      ),
+                      Padding(
                         padding: EdgeInsets.only(top: 20),
                         child: _buildTextareaWithPicAndVideoWidget(),
-                      ) : Container(),
+                      ),
                     ],
                   ),
                 ),
@@ -335,15 +306,15 @@ class _OrderRepairDetailPageState extends State<OrderRepairDetailPage> {
                         ),
                         color: Color.fromRGBO(76, 129, 235, 1),
                         onPressed: () {
-                          if ((this._device == null ||
+                          if (this._device == null ||
                               this._problemDescription == null ||
-                              this._description.text == "") && widget.order.ILART != "N06") {
+                              this._description.text == "") {
                             showCupertinoDialog(
                                 context: context,
                                 builder: (BuildContext context) {
                                   return CupertinoAlertDialog(
                                     content: Text(
-                                      "请选择设备与维修动作并填写描述",
+                                      "请选择设备与描述并填写描述",
                                       style: TextStyle(fontSize: 18),
                                     ),
                                     actions: <Widget>[
@@ -411,7 +382,7 @@ class _OrderRepairDetailPageState extends State<OrderRepairDetailPage> {
                                             pictures,
                                             video,
                                             audio,
-                                            this._selectProblemDescription == null ? null : this._selectProblemDescription[
+                                            this._selectProblemDescription[
                                                 "text"],
                                             this._description.text,
                                             null,
@@ -428,9 +399,9 @@ class _OrderRepairDetailPageState extends State<OrderRepairDetailPage> {
                                       this
                                           ._repairComplete(
                                               widget.order,
-                                          this._problemDescription == null ? null : this._problemDescription.group,
-                                          this._selectProblemDescription == null ? null : this._selectProblemDescription[
-                                          "code"],
+                                              this._problemDescription.group,
+                                              this._selectProblemDescription[
+                                                  "code"],
                                               this._device.deviceCode,
                                               this._description.text)
                                           .then((success) async {
@@ -506,7 +477,7 @@ class _OrderRepairDetailPageState extends State<OrderRepairDetailPage> {
                                         pictures,
                                         video,
                                         audio,
-                                        this._selectProblemDescription == null ? null : this._selectProblemDescription["text"],
+                                        this._selectProblemDescription["text"],
                                         this._description.text,
                                         null,
                                         true,
@@ -522,8 +493,8 @@ class _OrderRepairDetailPageState extends State<OrderRepairDetailPage> {
                                   this
                                       ._repairComplete(
                                           widget.order,
-                                          this._problemDescription == null ? null : this._problemDescription.group,
-                                          this._selectProblemDescription == null ? null : this._selectProblemDescription[
+                                          this._problemDescription.group,
+                                          this._selectProblemDescription[
                                               "code"],
                                           this._device.deviceCode,
                                           this._description.text)

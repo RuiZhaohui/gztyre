@@ -23,6 +23,7 @@ import 'package:gztyre/pages/problemReport/ProblemDescriptionPage.dart';
 import 'package:gztyre/pages/problemReport/RepairTypePage.dart';
 import 'package:gztyre/utils/ListController.dart';
 import 'package:jpush_flutter/jpush_flutter.dart';
+import 'package:uuid/uuid.dart';
 
 class ProblemReportHomePage extends StatefulWidget {
   ProblemReportHomePage({Key key, @required this.rootContext})
@@ -329,7 +330,8 @@ super.initState();
                                                 setState(() {
                                                   this._loading = true;
                                                 });
-                                                String left = (new DateTime.now().millisecondsSinceEpoch.toString() + "000").substring(0, 16);
+                                                Uuid uuid = Uuid();
+                                                String left = (new DateTime.now().millisecondsSinceEpoch.toString() + uuid.v4().substring(0, 3)).substring(0, 16);
                                                 List<String> pictures = List();
                                                 String video = '';
                                                 String audio = '';

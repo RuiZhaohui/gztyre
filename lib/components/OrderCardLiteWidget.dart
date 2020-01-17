@@ -13,6 +13,8 @@ class OrderCardLiteWidget extends StatefulWidget {
       @required this.isStop,
       @required this.order,
         @required this.color,
+        this.isHistory = false,
+        this.isPlanOrder = false,
       this.onTap})
       : super(key: key);
 
@@ -25,6 +27,8 @@ class OrderCardLiteWidget extends StatefulWidget {
   final bool isStop;
   final Order order;
   final String color;
+  final bool isHistory;
+  final bool isPlanOrder;
 
   @override
   State createState() => _OrderCardLiteWidgetState();
@@ -59,7 +63,16 @@ class _OrderCardLiteWidgetState extends State<OrderCardLiteWidget> {
     Duration duration = end.difference(start);
     int sum = duration.inMinutes;
     if (isReport) {
-      this.isOverTime = sum > 10 ? true : false;
+      if (widget.isHistory) {
+        this.isOverTime = false;
+      } else {
+        if (widget.order.NPLDA != null && widget.order.NPLDA != "0000-00-00") {
+          DateTime NPLDA = _getDateTime(widget.order.NPLDA, "00:00:00");
+          Duration npldaDuration = end.difference(NPLDA);
+          int npldaSum = npldaDuration.inDays;
+          this.isOverTime = npldaSum > 7 ? true : false;
+        } else this.isOverTime = sum > 10 ? true : false;
+      }
     }
     setState(() {
 
@@ -101,6 +114,10 @@ class _OrderCardLiteWidgetState extends State<OrderCardLiteWidget> {
                       child: Text("维修类型：${widget.order.ILATX != "" && widget.order.ILATX != null ? widget.order.ILATX : "未知"}", style: TextStyle(color: Color.fromRGBO(0, 0, 0, 0.45),
                         fontSize: 12,),),
                     ),
+                   widget.isPlanOrder && widget.order.PERNR1 != null ? Expanded(
+                      child: Text("负责人：${widget.order.KTEXT}", style: TextStyle(color: Color.fromRGBO(0, 0, 0, 0.45),
+                        fontSize: 12,),),
+                    ) : Container(),
                   ],
                 ),
               ),
@@ -194,18 +211,6 @@ class _OrderCardLiteWidgetState extends State<OrderCardLiteWidget> {
                         ),
                       ],
                     ),
-//                      Expanded(
-//                        child: Padding(
-//                          padding: EdgeInsets.only(top: 10),
-//                          child: Text(
-//                            widget.description,
-//                            style: TextStyle(
-//                                color: Color.fromRGBO(0, 0, 0, 0.65), fontSize: 14),
-//                            maxLines: 3,
-//                            overflow: TextOverflow.ellipsis,
-//                          ),
-//                        ),
-//                      ),
                   ],
                 ),
               ),
@@ -215,7 +220,6 @@ class _OrderCardLiteWidgetState extends State<OrderCardLiteWidget> {
               ),
               Container(
                 decoration: BoxDecoration(
-//                  color: Color.fromRGBO(225, 225, 225, 1),
                     borderRadius: BorderRadius.only(
                         bottomLeft: Radius.circular(5),
                         bottomRight: Radius.circular(5))),
@@ -318,102 +322,6 @@ class _OrderCardLiteWidgetState extends State<OrderCardLiteWidget> {
                         ],
                       ),
                     ),
-//                    Expanded(
-////                      flex: 3,
-//                      child: Padding(
-//                        padding: EdgeInsets.all(10),
-//                        child: Column(
-//                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                          crossAxisAlignment: CrossAxisAlignment.start,
-//                          children: <Widget>[
-//                            Row(
-//                              children: <Widget>[
-//                                Text(
-//                                  "位置：",
-//                                  style: TextStyle(
-//                                      color: Color.fromRGBO(0, 0, 0, 0.45),
-//                                      fontSize: 12),
-//                                ),
-//                                Expanded(
-//                                  child: Text(
-//                                    widget.position,
-//                                    style: TextStyle(fontSize: 12),
-//                                    maxLines: 1,
-//                                    overflow: TextOverflow.ellipsis,
-//                                  ),
-//                                )
-//                              ],
-//                            ),
-//                            Row(
-//                              children: <Widget>[
-//                                Text(
-//                                  "报修：",
-//                                  style: TextStyle(
-//                                      color: Color.fromRGBO(0, 0, 0, 0.45),
-//                                      fontSize: 12),
-//                                ),
-//                                Expanded(
-//                                  child: Text(
-//                                    this.report,
-//                                    style: TextStyle(fontSize: 12),
-//                                    maxLines: 1,
-//                                    overflow: TextOverflow.ellipsis,
-//                                  ),
-//                                )
-//                              ],
-//                            ),
-//                          ],
-//                        ),
-//                      ),
-//                    ),
-//                    Expanded(
-////                      flex: 2,
-//                      child: Padding(
-//                        padding: EdgeInsets.all(10),
-//                        child: Column(
-//                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                          crossAxisAlignment: CrossAxisAlignment.end,
-//                          children: <Widget>[
-//                            Row(
-//                              children: <Widget>[
-//                                Text(
-//                                  "设备：",
-//                                  style: TextStyle(
-//                                      color: Color.fromRGBO(0, 0, 0, 0.45),
-//                                      fontSize: 12),
-//                                ),
-//                                Expanded(
-//                                  child: Text(
-//                                    widget.device,
-//                                    style: TextStyle(fontSize: 12),
-//                                    maxLines: 1,
-//                                    overflow: TextOverflow.ellipsis,
-//                                  ),
-//                                )
-//                              ],
-//                            ),
-//                            Row(
-//                              children: <Widget>[
-//                                Text(
-//                                  "等待：",
-//                                  style: TextStyle(
-//                                      color: Color.fromRGBO(0, 0, 0, 0.45),
-//                                      fontSize: 12),
-//                                ),
-//                                Expanded(
-//                                  child: Text(
-//                                    this.wait,
-//                                    style: TextStyle(fontSize: 12),
-//                                    maxLines: 1,
-//                                    overflow: TextOverflow.ellipsis,
-//                                  ),
-//                                )
-//                              ],
-//                            )
-//                          ],
-//                        ),
-//                      ),
-//                    ),
                   ],
                 ),
               ),

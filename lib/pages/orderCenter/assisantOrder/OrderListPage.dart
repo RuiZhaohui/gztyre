@@ -6,7 +6,7 @@ import 'package:gztyre/api/model/UserInfo.dart';
 import 'package:gztyre/commen/Global.dart';
 import 'package:gztyre/components/OrderCardLiteWidget.dart';
 import 'package:gztyre/components/ProgressDialog.dart';
-import 'package:gztyre/pages/orderCenter/planOrder/OrderDetailPage.dart';
+import 'package:gztyre/pages/orderCenter/assisantOrder/OrderDetailPage.dart';
 
 class OrderListPage extends StatefulWidget {
   OrderListPage({Key key, @required this.title}) : super(key: key);
@@ -55,8 +55,8 @@ class _OrderListPageState extends State<OrderListPage> {
   _listOrder(bool isManager) async {
     this._loading = true;
     this._list = [];
-    return await HttpRequest.listPlanOrder(
-        this._userInfo.PERNR, this._userInfo.CPLGR, this._userInfo.MATYP, this._userInfo.SORTB, "X", null, "ZPM2", Global.maintenanceGroup, (List<Order> list) {
+    return await HttpRequest.listAssisantOrder(
+        this._userInfo.PERNR, this._userInfo.CPLGR, this._userInfo.MATYP, this._userInfo.SORTB, "X", null, "ZPM3", Global.maintenanceGroup, (List<Order> list) {
       this._isRepairing = false;
       list.forEach((item) {
         if (item.QMNUM != null &&
@@ -179,7 +179,6 @@ class _OrderListPageState extends State<OrderListPage> {
                                   isStop: true,
                                   order: this._list[index],
                                   isHistory: widget.title == "历史单",
-                                  isPlanOrder: true,
                                   onTap: () {
                                     Navigator.of(context).push(
                                         CupertinoPageRoute(

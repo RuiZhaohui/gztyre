@@ -70,16 +70,61 @@ class HttpRequest {
     }
   }
 
-  /// 列出所有计划性维修工单
-  static listPlanOrder(String PERNR, String CPLGR, String MATYP, String SORTB, String WCTYPE, String ASTTX, String AUART, List<String> ItWxfz, Function(List<Order> t) onSuccess, Function(DioError err) onError) async {
-    var xml = XmlUtils.buildPlanOrderXml(PERNR, CPLGR, MATYP, SORTB, WCTYPE, ASTTX, AUART, ItWxfz);
+  /// 列出所有非计划性维修工单
+  static listNoPlanOrder(String PERNR, String CPLGR, String MATYP, String SORTB, String WCTYPE, String ASTTX, String AUART, List<String> ItWxfz, Function(List<Order> t) onSuccess, Function(DioError err) onError) async {
+    var xml = XmlUtils.buildNoPlanOrderXml(PERNR, CPLGR, MATYP, SORTB, WCTYPE, ASTTX, AUART, ItWxfz);
     print(xml);
     try {
       Response response = await http.post("/zpm_search_order_zpm1/888/zpm_search_order_zpm1/zpm_search_order_zpm1",
           data: xml,
           options: Options(contentType: 'text/xml')
       );
+      return await onSuccess(XmlUtils.readNoPlanOrderXml(response.data));
+    } on DioError catch(e) {
+      return await onError(e);
+    }
+  }
+
+  /// 列出所有计划性维修工单
+  static listPlanOrder(String PERNR, String CPLGR, String MATYP, String SORTB, String WCTYPE, String ASTTX, String AUART, List<String> ItWxfz, Function(List<Order> t) onSuccess, Function(DioError err) onError) async {
+    var xml = XmlUtils.buildPlanOrderXml(PERNR, CPLGR, MATYP, SORTB, WCTYPE, ASTTX, AUART, ItWxfz);
+    print(xml);
+    try {
+      Response response = await http.post("/zpm_search_order_zpm2/888/zpm_search_order_zpm2/zpm_search_order_zpm2",
+          data: xml,
+          options: Options(contentType: 'text/xml')
+      );
       return await onSuccess(XmlUtils.readPlanOrderXml(response.data));
+    } on DioError catch(e) {
+      return await onError(e);
+    }
+  }
+
+  /// 列出所有组织维修工单
+  static listAssisantOrder(String PERNR, String CPLGR, String MATYP, String SORTB, String WCTYPE, String ASTTX, String AUART, List<String> ItWxfz, Function(List<Order> t) onSuccess, Function(DioError err) onError) async {
+    var xml = XmlUtils.buildAssisantOrderXml(PERNR, CPLGR, MATYP, SORTB, WCTYPE, ASTTX, AUART, ItWxfz);
+    print(xml);
+    try {
+      Response response = await http.post("/zpm_search_order_zpm3/888/zpm_search_order_zpm3/zpm_search_order_zpm3",
+          data: xml,
+          options: Options(contentType: 'text/xml')
+      );
+      return await onSuccess(XmlUtils.readAssisantOrderXml(response.data));
+    } on DioError catch(e) {
+      return await onError(e);
+    }
+  }
+
+  /// 列出所有备件维修工单
+  static listBlockOrder(String PERNR, String CPLGR, String MATYP, String SORTB, String WCTYPE, String ASTTX, String AUART, List<String> ItWxfz, Function(List<Order> t) onSuccess, Function(DioError err) onError) async {
+    var xml = XmlUtils.buildBlockOrderXml(PERNR, CPLGR, MATYP, SORTB, WCTYPE, ASTTX, AUART, ItWxfz);
+    print(xml);
+    try {
+      Response response = await http.post("/zpm_search_order_zpm4/888/zpm_search_order_zpm4/zpm_search_order_zpm4",
+          data: xml,
+          options: Options(contentType: 'text/xml')
+      );
+      return await onSuccess(XmlUtils.readBlockOrderXml(response.data));
     } on DioError catch(e) {
       return await onError(e);
     }
@@ -125,6 +170,21 @@ class HttpRequest {
           options: Options(contentType: 'text/xml')
       );
       return await onSuccess(XmlUtils.readRepairOrderDetailXml(response.data));
+    } on DioError catch(e) {
+      return await onError(e);
+    }
+  }
+
+  /// 维修单其他设备查询
+  static otherDevice(String AUFNR, Function(List<Device> t) onSuccess, Function(DioError err) onError) async {
+    var xml = XmlUtils.buildOtherDeviceXml(AUFNR);
+    print(xml);
+    try {
+      Response response = await http.post("/zpm_search_info/888/zpm_search_info/zpm_search_info",
+          data: xml,
+          options: Options(contentType: 'text/xml')
+      );
+      return await onSuccess(XmlUtils.readOtherDeviceXml(response.data));
     } on DioError catch(e) {
       return await onError(e);
     }

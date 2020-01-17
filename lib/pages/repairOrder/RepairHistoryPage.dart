@@ -54,7 +54,7 @@ class _RepairHistoryPageState extends State<RepairHistoryPage> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            Text("${this._repairOrderList[i].ERDAT.substring(2, 8)} ${this._repairOrderList[i].ERTIM.substring(0, 5)}", textAlign: TextAlign.left,),
+            Text("${this._repairOrderList[i].ERDAT.substring(2, 10)} ${this._repairOrderList[i].ERTIM.substring(0, 5)}", textAlign: TextAlign.left,),
             this._repairOrderList[i].PERNR != '' ? GestureDetector(
               onTap: () async {
                 Navigator.of(context)

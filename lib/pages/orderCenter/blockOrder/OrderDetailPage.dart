@@ -15,9 +15,9 @@ import 'package:gztyre/components/ListItemWidget.dart';
 import 'package:gztyre/components/ProgressDialog.dart';
 import 'package:gztyre/components/TextButtonWidget.dart';
 import 'package:gztyre/components/ViewDialog.dart';
-import 'package:gztyre/pages/orderCenter/planOrder/HelpPage.dart';
-import 'package:gztyre/pages/orderCenter/planOrder/OrderRepairDetailPage.dart';
-import 'package:gztyre/pages/orderCenter/planOrder/WorkerPage.dart';
+import 'package:gztyre/pages/orderCenter/blockOrder/HelpPage.dart';
+import 'package:gztyre/pages/orderCenter/blockOrder/OrderRepairDetailPage.dart';
+import 'package:gztyre/pages/orderCenter/blockOrder/WorkerPage.dart';
 import 'package:gztyre/pages/problemReport/DeviceSelectionPage.dart';
 import 'package:gztyre/pages/repairOrder/RepairDetailPage.dart';
 import 'package:gztyre/pages/repairOrder/RepairHistoryPage.dart';
@@ -57,15 +57,9 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
 
   var _audioPlayerStateSubscription;
 
-  List<String> _maintenanceWorker = ["A01", "A02", "A03"];
-  List<String> _monitorOrForeman = ["A04", "A05"];
-  List<String> _equipmentSupervisor = ["A06"];
-  List<String> _engineer = ["A07"];
-  List<String> _maintenanceManagementPersonnel = ["A08"];
-
-//  List<String> _distributeList = ["A04", "A05"];
-//  List<String> _outerRepairList = ["A06"];
-//  List<String> _normalList = ["A01", "A02", "A03", "A07", "A08"];
+  List<String> _distributeList = ["A04", "A05"];
+  List<String> _outerRepairList = ["A06"];
+  List<String> _normalList = ["A01", "A02", "A03", "A07", "A08"];
 
   playNet(path) async {
     await audioPlayer.play(path);
@@ -276,41 +270,6 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
           null,
           null, (res) async {
         await HttpRequestRest.pushAlias([order.PERNR1], "", "", "${Global.userInfo.ENAME}接受协助请求", [], (success){}, (err){});
-        setState(() {
-          this._loading = false;
-        });
-        return true;
-      }, (err) {
-        setState(() {
-          this._loading = false;
-        });
-        return false;
-      });
-    }).catchError((err) {
-      setState(() {
-        this._loading = false;
-      });
-      return false;
-    });
-  }
-
-  Future<bool> _join(Order order, ReportOrder reportOrder) async {
-    setState(() {
-      this._loading = true;
-    });
-    return await this._getAPPTRADENO(order.QMNUM).then((APPTRADENO) async {
-      return await HttpRequest.changeOrderStatus(
-          Global.userInfo.PERNR,
-          order.QMNUM,
-          order.AUFNR,
-          "加入",
-          APPTRADENO,
-          reportOrder.FEGRP,
-          reportOrder.FECOD,
-          order.EQUNR,
-          null,
-          null, (res) async {
-        await HttpRequestRest.pushAlias([order.PERNR1], "", "", "${Global.userInfo.ENAME}加入工单${order.AUFNR}", [], (success){}, (err){});
         setState(() {
           this._loading = false;
         });
@@ -1115,71 +1074,6 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
         });
   }
 
-  Widget _joinButton() {
-    return ButtonWidget(
-        padding: EdgeInsets.only(left: 0, right: 0),
-        child: Text(
-          '加入',
-          style: TextStyle(color: Color.fromRGBO(76, 129, 235, 1)),
-        ),
-        color: Color.fromRGBO(76, 129, 235, 1),
-        onPressed: () async {
-          setState(() {
-            this._loading = true;
-          });
-          await this
-              ._join(widget.order, this._reportOrder)
-              .then((success) {
-            if (success) {
-              setState(() {
-                this._loading = false;
-              });
-              showCupertinoDialog(
-                  context: context,
-                  builder: (BuildContext contextTemp) {
-                    return CupertinoAlertDialog(
-                      content: Text(
-                        "加入成功",
-                        style: TextStyle(fontSize: 18),
-                      ),
-                      actions: <Widget>[
-                        CupertinoDialogAction(
-                          onPressed: () {
-                            Navigator.of(contextTemp).pop();
-                            Navigator.of(context).pop();
-                          },
-                          child: Text("好"),
-                        ),
-                      ],
-                    );
-                  });
-            } else {
-              setState(() {
-                this._loading = false;
-              });
-              showCupertinoDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return CupertinoAlertDialog(
-                      content: Text(
-                        "加入失败",
-                        style: TextStyle(fontSize: 18),
-                      ),
-                      actions: <Widget>[
-                        CupertinoDialogAction(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          child: Text("好"),
-                        ),
-                      ],
-                    );
-                  });
-            }
-          });
-        });
-  }
-
   Widget _transferCardButton() {
     return TextButtonWidget(
       text: "转卡",
@@ -1240,460 +1134,6 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
   }
 
 
-  List<Widget> preventiveMaintenanceOrder() {
-    if (widget.order.ILART == "N05") {
-      return [
-        widget.itemStatus == "新工单" && this._maintenanceWorker.contains(Global.userInfo.SORTB)
-            ? Align(
-          alignment: Alignment.bottomCenter,
-          child: ButtonBarWidget(
-            button: _takeItemButton(),
-          ),
-        )
-            : Container(),
-        widget.itemStatus == "转卡单" && this._monitorOrForeman.contains(Global.userInfo.SORTB)
-            ? Align(
-          alignment: Alignment.bottomCenter,
-          child: ButtonBarWidget(
-            button: Row(
-              mainAxisAlignment:
-              MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 10, right: 10),
-                    child: _distributeButton(),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        )
-            : Container(),
-        widget.itemStatus == "转卡单" && this._maintenanceWorker.contains(Global.userInfo.SORTB)
-            ? Align(
-          alignment: Alignment.bottomCenter,
-          child: ButtonBarWidget(
-            button: _handleWaitItemButton(),
-          ),
-        )
-            : Container(),
-        widget.itemStatus == "维修中" && Global.userInfo.PERNR == widget.order.PERNR1 && this._maintenanceWorker.contains(Global.userInfo.SORTB)
-            ? Align(
-          alignment: Alignment.bottomCenter,
-          child: ButtonBarWidget(
-              button: Column(
-                children: <Widget>[
-                  Row(
-                    mainAxisAlignment:
-                    MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Expanded(
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 10, right: 10),
-                          child: _callHelpButton(),
-                        ),
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 10, right: 10),
-                          child: _waitButton(),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Expanded(
-                          child: Padding(
-                            padding: EdgeInsets.only(left: 10, right: 10),
-                            child: _addMaterielButton(),
-                          ),
-                        ),
-                        Expanded(
-                          child: Padding(
-                            padding: EdgeInsets.only(left: 10, right: 10),
-                            child: _repairButton(),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              )),
-        )
-            : Container(),
-        widget.itemStatus == "维修中" && Global.userInfo.PERNR == widget.order.PERNR1 && this._engineer.contains(Global.userInfo.SORTB)
-            ? Align(
-          alignment: Alignment.bottomCenter,
-          child: ButtonBarWidget(
-              button: Column(
-                children: <Widget>[
-                  Row(
-                    mainAxisAlignment:
-                    MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Expanded(
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 10, right: 10),
-                          child: _waitButton(),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Expanded(
-                          child: Padding(
-                            padding: EdgeInsets.only(left: 10, right: 10),
-                            child: _addMaterielButton(),
-                          ),
-                        ),
-                        Expanded(
-                          child: Padding(
-                            padding: EdgeInsets.only(left: 10, right: 10),
-                            child: _repairButton(),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              )),
-        )
-            : Container(),
-        widget.itemStatus == "等待中" && this._maintenanceWorker.contains(Global.userInfo.SORTB)
-            ? Align(
-          alignment: Alignment.bottomCenter,
-          child: ButtonBarWidget(
-            button: _handleWaitItemButton(),
-          ),
-        )
-            : Container(),
-        widget.itemStatus == "协助单"
-            ? ((widget.order.APPSTATUS == "呼叫协助" || widget.order.APPSTATUS == "加入")
-            ? Align(
-          alignment: Alignment.bottomCenter,
-          child: ButtonBarWidget(
-            button: _acceptButton(),
-          ),
-        )
-            : Container())
-            : Container(),
-        widget.itemStatus == "历史单" ? Container() : Container()
-      ];
-    } else return [];
-  }
-
-  List<Widget> inspectionOrder() {
-    if (widget.order.ILART == "N06") {
-      return [
-        widget.itemStatus == "新工单" && (this._maintenanceWorker.contains(Global.userInfo.SORTB) || this._monitorOrForeman.contains(Global.userInfo.SORTB))
-            ? Align(
-          alignment: Alignment.bottomCenter,
-          child: ButtonBarWidget(
-            button: _takeItemButton(),
-          ),
-        )
-            : Container(),
-        widget.itemStatus == "转卡单" && this._monitorOrForeman.contains(Global.userInfo.SORTB)
-            ? Align(
-          alignment: Alignment.bottomCenter,
-          child: ButtonBarWidget(
-            button: Row(
-              mainAxisAlignment:
-              MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 10, right: 10),
-                    child: _distributeButton(),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        )
-            : Container(),
-        widget.itemStatus == "转卡单" && (this._maintenanceWorker.contains(Global.userInfo.SORTB) || this._engineer.contains(Global.userInfo.SORTB))
-            ? Align(
-          alignment: Alignment.bottomCenter,
-          child: ButtonBarWidget(
-            button: _handleWaitItemButton(),
-          ),
-        )
-            : Container(),
-        widget.itemStatus == "维修中" && Global.userInfo.PERNR == widget.order.PERNR1 && this._maintenanceWorker.contains(Global.userInfo.SORTB)
-            ? Align(
-          alignment: Alignment.bottomCenter,
-          child: ButtonBarWidget(
-              button: Column(
-                children: <Widget>[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Expanded(
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 10, right: 10),
-                          child: _waitButton(),
-                        ),
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 10, right: 10),
-                          child: _repairButton(),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              )),
-        )
-            : Container(),
-        widget.itemStatus == "维修中" && Global.userInfo.PERNR == widget.order.PERNR1 && this._monitorOrForeman.contains(Global.userInfo.SORTB)
-            ? Align(
-          alignment: Alignment.bottomCenter,
-          child: ButtonBarWidget(
-              button: Column(
-                children: <Widget>[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Expanded(
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 10, right: 10),
-                          child: _callHelpButton(),
-                        ),
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 10, right: 10),
-                          child: _distributeButton(),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              )),
-        )
-            : Container(),
-        widget.itemStatus == "等待中" && (this._maintenanceWorker.contains(Global.userInfo.SORTB) || this._monitorOrForeman.contains(Global.userInfo.SORTB))
-            ? Align(
-          alignment: Alignment.bottomCenter,
-          child: ButtonBarWidget(
-            button: _handleWaitItemButton(),
-          ),
-        )
-            : Container(),
-        widget.itemStatus == "协助单"
-            ? ((widget.order.APPSTATUS == "呼叫协助" || widget.order.APPSTATUS == "加入")
-            ? Align(
-          alignment: Alignment.bottomCenter,
-          child: ButtonBarWidget(
-            button: _acceptButton(),
-          ),
-        )
-            : Container())
-            : Container(),
-        widget.itemStatus == "历史单" ? Container() : Container()
-      ];
-    } else return [];
-  }
-
-  List<Widget> forecastMaintenanceOrder() {
-    if (widget.order.ILART == "N07") {
-      return [
-        widget.itemStatus == "新工单" && (this._maintenanceWorker.contains(Global.userInfo.SORTB) ||
-        this._monitorOrForeman.contains(Global.userInfo.SORTB) || this._engineer.contains(Global.userInfo.SORTB))
-            ? Align(
-          alignment: Alignment.bottomCenter,
-          child: ButtonBarWidget(
-            button: _takeItemButton(),
-          ),
-        )
-            : Container(),
-        widget.itemStatus == "转卡单" && this._monitorOrForeman.contains(Global.userInfo.SORTB)
-            ? Align(
-          alignment: Alignment.bottomCenter,
-          child: ButtonBarWidget(
-            button: Row(
-              mainAxisAlignment:
-              MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 10, right: 10),
-                    child: _distributeButton(),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        )
-            : Container(),
-        widget.itemStatus == "转卡单" && this._maintenanceWorker.contains(Global.userInfo.SORTB)
-            ? Align(
-          alignment: Alignment.bottomCenter,
-          child: ButtonBarWidget(
-            button: _handleWaitItemButton(),
-          ),
-        )
-            : Container(),
-        widget.itemStatus == "维修中" && Global.userInfo.PERNR == widget.order.PERNR1 && this._maintenanceWorker.contains(Global.userInfo.SORTB)
-            ? Align(
-          alignment: Alignment.bottomCenter,
-          child: ButtonBarWidget(
-              button: Column(
-                children: <Widget>[
-                  Row(
-                    mainAxisAlignment:
-                    MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Expanded(
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 10, right: 10),
-                          child: _callHelpButton(),
-                        ),
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 10, right: 10),
-                          child: _waitButton(),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Expanded(
-                          child: Padding(
-                            padding: EdgeInsets.only(left: 10, right: 10),
-                            child: _addMaterielButton(),
-                          ),
-                        ),
-                        Expanded(
-                          child: Padding(
-                            padding: EdgeInsets.only(left: 10, right: 10),
-                            child: _repairButton(),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              )),
-        )
-            : Container(),
-        widget.itemStatus == "维修中" && Global.userInfo.PERNR == widget.order.PERNR1 && this._monitorOrForeman.contains(Global.userInfo.SORTB)
-            ? Align(
-          alignment: Alignment.bottomCenter,
-          child: ButtonBarWidget(
-              button: Column(
-                children: <Widget>[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Expanded(
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 10, right: 10),
-                          child: _callHelpButton(),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              )),
-        )
-            : Container(),
-        widget.itemStatus == "维修中" && Global.userInfo.PERNR == widget.order.PERNR1 && this._engineer.contains(Global.userInfo.SORTB)
-            ? Align(
-          alignment: Alignment.bottomCenter,
-          child: ButtonBarWidget(
-              button: Column(
-                children: <Widget>[
-                  Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Expanded(
-                          child: Padding(
-                            padding: EdgeInsets.only(left: 10, right: 10),
-                            child: _waitButton(),
-                          ),
-                        ),
-                        Expanded(
-                          child: Padding(
-                            padding: EdgeInsets.only(left: 10, right: 10),
-                            child: _repairButton(),
-                          ),
-                        ),
-                      ],
-                    ),
-                ],
-              )),
-        )
-            : Container(),
-        widget.itemStatus == "等待中" && this._maintenanceWorker.contains(Global.userInfo.SORTB)
-            ? Align(
-          alignment: Alignment.bottomCenter,
-          child: ButtonBarWidget(
-            button: _handleWaitItemButton(),
-          ),
-        )
-            : Container(),
-        widget.itemStatus == "协助单"
-            ? ((widget.order.APPSTATUS == "呼叫协助" || widget.order.APPSTATUS == "加入")
-            ? Align(
-          alignment: Alignment.bottomCenter,
-          child: ButtonBarWidget(
-            button: _acceptButton(),
-          ),
-        )
-            : Container())
-            : Container(),
-        widget.itemStatus == "历史单" ? Container() : Container()
-      ];
-    } else
-    return [];
-  }
-
-  List<Widget> improveMaintenanceOrder() {
-    if (widget.order.ILART == "N09") {
-      return [];
-    } else
-    return [];
-  }
-
-  List<Widget> plannedToolingRepairOrder() {
-    if (widget.order.ILART == "N10") {
-      return [];
-    } else
-      return [];
-  }
-
-  List<Widget> plannedSpecialEquipmentOrder() {
-    if (widget.order.ILART == "N11") {
-      return [];
-    } else
-      return [];
-  }
-
-  List<Widget> plannedInfrastructureRepairOrder() {
-    if (widget.order.ILART == "N12") {
-      return [];
-    } else
-      return [];
-  }
-
-
   @override
   void dispose() {
     if (this._controller != null) {
@@ -1745,10 +1185,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                           (widget.order.APPSTATUS == "呼叫协助" &&
                               widget.order.PERNR1 != Global.userInfo.PERNR) ||
                           (widget.order.APPSTATUS == "加入" &&
-                              widget.order.PERNR1 != Global.userInfo.PERNR))  && widget.itemStatus != "历史单" &&
-                      ((this._maintenanceWorker.contains(Global.userInfo.SORTB) && widget.order.ILART == "N05") ||
-                          ((this._maintenanceWorker.contains(Global.userInfo.SORTB) || this._monitorOrForeman.contains(Global.userInfo.SORTB)) && widget.order.ILART == "N06")
-                      )
+                              widget.order.PERNR1 != Global.userInfo.PERNR))  && widget.itemStatus != "历史单"
                       ? _transferCardButton()
                       : Container(),
                 ),
@@ -1881,13 +1318,147 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                           ),
                         ),
                       ),
-                      ...preventiveMaintenanceOrder(),
-                      ...inspectionOrder(),
-//                      ...forecastMaintenanceOrder(),
-//                      ...improveMaintenanceOrder(),
-//                      ...plannedToolingRepairOrder(),
-//                      ...plannedSpecialEquipmentOrder(),
-//                      ...plannedInfrastructureRepairOrder(),
+//                      !(!(
+                      widget.itemStatus == "新工单"
+                          ? Align(
+                              alignment: Alignment.bottomCenter,
+                              child: ButtonBarWidget(
+                                button: _takeItemButton(),
+                              ),
+                            )
+                          : Container(),
+                      widget.itemStatus == "转卡单" && this._distributeList.contains(Global.userInfo.SORTB)
+                          ? Align(
+                              alignment: Alignment.bottomCenter,
+                              child: ButtonBarWidget(
+                                button: Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Expanded(
+                                      child: Padding(
+                                        padding: EdgeInsets.only(left: 10, right: 10),
+                                        child: _distributeButton(),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Padding(
+                                        padding: EdgeInsets.only(left: 10, right: 10),
+                                        child: _handleWaitItemButton(),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            )
+                          : Container(),
+                      widget.itemStatus == "转卡单" && this._outerRepairList.contains(Global.userInfo.SORTB)
+                          ? Align(
+                        alignment: Alignment.bottomCenter,
+                        child: ButtonBarWidget(
+                          button: Row(
+                            mainAxisAlignment:
+                            MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Expanded(
+                                child: Padding(
+                                  padding: EdgeInsets.only(left: 10, right: 10),
+                                  child: _outerRepairButton(),
+                                ),
+                              ),
+                              Expanded(
+                                child: Padding(
+                                  padding: EdgeInsets.only(left: 10, right: 10),
+                                  child: _handleWaitItemButton(),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                          : Container(),
+                      widget.itemStatus == "转卡单" && this._normalList.contains(Global.userInfo.SORTB)
+                          ? Align(
+                        alignment: Alignment.bottomCenter,
+                        child: ButtonBarWidget(
+                          button: _handleWaitItemButton(),
+                        ),
+                      )
+                          : Container(),
+                      widget.itemStatus == "维修中" && Global.userInfo.PERNR == widget.order.PERNR1
+                          ? Align(
+                              alignment: Alignment.bottomCenter,
+                              child: ButtonBarWidget(
+                                  button: Column(
+                                children: <Widget>[
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: <Widget>[
+                                      Expanded(
+                                        child: Padding(
+                                          padding: EdgeInsets.only(left: 10, right: 10),
+                                          child: _callHelpButton(),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Padding(
+                                          padding: EdgeInsets.only(left: 10, right: 10),
+                                          child: _waitButton(),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(top: 10),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                        Expanded(
+                                          child: Padding(
+                                            padding: EdgeInsets.only(left: 10, right: 10),
+                                            child: _addMaterielButton(),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Padding(
+                                            padding: EdgeInsets.only(left: 10, right: 10),
+                                            child: _repairButton(),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+//                                  Padding(
+//                                    padding: EdgeInsets.only(top: 10),
+//                                    child: Container(
+//                                      width: ScreenUtils.screenW(context),
+//                                      child: _repairButton(),
+//                                    ),
+//                                  ),
+                                ],
+                              )),
+                            )
+                          : Container(),
+                      widget.itemStatus == "等待中"
+                          ? Align(
+                              alignment: Alignment.bottomCenter,
+                              child: ButtonBarWidget(
+                                button: _handleWaitItemButton(),
+                              ),
+                            )
+                          : Container(),
+                      widget.itemStatus == "协助单"
+                          ? ((widget.order.APPSTATUS == "呼叫协助" || widget.order.APPSTATUS == "加入")
+                              ? Align(
+                                  alignment: Alignment.bottomCenter,
+                                  child: ButtonBarWidget(
+                                    button: _acceptButton(),
+                                  ),
+                                )
+                              : Container())
+                          : Container(),
+                      widget.itemStatus == "历史单" ? Container() : Container(),
                     ],
                   ),
                 ),

@@ -10,6 +10,7 @@ class HttpRequestRest {
     Dio http = new Dio(BaseOptions(
 //        baseUrl: "http://61.159.128.211:8080", // 生产
       baseUrl: "http://192.168.6.211:8070", // 开发
+//        baseUrl: "http://127.0.0.1:8070", // 本地
         connectTimeout: 300000));
     http.interceptors.add(InterceptorsWrapper(onRequest: (RequestOptions options) {
       if (Global.token != null) {
