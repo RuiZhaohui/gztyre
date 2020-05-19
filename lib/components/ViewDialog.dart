@@ -271,6 +271,20 @@ class _PageStatus extends State<ViewDialog> {
                         ],
                       ))),
             ),
+            Positioned(
+              top: 20,
+              left: 20,
+              child: Container(
+                alignment: Alignment.topLeft,
+                width: w,
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pop(null);
+                  },
+                  child: Icon(Icons.arrow_back, color: Colors.white,),
+                ),
+              ),
+            ),
             widget.onlyView
                 ? Container()
                 : Positioned(

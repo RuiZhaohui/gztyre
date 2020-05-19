@@ -2,21 +2,21 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gztyre/api/model/Order.dart';
 
-class OrderCardLiteWidget extends StatefulWidget {
-  OrderCardLiteWidget(
+class OrderCardBlockWidget extends StatefulWidget {
+  OrderCardBlockWidget(
       {Key key,
-      @required this.title,
+        @required this.title,
         @required this.description,
-      @required this.level,
-      @required this.status,
-      @required this.position,
-      @required this.device,
-      @required this.isStop,
-      @required this.order,
+        @required this.level,
+        @required this.status,
+        @required this.position,
+        @required this.device,
+        @required this.isStop,
+        @required this.order,
         @required this.color,
         this.isHistory = false,
         this.isPlanOrder = false,
-      this.onTap})
+        this.onTap})
       : super(key: key);
 
   final VoidCallback onTap;
@@ -33,10 +33,10 @@ class OrderCardLiteWidget extends StatefulWidget {
   final bool isPlanOrder;
 
   @override
-  State createState() => _OrderCardLiteWidgetState();
+  State createState() => _OrderCardBlockWidgetState();
 }
 
-class _OrderCardLiteWidgetState extends State<OrderCardLiteWidget> {
+class _OrderCardBlockWidgetState extends State<OrderCardBlockWidget> {
 
   DateTime _reportTime;
   DateTime _acceptTime;
@@ -93,7 +93,7 @@ class _OrderCardLiteWidgetState extends State<OrderCardLiteWidget> {
       child: GestureDetector(
         onTap: widget.onTap,
         child: Container(
-          height: 240,
+          height: 180,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(5),
             boxShadow: [
@@ -116,7 +116,7 @@ class _OrderCardLiteWidgetState extends State<OrderCardLiteWidget> {
                       child: Text("维修类型：${widget.order.ILATX != "" && widget.order.ILATX != null ? widget.order.ILATX : "未知"}", style: TextStyle(color: Color.fromRGBO(0, 0, 0, 0.45),
                         fontSize: 12,),),
                     ),
-                   widget.isPlanOrder && widget.order.PERNR1 != null ? Expanded(
+                    widget.isPlanOrder && widget.order.PERNR1 != null ? Expanded(
                       child: Text("负责人：${widget.order.KTEXT}", style: TextStyle(color: Color.fromRGBO(0, 0, 0, 0.45),
                         fontSize: 12,),),
                     ) : Container(),
@@ -131,10 +131,10 @@ class _OrderCardLiteWidgetState extends State<OrderCardLiteWidget> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    Expanded(
-                      child: widget.order.QMNUM != "" && widget.order.QMNUM != null ? Text("报修单号：${widget.order.QMNUM}", style: TextStyle(color: Color.fromRGBO(0, 0, 0, 0.45),
-                        fontSize: 12,),) : Container(),
-                    ),
+//                    Expanded(
+//                      child: widget.order.QMNUM != "" && widget.order.QMNUM != null ? Text("报修单号：${widget.order.QMNUM}", style: TextStyle(color: Color.fromRGBO(0, 0, 0, 0.45),
+//                        fontSize: 12,),) : Container(),
+//                    ),
                     Expanded(
                       child: widget.order.AUFNR != "" && widget.order.AUFNR != null ? Text("维修单号：${widget.order.AUFNR}", style: TextStyle(color: Color.fromRGBO(0, 0, 0, 0.45),
                         fontSize: 12,),) : Container(),
@@ -145,96 +145,96 @@ class _OrderCardLiteWidgetState extends State<OrderCardLiteWidget> {
               Divider(
                 height: 1,
               ),
-            Expanded(
-              child: Padding(
-                padding: EdgeInsets.all(10),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.all(10),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
 //            Expanded(
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: <Widget>[
-                        widget.level != "" ? Padding(
-                          padding: EdgeInsets.only(right: 10),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: <Widget>[
+                          widget.level != "" ? Padding(
+                            padding: EdgeInsets.only(right: 10),
+                            child: Text(
+                              widget.level,
+                              style: TextStyle(
+                                  color: (widget.color == "A")
+                                      ? Colors.red
+                                      : (widget.color == "B"
+                                      ? Colors.yellow : (
+                                      widget.color == "C" ? Colors.blueAccent : (
+                                          widget.color == "D" ? Colors.green : (
+                                              widget.color == "X" ? Colors.pink[100] : Colors.black
+                                          )
+                                      )
+                                  )),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ) : Container(),
+                          Expanded(
+                            child: Text(
+                              widget.title,
+                              style: TextStyle(
+                                  color: (widget.color == "A")
+                                      ? Colors.red
+                                      : (widget.color == "B"
+                                      ? Colors.yellow : (
+                                      widget.color == "C" ? Colors.blueAccent : (
+                                          widget.color == "D" ? Colors.green : (
+                                              widget.color == "X" ? Colors.pink[100] : Colors.black
+                                          )
+                                      )
+                                  )),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          Expanded(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: <Widget>[
+                                Text(
+                                  widget.status,
+                                  style: TextStyle(
+                                      color: (widget.status == "新建" ||
+                                          widget.status == "新工单")
+                                          ? Color.fromRGBO(218, 4, 27, 1)
+                                          : (widget.status == "维修中"
+                                          ? Color.fromRGBO(80, 140, 100, 1)
+                                          : Color.fromRGBO(36, 84, 154, 1)),
+                                      fontSize: 14),
+                                )
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.only(top: 10, left: 10),
                           child: Text(
-                            widget.level,
+                            widget.description,
                             style: TextStyle(
-                                color: (widget.color == "A")
-                                    ? Colors.red
-                                    : (widget.color == "B"
-                                    ? Colors.yellow : (
-                                    widget.color == "C" ? Colors.blueAccent : (
-                                        widget.color == "D" ? Colors.green : (
-                                        widget.color == "X" ? Colors.pink[100] : Colors.black
-                                        )
-                                    )
-                                )),
-                                fontSize: 16,
-                                fontWeight: FontWeight.w700),
-                            maxLines: 1,
+                                color: Color.fromRGBO(0, 0, 0, 0.65),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400),
+                            maxLines: 3,
                             overflow: TextOverflow.ellipsis,
                           ),
-                        ) : Container(),
-                        Expanded(
-                          child: Text(
-                            widget.title,
-                            style: TextStyle(
-                                color: (widget.color == "A")
-                                    ? Colors.red
-                                    : (widget.color == "B"
-                                    ? Colors.yellow : (
-                                    widget.color == "C" ? Colors.blueAccent : (
-                                        widget.color == "D" ? Colors.green : (
-                                            widget.color == "X" ? Colors.pink[100] : Colors.black
-                                        )
-                                    )
-                                )),
-                                fontSize: 16,
-                                fontWeight: FontWeight.w700),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        Expanded(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: <Widget>[
-                              Text(
-                                widget.status,
-                                style: TextStyle(
-                                    color: (widget.status == "新建" ||
-                                        widget.status == "新工单")
-                                        ? Color.fromRGBO(218, 4, 27, 1)
-                                        : (widget.status == "维修中"
-                                        ? Color.fromRGBO(80, 140, 100, 1)
-                                        : Color.fromRGBO(36, 84, 154, 1)),
-                                    fontSize: 14),
-                              )
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: EdgeInsets.only(top: 10, left: 10),
-                        child: Text(
-                          widget.description,
-                          style: TextStyle(
-                              color: Color.fromRGBO(0, 0, 0, 0.65),
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400),
-                          maxLines: 3,
-                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
               Divider(
                 height: 1,
               ),
@@ -243,56 +243,56 @@ class _OrderCardLiteWidgetState extends State<OrderCardLiteWidget> {
                     borderRadius: BorderRadius.only(
                         bottomLeft: Radius.circular(5),
                         bottomRight: Radius.circular(5))),
-                height: 70,
+                height: 30,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    Expanded(
-                      child: Padding(
-                        padding: EdgeInsets.only(left: 10),
-                        child: Row(
-                          children: <Widget>[
-                            Text(
-                              "位置：",
-                              style: TextStyle(
-                                  color: Color.fromRGBO(0, 0, 0, 0.45),
-                                  fontSize: 12),
-                            ),
-                            Expanded(
-                              child: Text(
-                                widget.position,
-                                style: TextStyle(fontSize: 12),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Padding(
-                        child: Row(
-                          children: <Widget>[
-                            Text(
-                              "设备：",
-                              style: TextStyle(
-                                  color: Color.fromRGBO(0, 0, 0, 0.45),
-                                  fontSize: 12),
-                            ),
-                            Expanded(
-                              child: Text(
-                                widget.device,
-                                style: TextStyle(fontSize: 12),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            )
-                          ],
-                        ),
-                        padding: EdgeInsets.only(left: 10),
-                      ),
-                    ),
+//                    Expanded(
+//                      child: Padding(
+//                        padding: EdgeInsets.only(left: 10),
+//                        child: Row(
+//                          children: <Widget>[
+//                            Text(
+//                              "位置：",
+//                              style: TextStyle(
+//                                  color: Color.fromRGBO(0, 0, 0, 0.45),
+//                                  fontSize: 12),
+//                            ),
+//                            Expanded(
+//                              child: Text(
+//                                widget.position,
+//                                style: TextStyle(fontSize: 12),
+//                                maxLines: 1,
+//                                overflow: TextOverflow.ellipsis,
+//                              ),
+//                            )
+//                          ],
+//                        ),
+//                      ),
+//                    ),
+//                    Expanded(
+//                      child: Padding(
+//                        child: Row(
+//                          children: <Widget>[
+//                            Text(
+//                              "设备：",
+//                              style: TextStyle(
+//                                  color: Color.fromRGBO(0, 0, 0, 0.45),
+//                                  fontSize: 12),
+//                            ),
+//                            Expanded(
+//                              child: Text(
+//                                widget.device,
+//                                style: TextStyle(fontSize: 12),
+//                                maxLines: 1,
+//                                overflow: TextOverflow.ellipsis,
+//                              ),
+//                            )
+//                          ],
+//                        ),
+//                        padding: EdgeInsets.only(left: 10),
+//                      ),
+//                    ),
                     Expanded(
                       child: Row(
                         children: <Widget>[

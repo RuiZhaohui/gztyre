@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_refresh/flutter_refresh.dart';
 import 'package:gztyre/api/HttpRequest.dart';
 import 'package:gztyre/api/model/Order.dart';
 import 'package:gztyre/api/model/UserInfo.dart';
@@ -7,6 +6,7 @@ import 'package:gztyre/commen/Global.dart';
 import 'package:gztyre/components/OrderCardLiteWidget.dart';
 import 'package:gztyre/components/ProgressDialog.dart';
 import 'package:gztyre/pages/orderCenter/assisantOrder/OrderDetailPage.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class OrderListPage extends StatefulWidget {
   OrderListPage({Key key, @required this.title}) : super(key: key);
@@ -17,6 +17,7 @@ class OrderListPage extends StatefulWidget {
 }
 
 class _OrderListPageState extends State<OrderListPage> {
+  RefreshController _refreshController = RefreshController(initialRefresh: false);
   var _listOrderFuture;
 
   bool _loading = false;
@@ -37,15 +38,19 @@ class _OrderListPageState extends State<OrderListPage> {
   bool _isRepairing = false;
 
   _listHistoryOrder() async {
-    this._loading = true;
+    setState(() {
+      this._loading = true;
+    });
     this._list = [];
     return await HttpRequest.historyOrder(this._userInfo.PERNR, this._userInfo.WCTYPE == "是" ? "X" : "", (List<Order> list) {
       this._list = list;
+      this._refreshController.refreshCompleted();
       setState(() {
         this._loading = false;
       });
     }, (err) {
       print(err);
+      this._refreshController.refreshFailed();
       setState(() {
         this._loading = false;
       });
@@ -53,7 +58,9 @@ class _OrderListPageState extends State<OrderListPage> {
   }
 
   _listOrder(bool isManager) async {
-    this._loading = true;
+    setState(() {
+      this._loading = true;
+    });
     this._list = [];
     return await HttpRequest.listAssisantOrder(
         this._userInfo.PERNR, this._userInfo.CPLGR, this._userInfo.MATYP, this._userInfo.SORTB, "X", null, "ZPM3", Global.maintenanceGroup, (List<Order> list) {
@@ -86,8 +93,7 @@ class _OrderListPageState extends State<OrderListPage> {
       } else if (widget.title == "维修中") {
       list.forEach((item) {
         if (item.QMNUM != null &&
-            item.QMNUM != '' &&
-            (isManager ? true : item.PERNR1 == _userInfo.PERNR ) && item.ASTTX == "维修中" &&
+            item.QMNUM != '' && item.ASTTX == "维修中" &&
             (item.APPSTATUS == "接单" || item.APPSTATUS == "转单" || item.APPSTATUS == "呼叫协助" || item.APPSTATUS == "加入")) {
           this._list.add(item);
         }
@@ -96,7 +102,7 @@ class _OrderListPageState extends State<OrderListPage> {
         list.forEach((item) {
           if (item.QMNUM != null &&
               item.QMNUM != '' &&
-              (item.APPSTATUS == "等待" &&  (isManager ? true : item.PERNR1 == _userInfo.PERNR )  || item.APPSTATUS == "再维修" || item.APPSTATUS == "派单")) {
+              (item.APPSTATUS == "等待" || item.APPSTATUS == "再维修" || item.APPSTATUS == "派单")) {
             this._list.add(item);
           }
         });
@@ -110,11 +116,13 @@ class _OrderListPageState extends State<OrderListPage> {
           }
         });
       }
+      this._refreshController.refreshCompleted();
       setState(() {
         this._loading = false;
       });
     }, (err) {
       print(err);
+      this._refreshController.refreshFailed();
       setState(() {
         this._loading = false;
       });
@@ -163,14 +171,18 @@ class _OrderListPageState extends State<OrderListPage> {
                     child: Container(
                       color: Color.fromRGBO(231, 233, 234, 1),
                       child: CupertinoScrollbar(
-                        child: Refresh(
-                          onFooterRefresh: null,
-                          onHeaderRefresh: onHeaderRefresh,
+                        child: SmartRefresher(
+                          controller: _refreshController,
+                          enablePullDown: true,
+                          header: WaterDropHeader(complete: Text("刷新成功"), failed: Text("刷新失败"),),
+                          onRefresh: onHeaderRefresh,
                           child: ListView.custom(
                             childrenDelegate: SliverChildBuilderDelegate(
                               (BuildContext context, int index) {
                                 return new OrderCardLiteWidget(
-                                  color: this._list[index].COLORS,
+                                  color: (this._list[index].PERNR1 != _userInfo.PERNR &&
+                                      _managerList.contains(_userInfo.SORTB)) ? "X" : this._list[index].COLORS,
+                                  description: this._list[index].QMTXT ?? '',
                                   title: this._list[index].QMTXT ?? '',
                                   level: (this._list[index].COLORS == null || this._list[index].COLORS == "") ? "" :"${this._levelMap[this._list[index].COLORS]}级",
                                   status: this._list[index].ASTTX ?? '',

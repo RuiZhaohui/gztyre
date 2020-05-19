@@ -134,17 +134,17 @@ class _RepairHistoryPageState extends State<RepairHistoryPage> {
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            Padding(
-                              padding: EdgeInsets.only(
-                                top: 30,
-                                left: 20,
-                              ),
-                              child: CustomPaint(
-                                size: Size(20, (num * 10 + num * 45).toDouble()),
-                                isComplex: false,
-                                painter: TimeLinePainter(num: num),
-                              ),
-                            ),
+//                            Padding(
+//                              padding: EdgeInsets.only(
+//                                top: 30,
+//                                left: 20,
+//                              ),
+//                              child: CustomPaint(
+//                                size: Size(20, (num * 10 + num * 45).toDouble()),
+//                                isComplex: false,
+//                                painter: TimeLinePainter(num: num),
+//                              ),
+//                            ),
                             Padding(
                               padding: EdgeInsets.only(
                                 top: 22,

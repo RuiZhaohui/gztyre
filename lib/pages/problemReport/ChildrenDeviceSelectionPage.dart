@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:gztyre/api/model/Device.dart';
 import 'package:gztyre/components/ListItemWidget.dart';
 import 'package:gztyre/components/TextButtonWidget.dart';
-import 'package:gztyre/pages/orderCenter/planOrder/MaterielPage.dart';
+import 'package:gztyre/pages/orderCenter/MaterielPage.dart';
 
 class ChildrenDeviceSelectionPage extends StatefulWidget {
   ChildrenDeviceSelectionPage({Key key, @required this.device, @required this.selectItem,this.isAddMaterial = false,

@@ -32,7 +32,8 @@ dependencies:
   dio: ^3.0.6
   xml: ^3.5.0
   xml2json: ^4.1.0
-  flutter_refresh: ^0.0.2
+  pull_to_refresh: ^1.5.7
+#  flutter_refresh: ^0.0.2
   flutter_plugin_record: 0.0.9
   #  flutter_sound: ^1.7.0
   audioplayers: ^0.13.5

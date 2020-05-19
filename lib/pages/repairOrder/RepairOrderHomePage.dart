@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_refresh/flutter_refresh.dart';
 import 'package:gztyre/api/HttpRequest.dart';
 import 'package:gztyre/api/HttpRequestRest.dart';
 import 'package:gztyre/api/model/Order.dart';
@@ -10,6 +9,7 @@ import 'package:gztyre/components/OrderCardWidget.dart';
 import 'package:gztyre/components/ProgressDialog.dart';
 import 'package:gztyre/components/UserInfoWidget.dart';
 import 'package:gztyre/pages/repairOrder/RepairOrderPage.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class RepairOrderHomePage extends StatefulWidget {
   RepairOrderHomePage({Key key, @required this.rootContext})
@@ -37,7 +37,7 @@ class _RepairOrderHomePageState extends State<RepairOrderHomePage> {
     "D": "4"
   };
 
-//  List _extendList;
+  RefreshController _refreshController = RefreshController(initialRefresh: false);
 
   _listRepairOrder() async {
     this._loading = true;
@@ -75,11 +75,13 @@ class _RepairOrderHomePageState extends State<RepairOrderHomePage> {
             this._list.add(item);
           }
         });
+        this._refreshController.refreshCompleted();
         setState(() {
           this._loading = false;
         });
       }, (err) {
         print(err);
+        this._refreshController.refreshFailed();
         setState(() {
           this._loading = false;
         });
@@ -118,9 +120,11 @@ class _RepairOrderHomePageState extends State<RepairOrderHomePage> {
                     child: Container(
                       color: Color.fromRGBO(231, 233, 234, 1),
                       child: CupertinoScrollbar(
-                        child: Refresh(
-                          onFooterRefresh: null,
-                          onHeaderRefresh: onHeaderRefresh,
+                        child: SmartRefresher(
+                          controller: _refreshController,
+                          enablePullDown: true,
+                          header: WaterDropHeader(complete: Text("刷新成功"), failed: Text("刷新失败"),),
+                          onRefresh: onHeaderRefresh,
                           child: ListView.custom(
                             childrenDelegate: SliverChildBuilderDelegate(
                               (BuildContext context, int index) {

@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gztyre/api/HttpRequestRest.dart';
 import 'package:gztyre/api/model/ReportOrder.dart';
+import 'package:gztyre/commen/Global.dart';
 import 'package:gztyre/components/ProgressDialog.dart';
 import 'package:gztyre/components/ViewDialog.dart';
 import 'package:gztyre/utils/screen_utils.dart';
@@ -75,7 +76,7 @@ class _RepairOrderDetailPageState extends State<RepairOrderDetailPage> {
     List<Widget> imgList = [];
     print(list);
     for (int i = 0; i < list.length; i++) {
-      if (list[i].endsWith('mp4')) {
+      if (Global.videoType.contains(list[i].split(".").last.toLowerCase())) {
         imgList.add(Padding(
           padding: EdgeInsets.all(2),
           child: FutureBuilder(
@@ -101,10 +102,10 @@ class _RepairOrderDetailPageState extends State<RepairOrderDetailPage> {
                           int count = 0;
                           int position = 0;
                           list.asMap().keys.toList().forEach((index) {
-                            if (list[index].endsWith("mp4")) {
+                            if (Global.videoType.contains(list[index].split(".").last.toLowerCase())) {
                               imgs.add({'key': count, 'videoFile': list[index]});
                               count++;
-                            } else if (list[index].endsWith("wav")) {
+                            } else if (Global.audioType.contains(list[index].split(".").last.toLowerCase())) {
                               position = index;
                             } else {
                               imgs.add({'key': count, 'url': list[index]});
@@ -128,7 +129,7 @@ class _RepairOrderDetailPageState extends State<RepairOrderDetailPage> {
                               this._controller.pause();
                             }
                             if (index != null) {
-                              if (list[index - 1].endsWith("mp4")) {
+                              if (Global.videoType.contains(list[index - 1].split(".").last.toLowerCase())) {
                                 this._controller.initialize();
                               }
 //                              widget.callback(this.list);
@@ -150,7 +151,7 @@ class _RepairOrderDetailPageState extends State<RepairOrderDetailPage> {
             },
           ),
         ));
-      }  else if (list[i].endsWith('wav')) {
+      }  else if (Global.audioType.contains(list[i].split(".").last.toLowerCase())) {
         imgList.add(GestureDetector(
           child: Padding(
             padding: EdgeInsets.all(2),
@@ -169,7 +170,7 @@ class _RepairOrderDetailPageState extends State<RepairOrderDetailPage> {
             }
           },
         ));
-      } else if (list[i].endsWith('png')) {
+      } else if (Global.picType.contains(list[i].split(".").last.toLowerCase())) {
         imgList.add(GestureDetector(
           child: Padding(
             padding: EdgeInsets.all(2),
@@ -183,10 +184,10 @@ class _RepairOrderDetailPageState extends State<RepairOrderDetailPage> {
             int count = 0;
             int position = 0;
             list.asMap().keys.toList().forEach((index) {
-              if (list[index].endsWith("mp4")) {
+              if (Global.videoType.contains(list[index].split(".").last.toLowerCase())) {
                 imgs.add({'key': count, 'videoFile': list[index]});
                 count++;
-              } else if (list[index].endsWith("wav")) {
+              } else if (Global.audioType.contains(list[index].split(".").last.toLowerCase())) {
                 position = index;
               } else {
                 imgs.add({'key': count, 'url': list[index]});
@@ -209,7 +210,7 @@ class _RepairOrderDetailPageState extends State<RepairOrderDetailPage> {
                 this._controller.pause();
               }
               if (index != null) {
-                if (list[index - 1].endsWith("mp4")) {
+                if (Global.videoType.contains(list[index - 1].split(".").last.toLowerCase())) {
                   this._controller.initialize();
                 }
               }

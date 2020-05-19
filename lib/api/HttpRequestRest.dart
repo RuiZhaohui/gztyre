@@ -8,7 +8,7 @@ class HttpRequestRest {
 
   static Dio getHttp() {
     Dio http = new Dio(BaseOptions(
-//        baseUrl: "http://61.159.128.211:8080", // 生产
+//        baseUrl: "http://pmapp.gztyre.com:8080", // 生产
       baseUrl: "http://192.168.6.211:8070", // 开发
 //        baseUrl: "http://127.0.0.1:8070", // 本地
         connectTimeout: 300000));
@@ -30,28 +30,6 @@ class HttpRequestRest {
     return http;
   }
 
-  static Dio getFileHttp() {
-    Dio http = new Dio(BaseOptions(
-//        baseUrl: "http://61.159.128.211:8085", // 生产
-      baseUrl: "http://192.168.6.211:8070", // 开发
-        connectTimeout: 30000));
-    http.interceptors.add(InterceptorsWrapper(onRequest: (RequestOptions options) {
-      if (Global.token != null) {
-        options.headers.addEntries([
-          MapEntry("Authorization", "Bearer ${Global.token}")
-        ]);
-      }
-      // Do something before request is sent
-      return options; //continue
-    }, onResponse: (Response response) {
-      // Do something with response data
-      return response; // continue
-    }, onError: (DioError e) {
-      // Do something with response error
-      return e; //continue
-    }));
-    return http;
-  }
 
   static upload(List<dynamic> fileList, Function(List list) onSuccess,
       Function(DioError err) onError) async {
@@ -63,7 +41,7 @@ class HttpRequestRest {
       )));
     }
     try {
-      Response response = await getFileHttp().post(
+      Response response = await getHttp().post(
         "/api/uploadMultipleFiles",
         data: formData,
       );
@@ -77,7 +55,7 @@ class HttpRequestRest {
   static download(String fileName, Function(File file) onSuccess,
       Function(DioError err) onError) async {
     try {
-      Response response = await getFileHttp().get("/downloadFile/{fileName:$fileName}");
+      Response response = await getHttp().get("/downloadFile/{fileName:$fileName}");
       return await onSuccess(response.data);
     } on DioError catch (e) {
       return await onError(e);

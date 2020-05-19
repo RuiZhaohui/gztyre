@@ -13,7 +13,7 @@ import 'package:gztyre/components/ListTitleWidget.dart';
 import 'package:gztyre/components/ProgressDialog.dart';
 import 'package:gztyre/components/SearchBar.dart';
 import 'package:gztyre/components/TextButtonWidget.dart';
-import 'package:gztyre/pages/orderCenter/planOrder/MaterielPage.dart';
+import 'package:gztyre/pages/orderCenter/MaterielPage.dart';
 import 'package:gztyre/pages/problemReport/ChildrenDeviceSelectionPage.dart';
 import 'package:gztyre/pages/problemReport/ChildrenPositonSelectionPage.dart';
 
@@ -42,6 +42,7 @@ class _DeviceSelectionPageState extends State<DeviceSelectionPage> {
 
   List<FunctionPosition> _position = [];
   List<FunctionPosition> _tempPosition = [];
+  List<Device> _allList = [];
 
   var _listPositionAndDeviceFuture;
 
@@ -51,12 +52,33 @@ class _DeviceSelectionPageState extends State<DeviceSelectionPage> {
     this._loading = true;
     HttpRequestRest.listPosition(Global.userInfo.PERNR,
         (List<FunctionPosition> list) {
-      print(list);
       this._position = list;
       this._tempPosition.addAll(list);
       setState(() {
         this._loading = false;
       });
+
+      FunctionPosition position = _position.firstWhere((element) => widget.selectItem.positionCode.contains(element.positionCode));
+      if (position.children.length > 0) {
+        Navigator.of(context).push(CupertinoPageRoute(builder: (BuildContext context) {
+          return ChildrenPositionSelectionPage(position: position.children, selectItem: widget.selectItem, isAddMaterial: widget.isAddMaterial, AUFNR: widget.AUFNR,);
+        })).then((val) {
+          if (val["isOk"]) {
+            this._selectItem = val["item"];
+            Navigator.of(context).pop(val);
+          }
+        });
+      } else if (position.deviceChildren.length > 0) {
+
+        Navigator.of(context).push(CupertinoPageRoute(builder: (BuildContext context) {
+          return ChildrenDeviceSelectionPage(device: position.deviceChildren, selectItem: widget.selectItem, isAddMaterial: widget.isAddMaterial, AUFNR: widget.AUFNR,);
+        })).then((val) {
+          if (val["isOk"]) {
+            this._selectItem = val["item"];
+            Navigator.of(context).pop(val);
+          }
+        });
+      }
     }, (err) {
       print(err);
       setState(() {
@@ -65,103 +87,9 @@ class _DeviceSelectionPageState extends State<DeviceSelectionPage> {
     });
   }
 
-//  List<Widget> createDeviceWidgetList(List<Device> list) {
-//    List<Widget> deviceList = [];
-//    list.forEach((item) {
-//      if (item.children.length > 0) {
-//        deviceList.add(ExpansionTile(
-//          leading: Checkbox(value: this._selectItem == item, onChanged: (bool val)
-//            {
-//              if (val) {
-//                this._selectItem = item;
-//                setState(() {
-//                });
-//              } else {
-//                this._selectItem = null;
-//                setState(() {
-//                });
-//              }
-//            }
-//          ),
-//          title: Text(item.deviceName),
-//          children: <Widget>[
-//            ...createDeviceWidgetList(item.children)
-//          ],
-//        ));
-//      } else {
-//        deviceList.add(GestureDetector(
-//          child: ListTile(
-////            actionArea: Container(),
-//              title: Row(
-//                children: <Widget>[
-//                  Padding(
-//                    padding: EdgeInsets.only(left: 10),
-//                    child: Checkbox(value: this._selectItem == item, onChanged: (bool val) {
-//                      if (val) {
-//                        this._selectItem = item;
-//                        setState(() {
-//
-//                        });
-//                      } else {
-//                        this._selectItem = null;
-//                        setState(() {
-//
-//                        });
-//                      }
-//                    },),
-//                  ),
-//                  Expanded(
-//                    child: Text(
-//                      item.deviceName,
-//                    ),
-//                  )
-//                ],
-//              )),
-//          onTap: () {
-//            if (this._selectItem == item) {
-//              this._selectItem = null;
-//            } else
-//              this._selectItem = item;
-//            setState(() {});
-//          },
-//        ));
-//      }
-//    });
-//    return deviceList;
-//  }
-//
-//  List<Widget> createWidgetList(List<FunctionPosition> list) {
-//    List<Widget> deviceList = [];
-//    list.forEach((item) {
-//      if (item.children.length > 0) {
-//        deviceList.add(
-//            Material(
-//              child: ExpansionTile(
-//                title: Text(item.positionName),
-//                children: <Widget>[
-//                  ...createWidgetList(item.children)
-//                ],
-//              ),
-//            )
-//        );
-//      } else {
-//        deviceList.add(Material(
-//          child: ExpansionTile(
-//            title: Text(item.positionName),
-//            children: <Widget>[
-//              ...createDeviceWidgetList(item.deviceChildren)
-//            ],
-//          ),
-//        ));
-//      }
-//    });
-//    return deviceList;
-//  }
-
   List<Widget> createWidgetList(List<FunctionPosition> list) {
     List<Widget> deviceList = [];
     list.forEach((item) {
-//      if (item.children.length > 0) {
         deviceList.add(ListItemWidget(
             title: Text(item.positionName),
           onTap: () {
@@ -188,22 +116,117 @@ class _DeviceSelectionPageState extends State<DeviceSelectionPage> {
           },
           ),
         );
-//      } else {
-//        deviceList.add(Material(
-//          child: ExpansionTile(
-//            title: Text(item.positionName),
-//            children: <Widget>[...createDeviceWidgetList(item.deviceChildren)],
-//          ),
-//        ));
-//      }
     });
     return deviceList;
+  }
+
+  List<Widget> createSearchWidgetList(List<Device> list) {
+    List<Widget> itemList = [];
+    if (list.length == 0) {
+      return itemList;
+    }
+    for (int i = 0; i < list.length; i++) {
+      if (i == 0) {
+        itemList.add(
+          new ListItemWidget(
+            actionArea: Container(),
+            title: Row(
+              children: <Widget>[
+                Material(
+                  child: Checkbox(
+                    value: this._selectItem.deviceCode == list[i].deviceCode,
+                    onChanged: (bool val) {
+                      if (val) {
+                        this._selectItem = list[i];
+                        setState(() {});
+                      } else {
+                        this._selectItem = new Device();
+                        setState(() {});
+                      }
+                    },
+                  ),
+                ),
+                Expanded(
+                  child: Text(list[i].deviceName),
+                ),
+              ],
+            ),
+          ),
+        );
+      } else {
+        itemList.add(Divider(
+          height: 1,
+        ));
+        itemList.add(new ListItemWidget(
+          actionArea: Container(),
+          title: Row(
+            children: <Widget>[
+              Material(
+                child: Checkbox(
+                  value: this._selectItem.deviceCode == list[i].deviceCode,
+                  onChanged: (bool val) {
+                    if (val) {
+                      this._selectItem = list[i];
+                      setState(() {});
+                    } else {
+                      this._selectItem = new Device();
+                      setState(() {});
+                    }
+                  },
+                ),
+              ),
+              Expanded(
+                child: Text(list[i].deviceName),
+              ),
+            ],
+          ),
+        ));
+      }
+    }
+    return itemList;
+  }
+
+  List<Widget> _createWidgetList(List<Device> searchResult, List<FunctionPosition> positionList) {
+    if (searchResult.length == 0 && this._shiftController.value.text == null || this._shiftController.value.text.trim().length == 0) {
+      return createWidgetList(positionList);
+    } else return createSearchWidgetList(searchResult);
+  }
+
+  findDeviceByKeywordInDeviceList(List<Device> list, String keyword, List<Device> deviceList) {
+    deviceList.forEach((item) {
+      if (item.deviceName.indexOf(keyword) > -1) {
+        list.add(item);
+      }
+      if (item.children.length > 0) {
+        findDeviceByKeywordInDeviceList(list, keyword, item.children);
+      }
+    });
+  }
+
+  findDeviceByKeyword(List<Device> list, String keyword, List<FunctionPosition> positionList) {
+    if (keyword == null || keyword.trim() == "") return;
+    print(keyword);
+    positionList.forEach((item) {
+      if (item.children.length > 0) {
+        findDeviceByKeyword(list, keyword, item.children);
+      }
+      if (item.deviceChildren.length > 0) {
+        findDeviceByKeywordInDeviceList(list, keyword, item.deviceChildren);
+      }
+    });
   }
 
   @override
   void initState() {
     this._selectItem = widget.selectItem;
     _listPositionAndDeviceFuture = this._listPositionAndDevice();
+    this._shiftController.addListener(() {
+      this._allList = [];
+      findDeviceByKeyword(_allList, this._shiftController.value.text, _position);
+      setState(() {
+        print(_allList);
+      });
+    });
     super.initState();
   }
 
@@ -227,30 +250,19 @@ class _DeviceSelectionPageState extends State<DeviceSelectionPage> {
                         "选择设备",
                         style: TextStyle(fontWeight: FontWeight.w500),
                       ),
-//                      trailing: TextButtonWidget(
-//                        onTap: () {
-//                          if (widget.isAddMaterial) {
-//                            Navigator.of(context).push(CupertinoPageRoute(
-//                                builder: (BuildContext context) {
-//                              return MaterielPage(
-//                                list: null,
-//                                AUFNR: widget.AUFNR,
-//                                device: this._selectItem,
-//                              );
-//                            })).then((val) {
-//                              Navigator.of(context).pop();
-//                            });
-//                          }
-//                        },
-//                        text: "确定",
-//                      ),
+                      trailing: this._allList.length > 0 ? TextButtonWidget(
+                        onTap: () {
+                          Navigator.of(context).pop({"item": this._selectItem, "isOk": true});
+                        },
+                        text: "确定",
+                      ) : null,
                     ),
                     child: SafeArea(
                         child: CupertinoScrollbar(
                             child: ListView(
                       children: <Widget>[
-//                                SearchBar(controller: this._shiftController),
-                        ...createWidgetList(this._position),
+                                SearchBar(controller: this._shiftController),
+                        ..._createWidgetList(_allList, _position),
                       ],
                     ))),
                   ));

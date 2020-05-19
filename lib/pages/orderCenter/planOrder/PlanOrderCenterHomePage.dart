@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_refresh/flutter_refresh.dart';
 import 'package:gztyre/api/HttpRequest.dart';
 import 'package:gztyre/api/model/Order.dart';
 import 'package:gztyre/api/model/UserInfo.dart';
@@ -10,6 +9,9 @@ import 'package:gztyre/components/DividerBetweenIconListItem.dart';
 import 'package:gztyre/components/ListItemWidget.dart';
 import 'package:gztyre/components/ProgressDialog.dart';
 import 'package:gztyre/pages/orderCenter/planOrder/OrderListPage.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
+
+import 'OrderTypeCategoryPage.dart';
 
 class PlanOrderCenterHomePage extends StatefulWidget {
   PlanOrderCenterHomePage({Key key, @required this.rootContext})
@@ -23,6 +25,7 @@ class PlanOrderCenterHomePage extends StatefulWidget {
 }
 
 class _PlanOrderCenterHomePageState extends State<PlanOrderCenterHomePage> {
+  RefreshController _refreshController = RefreshController(initialRefresh: false);
   var _listOrderFuture;
 
   bool _loading = false;
@@ -43,6 +46,10 @@ class _PlanOrderCenterHomePageState extends State<PlanOrderCenterHomePage> {
             (item.APPSTATUS == "" ||
                 item.ASTTX == "新建" ||
                 item.ASTTX == "新工单")) {
+//        if (item.QMNUM.contains("10032492")) {
+//          var aaa = item;
+//          print(aaa);
+//        }
           resList.add(item);
         }
       });
@@ -61,8 +68,7 @@ class _PlanOrderCenterHomePageState extends State<PlanOrderCenterHomePage> {
       List<Order> resList = new List();
       list.forEach((item) {
         if (item.QMNUM != null &&
-            item.QMNUM != '' &&
-            (isManager ? true : item.PERNR1 == _userInfo.PERNR) && item.ASTTX == "维修中" &&
+            item.QMNUM != '' && item.ASTTX == "维修中" &&
             (item.APPSTATUS == "接单" ||
                 item.APPSTATUS == "转单" ||
                 (item.APPSTATUS == "呼叫协助") ||
@@ -77,8 +83,7 @@ class _PlanOrderCenterHomePageState extends State<PlanOrderCenterHomePage> {
       list.forEach((item) {
         if (item.QMNUM != null &&
             item.QMNUM != '' &&
-            (item.APPSTATUS == "等待" &&
-                    (isManager ? true : item.PERNR1 == _userInfo.PERNR) ||
+            (item.APPSTATUS == "等待" ||
                 item.APPSTATUS == "再维修" ||
                 item.APPSTATUS == "派单")) {
           resList.add(item);
@@ -91,8 +96,7 @@ class _PlanOrderCenterHomePageState extends State<PlanOrderCenterHomePage> {
       list.forEach((item) {
         if (item.QMNUM != null &&
             item.QMNUM != '' &&
-            (item.APPSTATUS == "呼叫协助" || item.APPSTATUS == "加入") &&
-            item.PERNR1 != _userInfo.PERNR) {
+            (item.APPSTATUS == "呼叫协助" || item.APPSTATUS == "加入")) {
           resList.add(item);
         }
       });
@@ -107,9 +111,10 @@ class _PlanOrderCenterHomePageState extends State<PlanOrderCenterHomePage> {
   }
 
   Future<int> _countHistoryOrder() async {
-    this._loading = true;
+    setState(() {
+      this._loading = true;
+    });
     return await HttpRequest.historyOrder(this._userInfo.PERNR, this._userInfo.WCTYPE == "是" ? "X" : "", (List<Order> list) {
-      print(list);
       return list.length;
     }, (err) {
       print(err);
@@ -118,7 +123,9 @@ class _PlanOrderCenterHomePageState extends State<PlanOrderCenterHomePage> {
   }
 
   _listOrder() async {
-    this._loading = true;
+    setState(() {
+      this._loading = true;
+    });
     this._list = [];
     if (this._userInfo.WCTYPE == "是") {
       return await HttpRequest.listPlanOrder(this._userInfo.PERNR, null, null, null,
@@ -130,11 +137,13 @@ class _PlanOrderCenterHomePageState extends State<PlanOrderCenterHomePage> {
               }
             });
             this._countMap = await this._getCountMap(this._list, this._isManager);
+            this._refreshController.refreshCompleted();
             setState(() {
               this._loading = false;
             });
           }, (err) {
             print(err);
+            this._refreshController.refreshFailed();
             setState(() {
               this._loading = false;
             });
@@ -145,10 +154,12 @@ class _PlanOrderCenterHomePageState extends State<PlanOrderCenterHomePage> {
           return val;
         });
         print(this._countMap);
+        this._refreshController.refreshCompleted();
         setState(() {
           this._loading = false;
         });
       }).catchError((err) {
+        this._refreshController.refreshFailed();
         setState(() {
           this._loading = false;
         });
@@ -194,9 +205,11 @@ class _PlanOrderCenterHomePageState extends State<PlanOrderCenterHomePage> {
                     child: Container(
                       color: Color.fromRGBO(231, 233, 234, 1),
                       child: CupertinoScrollbar(
-                        child: Refresh(
-                          onFooterRefresh: null,
-                          onHeaderRefresh: onHeaderRefresh,
+                        child: SmartRefresher(
+                          controller: _refreshController,
+                          header:  WaterDropHeader(complete: Text("刷新成功"), failed: Text("刷新失败"),),
+                          enablePullDown: true,
+                          onRefresh: onHeaderRefresh,
                           child: ListView(
                             children: <Widget>[
                               this._userInfo.WCTYPE == "是" ? ListItemWidget(
@@ -227,7 +240,7 @@ class _PlanOrderCenterHomePageState extends State<PlanOrderCenterHomePage> {
                                           settings:
                                               RouteSettings(name: "repairList"),
                                           builder: (BuildContext context) {
-                                            return OrderListPage(
+                                            return OrderTypeCategoryPage(
                                               title: "新工单",
                                             );
                                           })).then((val) {
@@ -284,7 +297,7 @@ class _PlanOrderCenterHomePageState extends State<PlanOrderCenterHomePage> {
                                           settings:
                                               RouteSettings(name: "repairList"),
                                           builder: (BuildContext context) {
-                                            return OrderListPage(
+                                            return OrderTypeCategoryPage(
                                               title: "转卡单",
                                             );
                                           })).then((val) {
@@ -342,7 +355,7 @@ class _PlanOrderCenterHomePageState extends State<PlanOrderCenterHomePage> {
                                           settings:
                                               RouteSettings(name: "repairList"),
                                           builder: (BuildContext context) {
-                                            return OrderListPage(
+                                            return OrderTypeCategoryPage(
                                               title: "维修中",
                                             );
                                           })).then((val) {
@@ -400,7 +413,7 @@ class _PlanOrderCenterHomePageState extends State<PlanOrderCenterHomePage> {
                                           settings:
                                               RouteSettings(name: "repairList"),
                                           builder: (BuildContext context) {
-                                            return OrderListPage(
+                                            return OrderTypeCategoryPage(
                                               title: "等待中",
                                             );
                                           })).then((val) {
@@ -458,7 +471,7 @@ class _PlanOrderCenterHomePageState extends State<PlanOrderCenterHomePage> {
                                           settings:
                                               RouteSettings(name: "repairList"),
                                           builder: (BuildContext context) {
-                                            return OrderListPage(
+                                            return OrderTypeCategoryPage(
                                               title: "协助单",
                                             );
                                           })).then((val) {
@@ -516,7 +529,7 @@ class _PlanOrderCenterHomePageState extends State<PlanOrderCenterHomePage> {
                                           settings:
                                               RouteSettings(name: "repairList"),
                                           builder: (BuildContext context) {
-                                            return OrderListPage(
+                                            return OrderTypeCategoryPage(
                                               title: "历史单",
                                             );
                                           })).then((val) {

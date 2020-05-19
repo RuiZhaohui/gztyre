@@ -6,6 +6,7 @@ import 'package:gztyre/api/HttpRequest.dart';
 import 'package:gztyre/api/HttpRequestRest.dart';
 import 'package:gztyre/api/model/Order.dart';
 import 'package:gztyre/api/model/RepairOrder.dart';
+import 'package:gztyre/commen/Global.dart';
 import 'package:gztyre/components/ListItemWidget.dart';
 import 'package:gztyre/components/ListTitleWidget.dart';
 import 'package:gztyre/components/ProgressDialog.dart';
@@ -88,7 +89,7 @@ class _RepairDetailPageState extends State<RepairDetailPage> {
     List<Widget> imgList = [];
     print(list);
     for (int i = 0; i < list.length; i++) {
-      if (list[i].endsWith('mp4')) {
+      if (Global.videoType.contains(list[i].split(".").last.toLowerCase())) {
         imgList.add(Padding(
           padding: EdgeInsets.all(2),
           child: FutureBuilder(
@@ -116,10 +117,10 @@ class _RepairDetailPageState extends State<RepairDetailPage> {
                           int count = 0;
                           int position = 0;
                           list.asMap().keys.toList().forEach((index) {
-                            if (list[index].endsWith("mp4")) {
+                            if (Global.videoType.contains(list[index].split(".").last.toLowerCase())) {
                               imgs.add({'key': count, 'videoFile': list[index]});
                               count++;
-                            } else if (list[index].endsWith("wav")) {
+                            } else if (Global.audioType.contains(list[index].split(".").last.toLowerCase())) {
                               position = index;
                             } else {
                               imgs.add({'key': count, 'url': list[index]});
@@ -143,7 +144,7 @@ class _RepairDetailPageState extends State<RepairDetailPage> {
                               this._controller.pause();
                             }
                             if (index != null) {
-                              if (list[index - 1].endsWith("mp4")) {
+                              if (Global.videoType.contains(list[index - 1].split(".").last.toLowerCase())) {
                                 this._controller = null;
                               }
 //                              widget.callback(this.list);
@@ -166,7 +167,7 @@ class _RepairDetailPageState extends State<RepairDetailPage> {
             },
           ),
         ));
-      }  else if (list[i].endsWith('wav')) {
+      }  else if (Global.audioType.contains(list[i].split(".").last.toLowerCase())) {
         imgList.add(GestureDetector(
           child: Padding(
             padding: EdgeInsets.all(2),
@@ -199,10 +200,10 @@ class _RepairDetailPageState extends State<RepairDetailPage> {
             int count = 0;
             int position = 0;
             list.asMap().keys.toList().forEach((index) {
-              if (list[index].endsWith("mp4")) {
+              if (Global.videoType.contains(list[index].split(".").last.toLowerCase())) {
                 imgs.add({'key': count, 'videoFile': list[index]});
                 count++;
-              } else if (list[index].endsWith("wav")) {
+              } else if (Global.audioType.contains(list[index].split(".").last.toLowerCase())) {
                 position = index;
               } else {
                 imgs.add({'key': count, 'url': list[index]});
@@ -225,7 +226,7 @@ class _RepairDetailPageState extends State<RepairDetailPage> {
                 this._controller.pause();
               }
               if (index != null) {
-                if (list[index - 1].endsWith("mp4")) {
+                if (Global.videoType.contains(list[index - 1].split(".").last.toLowerCase())) {
                   this._controller = null;
                 }
               }

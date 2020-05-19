@@ -66,7 +66,7 @@ class OrderCardWidgetState extends State<OrderCardWidget> {
       child: GestureDetector(
         onTap: widget.onTap,
         child: Container(
-          height: 220,
+          height: 240,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(5),
             boxShadow: [

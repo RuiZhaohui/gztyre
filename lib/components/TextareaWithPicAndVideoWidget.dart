@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:gztyre/commen/Global.dart';
 import 'package:gztyre/components/ButtonBarWidget.dart';
 import 'package:gztyre/components/ButtonWidget.dart';
 import 'package:gztyre/components/TakePhotoAndVideoWidget.dart';
@@ -82,7 +83,7 @@ class _TextareaWithPicAndVideoWidgetState
     List<Widget> imgList = [];
     print(list);
     for (int i = 0; i < list.length; i++) {
-      if (list[i].endsWith('mp4')) {
+      if (Global.videoType.contains(list[i].split(".").last.toLowerCase())) {
         imgList.add(Padding(
           padding: EdgeInsets.all(2),
           child: FutureBuilder(
@@ -110,13 +111,13 @@ class _TextareaWithPicAndVideoWidgetState
                           int count = 0;
                           int position = 0;
                           list.asMap().keys.toList().forEach((index) {
-                            if (list[index].endsWith("mp4")) {
+                            if (Global.videoType.contains(list[index].split(".").last.toLowerCase())) {
                               imgs.add({
                                 'key': count,
                                 'videoFile': File(list[index])
                               });
                               count++;
-                            } else if (list[index].endsWith("wav")) {
+                            } else if (Global.audioType.contains(list[index].split(".").last.toLowerCase())) {
                               position = index;
                             } else {
                               imgs.add({'key': count, 'file': File(list[index])});
@@ -143,12 +144,15 @@ class _TextareaWithPicAndVideoWidgetState
                               this._controller.pause();
                             }
                             if (index != null) {
-                              if (list[index - 1].endsWith("mp4")) {
+                              if (Global.videoType.contains(list[index - 1].split(".").last.toLowerCase())) {
                                 this._controller.initialize();
                               }
                               widget.listController.value.removeAt(index - 1);
 //                              widget.callback(this.list);
                             }
+                            setState(() {
+
+                            });
                           });
                         },
                         // Display the correct icon depending on the state of the player.
@@ -167,7 +171,7 @@ class _TextareaWithPicAndVideoWidgetState
             },
           ),
         ));
-      } else if (list[i].endsWith('wav')) {
+      } else if (Global.audioType.contains(list[i].split(".").last.toLowerCase())) {
         imgList.add(GestureDetector(
           child: Padding(
             padding: EdgeInsets.all(2),
@@ -234,10 +238,10 @@ class _TextareaWithPicAndVideoWidgetState
             int count = 0;
             int position = 0;
             list.asMap().keys.toList().forEach((index) {
-              if (list[index].endsWith("mp4")) {
+              if (Global.videoType.contains(list[index].split(".").last.toLowerCase())) {
                 imgs.add({'key': count, 'videoFile': File(list[index])});
                 count++;
-              } else if (list[index].endsWith("wav")) {
+              } else if (Global.audioType.contains(list[index].split(".").last.toLowerCase())) {
                 position = index;
               } else {
                 imgs.add({'key': count, 'file': File(list[index])});
@@ -260,15 +264,15 @@ class _TextareaWithPicAndVideoWidgetState
                 this._controller.pause();
               }
               if (index != null) {
-                if (list[index - 1].endsWith("mp4")) {
+                if (Global.videoType.contains(list[index - 1].split(".").last.toLowerCase())) {
                   this._controller.initialize();
-                  setState(() {
-
-                  });
                 }
                 widget.listController.value.removeAt(index - 1);
 //                widget.callback(this.list);
               }
+              setState(() {
+
+              });
             });
           },
         ));
@@ -357,10 +361,10 @@ class _TextareaWithPicAndVideoWidgetState
                   Container(
                     child: widget.listController.value.length < 6 ? TakePhotoAndVideoWidget(
                       canShoot: !widget.listController.value.any((item) {
-                        return item.endsWith('mp4');
+                        return Global.videoType.contains(item.split(".").last.toLowerCase());
                       }),
                       takePhotoCallback: (path) {
-                        if (path.endsWith('mp4')) {
+                        if (Global.videoType.contains(path.split(".").last.toLowerCase())) {
                           print(path);
                           this._controller =
                               VideoPlayerController.file(File(path));

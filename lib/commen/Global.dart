@@ -23,6 +23,13 @@ class Global {
   // 是否为release版
   static bool get isRelease => bool.fromEnvironment("dart.vm.product");
 
+  // 支持图片格式
+  static List<String> picType = ["png", "jpg", "jpeg", "bmp", "gif"];
+  // 支持视频格式
+  static List<String> videoType = ["mp4", "avi", "mpeg4"];
+  // 支持音频格式
+  static List<String> audioType = ["wav", "mp3"];
+
 //  static Profile profile = Profile();
 
   //初始化全局信息，会在APP启动时执行
