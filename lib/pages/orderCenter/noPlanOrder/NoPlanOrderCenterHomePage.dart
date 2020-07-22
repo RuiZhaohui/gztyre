@@ -12,11 +12,7 @@ import 'package:gztyre/pages/orderCenter/noPlanOrder/OrderListPage.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class NoPlanOrderCenterHomePage extends StatefulWidget {
-  NoPlanOrderCenterHomePage({Key key, @required this.rootContext})
-      : assert(rootContext != null),
-        super(key: key);
-
-  final BuildContext rootContext;
+  NoPlanOrderCenterHomePage({Key key}):super(key: key);
 
   @override
   State createState() => _NoPlanOrderCenterHomePageState();
@@ -66,7 +62,7 @@ class _NoPlanOrderCenterHomePageState extends State<NoPlanOrderCenterHomePage> {
             (item.APPSTATUS == "接单" ||
                 item.APPSTATUS == "转单" ||
                 (item.APPSTATUS == "呼叫协助") ||
-                (item.APPSTATUS == "加入"))) {
+                (item.APPSTATUS == "加入")) && (isManager || item.PERNR1 == _userInfo.PERNR)) {
           resList.add(item);
         }
       });
@@ -90,7 +86,7 @@ class _NoPlanOrderCenterHomePageState extends State<NoPlanOrderCenterHomePage> {
       list.forEach((item) {
         if (item.QMNUM != null &&
             item.QMNUM != '' &&
-            (item.APPSTATUS == "呼叫协助" || item.APPSTATUS == "加入")) {
+            (item.APPSTATUS == "呼叫协助" || item.APPSTATUS == "加入") && item.PERNR1 != _userInfo.PERNR) {
           resList.add(item);
         }
       });
@@ -110,7 +106,7 @@ class _NoPlanOrderCenterHomePageState extends State<NoPlanOrderCenterHomePage> {
     });
     return await HttpRequest.historyOrder(this._userInfo.PERNR, this._userInfo.WCTYPE == "是" ? "X" : "", (List<Order> list) {
       print(list);
-      return list.length;
+      return list.where((element) => ["N01", "N02", "N03", "N04", "N18", "N21"].contains(element.ILART)).toList().length;
     }, (err) {
       print(err);
       return 0;
@@ -230,7 +226,7 @@ class _NoPlanOrderCenterHomePageState extends State<NoPlanOrderCenterHomePage> {
                                   ],
                                 ),
                                 onTap: () {
-                                  Navigator.of(widget.rootContext).push(
+                                  Navigator.of(context).push(
                                       new CupertinoPageRoute(
                                           settings:
                                               RouteSettings(name: "repairList"),
@@ -287,7 +283,7 @@ class _NoPlanOrderCenterHomePageState extends State<NoPlanOrderCenterHomePage> {
                                   ],
                                 ),
                                 onTap: () {
-                                  Navigator.of(widget.rootContext).push(
+                                  Navigator.of(context).push(
                                       new CupertinoPageRoute(
                                           settings:
                                               RouteSettings(name: "repairList"),
@@ -345,7 +341,7 @@ class _NoPlanOrderCenterHomePageState extends State<NoPlanOrderCenterHomePage> {
                                   ],
                                 ),
                                 onTap: () {
-                                  Navigator.of(widget.rootContext).push(
+                                  Navigator.of(context).push(
                                       new CupertinoPageRoute(
                                           settings:
                                               RouteSettings(name: "repairList"),
@@ -403,7 +399,7 @@ class _NoPlanOrderCenterHomePageState extends State<NoPlanOrderCenterHomePage> {
                                   ],
                                 ),
                                 onTap: () {
-                                  Navigator.of(widget.rootContext).push(
+                                  Navigator.of(context).push(
                                       new CupertinoPageRoute(
                                           settings:
                                               RouteSettings(name: "repairList"),
@@ -461,7 +457,7 @@ class _NoPlanOrderCenterHomePageState extends State<NoPlanOrderCenterHomePage> {
                                   ],
                                 ),
                                 onTap: () {
-                                  Navigator.of(widget.rootContext).push(
+                                  Navigator.of(context).push(
                                       new CupertinoPageRoute(
                                           settings:
                                               RouteSettings(name: "repairList"),
@@ -519,7 +515,7 @@ class _NoPlanOrderCenterHomePageState extends State<NoPlanOrderCenterHomePage> {
                                   ],
                                 ),
                                 onTap: () {
-                                  Navigator.of(widget.rootContext).push(
+                                  Navigator.of(context).push(
                                       new CupertinoPageRoute(
                                           settings:
                                               RouteSettings(name: "repairList"),

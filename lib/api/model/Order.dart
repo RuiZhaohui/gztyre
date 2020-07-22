@@ -14,8 +14,11 @@ class Order {
   /// 报修单名称
   String QMTXT;
 
-  /// 负责人员
+  /// 负责人员编码
   String PERNR1;
+
+  /// 负责人员名称
+  String KTEXT1;
 
   /// 维修工单号
   String AUFNR;
@@ -108,6 +111,7 @@ class Order {
         QMNUM = json['QMNUM'],
         QMTXT = json['QMTXT'],
         PERNR1 = json['PERNR1'],
+        KTEXT1 = json['KTEXT1'],
         AUFNR = json['AUFNR'],
         AUFTEXT = json["AUFTEXT"],
         EQUNR = json['EQUNR'],
@@ -141,6 +145,7 @@ class Order {
         "QMNUM": QMNUM,
         "QMTXT": QMTXT,
         "PERNR1": PERNR1,
+        "KTEXT1": KTEXT1,
         "AUFNR": AUFNR,
         "AUFTEXT": AUFTEXT,
         "EQUNR": EQUNR,

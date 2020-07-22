@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:gztyre/commen/Global.dart';
 import 'package:gztyre/components/TabBarIcon.dart';
 import 'package:gztyre/pages/orderCenter/OrderCategory.dart';
 import 'package:gztyre/pages/problemReport/ProblemReportHomePage.dart';
@@ -51,6 +52,8 @@ class _ContainerPageState extends State<ContainerPage> {
   }
 
   Widget _buildTabBar() {
+
+  print(Global.userInfo.toString());
 //    if (isWorker) {
       return CupertinoTabBar(
           items: <BottomNavigationBarItem>[
@@ -150,6 +153,11 @@ class _ContainerPageState extends State<ContainerPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (!['A1', 'A2'].contains(Global.userInfo.MATYP)) {
+      return new Center(
+        child: Text("参数错误"),
+      );
+    }
     return CupertinoTabScaffold(
         tabBar: _buildTabBar(),
         tabBuilder: (BuildContext context, int index) {

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:gztyre/api/HttpRequest.dart';
 import 'package:gztyre/api/HttpRequestRest.dart';
 import 'package:gztyre/api/model/UserInfo.dart';
@@ -11,6 +12,7 @@ import 'package:gztyre/pages/login/DefaultPasswordAndPhoneNumberChangePage.dart'
 import 'package:gztyre/pages/login/MaintenanceGroupSelectionPage.dart';
 import 'package:gztyre/pages/login/WorkShiftSelectionPage.dart';
 import 'package:gztyre/utils/screen_utils.dart';
+import 'package:jpush_flutter/jpush_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
@@ -224,6 +226,11 @@ class _LoginPageState extends State<LoginPage> {
               ),
               color: Color.fromRGBO(51, 115, 178, 1),
               onPressed: () async {
+
+//                Global.jPush.sendLocalNotification(new LocalNotification(
+//                    id: 1, title: 'test', content: 'test', fireTime: new DateTime.now().add(new Duration(seconds: 1)), buildId: 1
+//                ));
+//                return;
                 if (_rememberUsername) {
                   Global.saveUsername(_usernameController.text);
                 } else {
@@ -314,26 +321,26 @@ class _LoginPageState extends State<LoginPage> {
                                       new DefaultPasswordAndPhoneNumberChangePage()));
                                 } else {
                                   if (Global.userInfo.WCTYPE != "是") {
-                                    Global.jPush.setAlias(Global.userInfo.PERNR);
+                                    Global.jPush.setAlias(Global.userInfo.CPLGR + Global.userInfo.MATYP + Global.userInfo.PERNR);
                                     if ([
-                                      "A01", "A02", "A3"
+                                      "A01", "A02", "A03"
                                     ].contains(Global.userInfo.SORTB)) {
-                                      Global.jPush.setTags(["维修工"]);
+                                      Global.jPush.setTags([Global.userInfo.CPLGR + Global.userInfo.MATYP + "维修工"]);
                                     }
                                     if ([
                                       "A04", "A05"
                                     ].contains(Global.userInfo.SORTB)) {
-                                      Global.jPush.setTags(["领班"]);
+                                      Global.jPush.setTags([Global.userInfo.CPLGR + Global.userInfo.MATYP + "领班"]);
                                     }
                                     if ([
                                       "A06", "A08"
                                     ].contains(Global.userInfo.SORTB)) {
-                                      Global.jPush.setTags(["主管"]);
+                                      Global.jPush.setTags([Global.userInfo.CPLGR + Global.userInfo.MATYP + "主管"]);
                                     }
                                     if ([
                                       "A07"
                                     ].contains(Global.userInfo.SORTB)) {
-                                      Global.jPush.setTags(["工程师"]);
+                                      Global.jPush.setTags([Global.userInfo.CPLGR + Global.userInfo.MATYP + "工程师"]);
                                     }
                                     Navigator.push(
                                         context,
@@ -341,26 +348,26 @@ class _LoginPageState extends State<LoginPage> {
                                             builder: (context) => new WorkShiftSelectionPage(
                                                 userName: this._usernameController.text)));
                                   } else {
-                                    Global.jPush.setAlias(Global.userInfo.PERNR);
+                                    Global.jPush.setAlias(Global.userInfo.CPLGR + Global.userInfo.MATYP + Global.userInfo.PERNR);
                                     if ([
                                       "A01", "A02", "A3"
                                     ].contains(Global.userInfo.SORTB)) {
-                                      Global.jPush.setTags(["维修工"]);
+                                      Global.jPush.setTags([Global.userInfo.CPLGR + Global.userInfo.MATYP + "维修工"]);
                                     }
                                     if ([
                                       "A04", "A05"
                                     ].contains(Global.userInfo.SORTB)) {
-                                      Global.jPush.setTags(["领班"]);
+                                      Global.jPush.setTags([Global.userInfo.CPLGR + Global.userInfo.MATYP + "领班"]);
                                     }
                                     if ([
                                       "A06", "A08"
                                     ].contains(Global.userInfo.SORTB)) {
-                                      Global.jPush.setTags(["主管"]);
+                                      Global.jPush.setTags([Global.userInfo.CPLGR + Global.userInfo.MATYP + "主管"]);
                                     }
                                     if ([
                                       "A07"
                                     ].contains(Global.userInfo.SORTB)) {
-                                      Global.jPush.setTags(["工程师"]);
+                                      Global.jPush.setTags([Global.userInfo.CPLGR + Global.userInfo.MATYP + "工程师"]);
                                     }
                                     Navigator.push(
                                         context,

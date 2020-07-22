@@ -184,6 +184,7 @@ class XmlUtils {
        order.QMNUM = e.findElements("Qmnum").first.text;
        order.QMTXT = e.findElements("Qmtxt").first.text;
        order.PERNR1 = e.findElements("Pernr1").first.text;
+       order.KTEXT1 = e.findElements("Ktext1").first.text;
        order.AUFNR = e.findElements("Aufnr").first.text;
        order.AUFTEXT = e.findElements("Auftext").first.text;
        order.EQUNR = e.findElements("Equnr").first.text;
@@ -259,6 +260,7 @@ class XmlUtils {
         order.QMNUM = e.findElements("Qmnum").first.text;
         order.QMTXT = e.findElements("Qmtxt").first.text;
         order.PERNR1 = e.findElements("Pernr1").first.text;
+        order.KTEXT1 = e.findElements("Ktext1").first.text;
         order.AUFNR = e.findElements("Aufnr").first.text;
         order.AUFTEXT = e.findElements("Auftext").first.text;
         order.EQUNR = e.findElements("Equnr").first.text;
@@ -335,6 +337,7 @@ class XmlUtils {
         order.QMNUM = e.findElements("Qmnum").first.text;
         order.QMTXT = e.findElements("Qmtxt").first.text;
         order.PERNR1 = e.findElements("Pernr1").first.text;
+        order.KTEXT1 = e.findElements("Ktext1").first.text;
         order.AUFNR = e.findElements("Aufnr").first.text;
         order.AUFTEXT = e.findElements("Auftext").first.text;
         order.EQUNR = e.findElements("Equnr").first.text;
@@ -482,6 +485,7 @@ class XmlUtils {
         order.QMNUM = e.findElements("Qmnum").first.text;
         order.QMTXT = e.findElements("Qmtxt").first.text;
         order.PERNR1 = e.findElements("Pernr1").first.text;
+        order.KTEXT1 = e.findElements("Ktext1").first.text;
         order.AUFNR = e.findElements("Aufnr").first.text;
         order.AUFTEXT = e.findElements("Auftext").first.text;
         order.EQUNR = e.findElements("Equnr").first.text;
@@ -558,6 +562,7 @@ class XmlUtils {
         order.QMNUM = e.findElements("Qmnum").first.text;
         order.QMTXT = e.findElements("Qmtxt").first.text;
         order.PERNR1 = e.findElements("Pernr1").first.text;
+        order.KTEXT1 = e.findElements("Ktext1").first.text;
         order.AUFNR = e.findElements("Aufnr").first.text;
         order.AUFTEXT = e.findElements("Auftext").first.text;
         order.EQUNR = e.findElements("Equnr").first.text;
@@ -634,6 +639,7 @@ class XmlUtils {
         order.QMNUM = e.findElements("Qmnum").first.text;
         order.QMTXT = e.findElements("Qmtxt").first.text;
         order.PERNR1 = e.findElements("Pernr1").first.text;
+        order.KTEXT1 = e.findElements("Ktext1").first.text;
         order.AUFNR = e.findElements("Aufnr").first.text;
         order.AUFTEXT = e.findElements("Auftext").first.text;
         order.EQUNR = e.findElements("Equnr").first.text;
@@ -781,7 +787,7 @@ class XmlUtils {
         order.KTEXT2 = "";
         order.PERNR1 = "";
         order.MAKTX = item.findAllElements("Maktx").first.text;
-        order.ENMG = item.findAllElements("Enmg").first.text;
+        order.ENMG = item.findAllElements("Enmng").first.text;
         order.ERDAT = item.findAllElements("Erdat").first.text;
         order.ERTIM = item.findAllElements("Ertim").first.text;
         order.APPSTATUS = item.findAllElements("Appstatus").first.text;
@@ -1157,7 +1163,7 @@ class XmlUtils {
       if (flag) {
         return true;
       } else
-        throw DioError();
+        throw DioError(error: document.findAllElements("Message").first.text);
     } catch (e) {
       throw DioError();
     }
@@ -1417,13 +1423,14 @@ class XmlUtils {
     try {
       document.findAllElements("MType").forEach((item) {
         if (item.text == "E")
-          throw DioError();
+          throw DioError(error: document.findAllElements("Message").first.text);
         else
           flag = true;
       });
       return flag;
     } catch (e) {
-      throw DioError();
+      if (e is DioError) throw e;
+      else throw DioError();
     }
   }
 
@@ -1456,6 +1463,7 @@ class XmlUtils {
       order.QMNUM = e.findElements("Qmnum").first.text;
       order.QMTXT = e.findElements("Qmtxt").first.text;
       order.PERNR1 = e.findElements("Pernr1").first.text;
+      order.KTEXT1 = e.findElements("Ktext1").first.text;
       order.AUFNR = e.findElements("Aufnr").first.text;
       order.AUFTEXT = e.findElements("KtextAufnr").first.text;
       order.ILATX = e.findAllElements("Ilatx").first.text;
@@ -1508,6 +1516,33 @@ class XmlUtils {
       print(double.parse(e.findElements("Enmng").first.text).floor());
       submitMateriel.MENGE = double.parse(e.findElements("Enmng").first.text).floor();
       return submitMateriel;
+    }).toList();
+    return list;
+  }
+
+
+  static xml.XmlNode buildHelpWorker(
+      String AUFNR) {
+    var builder = new xml.XmlBuilder();
+    builder.element("Envelope",
+        attributes: {"xmlns": "http://schemas.xmlsoap.org/soap/envelope/"},
+        nest: () {
+          builder.element("Body", nest: () {
+            builder.element("ZpmSearchOrderJrPernr", attributes: {
+              "xmlns": "urn:sap-com:document:sap:soap:functions:mc-style"
+            }, nest: () {
+              builder.element("EtData", attributes: {"xmlns": ""});
+              builder.element("IAufnr", attributes: {"xmlns": ""}, nest: AUFNR);
+            });
+          });
+        });
+    return builder.build();
+  }
+
+  static List<String> readHelpWorker(String stringXml) {
+    var document = xml.parse(stringXml);
+    List<String> list = document.findAllElements("item").map((e) {
+      return e.findElements("Pernr").first.text;
     }).toList();
     return list;
   }

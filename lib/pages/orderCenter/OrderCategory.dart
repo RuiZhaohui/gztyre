@@ -50,7 +50,7 @@ class _OrderCategoryState extends State<OrderCategory> {
                           onTap: () {
                             Navigator.of(widget.rootContext).push(CupertinoPageRoute(
                               builder: (BuildContext context) {
-                              return PlanOrderCenterHomePage(rootContext: context,);
+                              return PlanOrderCenterHomePage();
                             }, settings: RouteSettings(name: "planOrderHome"),));
                           },
                         ),
@@ -70,7 +70,7 @@ class _OrderCategoryState extends State<OrderCategory> {
                           ),
                           onTap: () {
                             Navigator.of(widget.rootContext).push(CupertinoPageRoute(builder: (BuildContext context) {
-                              return NoPlanOrderCenterHomePage(rootContext: context,);
+                              return NoPlanOrderCenterHomePage();
                             }, settings: RouteSettings(name: "noPlanOrderHome"),));
                           },
                         ),
@@ -91,7 +91,7 @@ class _OrderCategoryState extends State<OrderCategory> {
                           onTap: () {
                             Navigator.of(widget.rootContext).push(CupertinoPageRoute(
                               builder: (BuildContext context) {
-                                return AssisantOrderCenterHomePage(rootContext: context,);
+                                return AssisantOrderCenterHomePage();
                               }, settings: RouteSettings(name: "assisantOrderHome"),));
                           },
                         ),
@@ -112,7 +112,7 @@ class _OrderCategoryState extends State<OrderCategory> {
                           onTap: () {
                             Navigator.of(widget.rootContext).push(CupertinoPageRoute(
                               builder: (BuildContext context) {
-                                return BlockOrderCenterHomePage(rootContext: context,);
+                                return BlockOrderCenterHomePage();
                               }, settings: RouteSettings(name: "blockOrderHome"),));
                           },
                         ),

@@ -50,50 +50,53 @@ class _RepairHistoryPageState extends State<RepairHistoryPage> {
     List<Widget> list = [];
     for (int i = 0; i < num; i++) {
       list.add(Padding(
-        padding: EdgeInsets.only(bottom: 30),
+        padding: EdgeInsets.only(bottom: 15, top: 15),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text("${this._repairOrderList[i].ERDAT.substring(2, 10)} ${this._repairOrderList[i].ERTIM.substring(0, 5)}", textAlign: TextAlign.left,),
+            this._repairOrderList[i].ERDAT == "0000-00-00" ? Container() : Text("${this._repairOrderList[i].ERDAT.substring(2, 10)} ${this._repairOrderList[i].ERTIM.substring(0, 5)}", textAlign: TextAlign.left,),
             this._repairOrderList[i].PERNR != '' ? GestureDetector(
-              onTap: () async {
-                Navigator.of(context)
-                    .push(CupertinoPageRoute(builder: (BuildContext context) {
-                  return UserInfoPage(
-                    PERNR: this._repairOrderList[i].PERNR,
-                  );
-                }));
-              },
-              child: Padding(
-                padding: EdgeInsets.only(left: 10),
-                child: Text(
-                  this._repairOrderList[i].KTEXT,
-                  style: TextStyle(color: Color.fromRGBO(36, 98, 204, 1)),
+                onTap: () async {
+                  Navigator.of(context)
+                      .push(CupertinoPageRoute(builder: (BuildContext context) {
+                    return UserInfoPage(
+                      PERNR: this._repairOrderList[i].PERNR,
+                    );
+                  }));
+                },
+                child: Padding(
+                  padding: EdgeInsets.only(left: 10),
+                  child: Text(
+                      this._repairOrderList[i].KTEXT,
+                      style: TextStyle(color: Color.fromRGBO(36, 98, 204, 1)),
+                    ),
                 ),
-              ),
-            ) : Container(),
+              ) : Container(),
             Text("${this._repairOrderList[i].APPSTATUS}"),
             this._repairOrderList[i].PERNR1 != '' ? GestureDetector(
-              onTap: () async {
-                Navigator.of(context)
-                    .push(CupertinoPageRoute(builder: (BuildContext context) {
-                  return UserInfoPage(
-                    PERNR: this._repairOrderList[i].PERNR1,
-                  );
-                }));
-              },
-              child: Text(
+                onTap: () async {
+                  Navigator.of(context)
+                      .push(CupertinoPageRoute(builder: (BuildContext context) {
+                    return UserInfoPage(
+                      PERNR: this._repairOrderList[i].PERNR1,
+                    );
+                  }));
+                },
+                child: Text(
                   this._repairOrderList[i].KTEXT2,
                   style: TextStyle(color: Color.fromRGBO(36, 98, 204, 1)),
                 ),
-            ) : Container(),
-            this._repairOrderList[i].MAKTX != '' ? Padding(
-              padding: EdgeInsets.only(left: 10),
-              child: Text(
-                '${this._repairOrderList[i].MAKTX} ${this._repairOrderList[i].ENMG}',
+              ) : Container(),
+            this._repairOrderList[i].MAKTX != '' ? Expanded(
+              child: Padding(
+                padding: EdgeInsets.only(left: 10),
+                child: Text(
+                  '${this._repairOrderList[i].MAKTX} ${this._repairOrderList[i].ENMG}',
+                ),
               ),
             ) :
-                Container(),
+              Container(),
           ],
         ),
       ));
@@ -129,36 +132,28 @@ class _RepairHistoryPageState extends State<RepairHistoryPage> {
               ),
             ),
             child: SafeArea(
-                    child: this._repairOrderList.length > 0 ? ListView(
-                      children: <Widget>[
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
+                    child: this._repairOrderList.length > 0 ? Padding(
+                      padding: EdgeInsets.only(left: 20),
+                      child: ListView(
+//                      children: <Widget>[
+//                        Row(
+//                          crossAxisAlignment: CrossAxisAlignment.start,
+//                          children: <Widget>[
 //                            Padding(
 //                              padding: EdgeInsets.only(
-//                                top: 30,
+//                                top: 22,
 //                                left: 20,
 //                              ),
-//                              child: CustomPaint(
-//                                size: Size(20, (num * 10 + num * 45).toDouble()),
-//                                isComplex: false,
-//                                painter: TimeLinePainter(num: num),
+//                              child: Column(
+//                                crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[..._buildList()],
 //                              ),
 //                            ),
-                            Padding(
-                              padding: EdgeInsets.only(
-                                top: 22,
-                                left: 20,
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[..._buildList()],
-                              ),
-                            ),
-                          ],
-                        )
-                      ],
-                ) : Container()),
+//                          ],
+//                        )
+//                      ],
+                      ),
+                    ) : Container()),
           ));
     });
   }

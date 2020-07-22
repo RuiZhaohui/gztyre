@@ -117,7 +117,7 @@ class _OrderCardLiteWidgetState extends State<OrderCardLiteWidget> {
                         fontSize: 12,),),
                     ),
                    widget.isPlanOrder && widget.order.PERNR1 != null ? Expanded(
-                      child: Text("负责人：${widget.order.KTEXT}", style: TextStyle(color: Color.fromRGBO(0, 0, 0, 0.45),
+                      child: Text("负责人：${(widget.order.KTEXT1 == null || widget.order.KTEXT1.length == 0) ? "暂无" : widget.order.KTEXT1}", style: TextStyle(color: Color.fromRGBO(0, 0, 0, 0.45),
                         fontSize: 12,),),
                     ) : Container(),
                   ],

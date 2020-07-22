@@ -51,6 +51,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
   VideoPlayerController _controller;
   Future<void> _initializeVideoPlayerFuture;
   var _reportOrderDetailFuture;
+  List<String> _helpWorker = new List();
 
   AudioPlayer audioPlayer = new AudioPlayer();
   var icon = Icon(Icons.play_arrow);
@@ -158,7 +159,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
           order.EQUNR,
           null,
           null, (res) async {
-        await HttpRequestRest.pushAlias([PERNR], "", "",
+        await HttpRequestRest.pushAlias([Global.userInfo.CPLGR + Global.userInfo.MATYP + PERNR], "", "",
             "收到${Global.userInfo.ENAME}转卡单", [], (success) {}, (err) {});
         setState(() {
           this._loading = false;
@@ -195,7 +196,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
           order.EQUNR,
           null,
           null, (res) async {
-        await HttpRequestRest.pushAlias([PERNR], "", "",
+        await HttpRequestRest.pushAlias([Global.userInfo.CPLGR + Global.userInfo.MATYP + PERNR], "", "",
             "收到${Global.userInfo.ENAME}派单", [], (success) {}, (err) {});
         setState(() {
           this._loading = false;
@@ -251,7 +252,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
           null,
           list, (res) async {
         List<String> workList = list.map((item) {
-          return item.PERNR;
+          return Global.userInfo.CPLGR + Global.userInfo.MATYP + item.PERNR;
         }).toList();
         await HttpRequestRest.pushAlias(workList, "", "",
             "${Global.userInfo.ENAME}请求协助", [], (success) {}, (err) {});
@@ -290,7 +291,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
           null,
           null, (res) async {
         await HttpRequestRest.pushAlias(
-            [order.PERNR],
+            [Global.userInfo.CPLGR + Global.userInfo.MATYP + order.PERNR],
             "",
             "",
             "${Global.userInfo.ENAME}将工单${order.QMNUM}置为等待",
@@ -331,7 +332,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
           order.EQUNR,
           null,
           null, (res) async {
-        await HttpRequestRest.pushAlias([order.PERNR1], "", "",
+        await HttpRequestRest.pushAlias([Global.userInfo.CPLGR + Global.userInfo.MATYP + order.PERNR1], "", "",
             "${Global.userInfo.ENAME}接受协助请求", [], (success) {}, (err) {});
         setState(() {
           this._loading = false;
@@ -373,7 +374,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
             APPTRADENO,
             null, null, (res) async {
           await HttpRequestRest.pushAlias(
-              [reportOrder.PERNR],
+              [Global.userInfo.CPLGR + Global.userInfo.MATYP + reportOrder.PERNR],
               "",
               "",
               "${Global.userInfo.ENAME}开始处理${reportOrder.QMNUM}",
@@ -406,7 +407,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
             null,
             null, (res) async {
           await HttpRequestRest.pushAlias(
-              [reportOrder.PERNR],
+              [Global.userInfo.CPLGR + Global.userInfo.MATYP + reportOrder.PERNR],
               "",
               "",
               "${Global.userInfo.ENAME}开始处理工单${reportOrder.QMNUM}",
@@ -436,16 +437,21 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
     setState(() {
       this._loading = true;
     });
+    if (widget.itemStatus == "协助单") {
+      await HttpRequest.listHelpWorker(widget.order.AUFNR, (List<String> list) {
+        this._helpWorker = list;
+      }, (err) => {});
+    }
     return await HttpRequest.reportOrderDetail(widget.order.QMNUM,
-        (ReportOrder order) async {
-      this._reportOrder = order;
-      this._getPic(order);
-    }, (err) {
-      print(err);
-      setState(() {
-        this._loading = false;
-      });
-    });
+            (ReportOrder order) async {
+          this._reportOrder = order;
+          this._getPic(order);
+        }, (err) {
+          print(err);
+          setState(() {
+            this._loading = false;
+          });
+        });
   }
 
   Future _getPic(ReportOrder reportOrder) async {
@@ -745,7 +751,8 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                         CupertinoDialogAction(
                           onPressed: () {
                             Navigator.of(contextTemp).pop();
-                            Navigator.of(context).pop();
+                            Navigator.of(context).popUntil(
+                                ModalRoute.withName("noPlanOrderHome"));
                           },
                           child: Text("好"),
                         ),
@@ -1112,6 +1119,17 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
         });
   }
 
+  Widget _alreadyAcceptButton() {
+    return ButtonWidget(
+      padding: EdgeInsets.only(left: 0, right: 0),
+      child: Text(
+        '已接受',
+        style: TextStyle(color: Colors.grey),
+      ),
+      color: Colors.black,
+    );
+  }
+
   Widget _acceptButton() {
     return ButtonWidget(
         padding: EdgeInsets.only(left: 0, right: 0),
@@ -1252,7 +1270,8 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
               )
             : Container(),
         widget.itemStatus == "转卡单" &&
-                this._monitorOrForeman.contains(Global.userInfo.SORTB)
+                (this._monitorOrForeman.contains(Global.userInfo.SORTB) &&
+                    widget.order.PERNR1 == Global.userInfo.PERNR)
             ? Align(
                 alignment: Alignment.bottomCenter,
                 child: ButtonBarWidget(
@@ -1277,8 +1296,9 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
               )
             : Container(),
         widget.itemStatus == "转卡单" &&
-                (this._equipmentSupervisor.contains(Global.userInfo.SORTB) ||
-                    this._engineer.contains(Global.userInfo.SORTB))
+            ((this._equipmentSupervisor.contains(Global.userInfo.SORTB) ||
+                    this._engineer.contains(Global.userInfo.SORTB)) &&
+                widget.order.PERNR1 == Global.userInfo.PERNR)
             ? Align(
                 alignment: Alignment.bottomCenter,
                 child: ButtonBarWidget(
@@ -1297,7 +1317,8 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
               )
             : Container(),
         widget.itemStatus == "转卡单" &&
-                this._maintenanceWorker.contains(Global.userInfo.SORTB)
+                (this._maintenanceWorker.contains(Global.userInfo.SORTB) &&
+                    widget.order.PERNR1 == Global.userInfo.PERNR)
             ? Align(
                 alignment: Alignment.bottomCenter,
                 child: ButtonBarWidget(
@@ -1306,9 +1327,9 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
               )
             : Container(),
         widget.itemStatus == "维修中" &&
-                Global.userInfo.PERNR == widget.order.PERNR1 &&
+                (Global.userInfo.PERNR == widget.order.PERNR1 &&
                 (this._maintenanceWorker.contains(Global.userInfo.SORTB) ||
-                    this._monitorOrForeman.contains(Global.userInfo.SORTB))
+                    this._monitorOrForeman.contains(Global.userInfo.SORTB)))
             ? Align(
                 alignment: Alignment.bottomCenter,
                 child: ButtonBarWidget(
@@ -1356,8 +1377,9 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
               )
             : Container(),
         widget.itemStatus == "等待中" &&
-                (this._maintenanceWorker.contains(Global.userInfo.SORTB) ||
-                    this._monitorOrForeman.contains(Global.userInfo.SORTB))
+                ((this._maintenanceWorker.contains(Global.userInfo.SORTB) ||
+                    this._monitorOrForeman.contains(Global.userInfo.SORTB)) &&
+            widget.order.PERNR1 == Global.userInfo.PERNR)
             ? Align(
                 alignment: Alignment.bottomCenter,
                 child: ButtonBarWidget(
@@ -1366,21 +1388,23 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
               )
             : Container(),
         widget.itemStatus == "协助单"
-            ? ((widget.order.APPSTATUS == "呼叫协助" ||
+            && ((widget.order.APPSTATUS == "呼叫协助" ||
                         widget.order.APPSTATUS == "加入") &&
                     (this._maintenanceWorker.contains(Global.userInfo.SORTB) ||
                         this
                             ._monitorOrForeman
                             .contains(Global.userInfo.SORTB) ||
-                        this._engineer.contains(Global.userInfo.SORTB))
+                        this._engineer.contains(Global.userInfo.SORTB)) &&
+        widget.order.PERNR1 != Global.userInfo.PERNR)
                 ? Align(
                     alignment: Alignment.bottomCenter,
                     child: ButtonBarWidget(
-                      button: _acceptButton(),
+                      button: this._helpWorker.contains(Global.userInfo.PERNR)
+                          ? _alreadyAcceptButton()
+                          : _acceptButton(),
                     ),
                   )
-                : Container())
-            : Container(),
+                : Container(),
         widget.itemStatus == "历史单" ? Container() : Container()
       ];
     } else
@@ -1398,7 +1422,8 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                 ),
               )
             : Container(),
-        widget.itemStatus == "转卡单" && "A03" == Global.userInfo.SORTB
+        widget.itemStatus == "转卡单" && ("A03" == Global.userInfo.SORTB &&
+            widget.order.PERNR1 == Global.userInfo.PERNR)
             ? Align(
                 alignment: Alignment.bottomCenter,
                 child: ButtonBarWidget(
@@ -1417,7 +1442,8 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
               )
             : Container(),
         widget.itemStatus == "转卡单" &&
-                this._monitorOrForeman.contains(Global.userInfo.SORTB)
+                (this._monitorOrForeman.contains(Global.userInfo.SORTB) &&
+                    widget.order.PERNR1 == Global.userInfo.PERNR)
             ? Align(
                 alignment: Alignment.bottomCenter,
                 child: ButtonBarWidget(
@@ -1436,7 +1462,8 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
               )
             : Container(),
         widget.itemStatus == "转卡单" &&
-                this._equipmentSupervisor.contains(Global.userInfo.SORTB)
+                (this._equipmentSupervisor.contains(Global.userInfo.SORTB) &&
+                    widget.order.PERNR1 == Global.userInfo.PERNR)
             ? Align(
                 alignment: Alignment.bottomCenter,
                 child: ButtonBarWidget(
@@ -1455,8 +1482,8 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
               )
             : Container(),
         widget.itemStatus == "维修中" &&
-                Global.userInfo.PERNR == widget.order.PERNR1 &&
-                "A03" == Global.userInfo.SORTB
+                (Global.userInfo.PERNR == widget.order.PERNR1 &&
+                "A03" == Global.userInfo.SORTB)
             ? Align(
                 alignment: Alignment.bottomCenter,
                 child: ButtonBarWidget(
@@ -1503,7 +1530,8 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                 )),
               )
             : Container(),
-        widget.itemStatus == "等待中" && "A03" == Global.userInfo.SORTB
+        widget.itemStatus == "等待中" && ("A03" == Global.userInfo.SORTB &&
+            widget.order.PERNR1 == Global.userInfo.PERNR)
             ? Align(
                 alignment: Alignment.bottomCenter,
                 child: ButtonBarWidget(
@@ -1512,17 +1540,19 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
               )
             : Container(),
         widget.itemStatus == "协助单"
-            ? ((widget.order.APPSTATUS == "呼叫协助" ||
+            && ((widget.order.APPSTATUS == "呼叫协助" ||
                         widget.order.APPSTATUS == "加入") &&
-                    this._maintenanceWorker.contains(Global.userInfo.SORTB)
+                    this._maintenanceWorker.contains(Global.userInfo.SORTB) &&
+        widget.order.PERNR1 != Global.userInfo.PERNR)
                 ? Align(
                     alignment: Alignment.bottomCenter,
                     child: ButtonBarWidget(
-                      button: _acceptButton(),
+                      button: this._helpWorker.contains(Global.userInfo.PERNR)
+                          ? _alreadyAcceptButton()
+                          : _acceptButton(),
                     ),
                   )
-                : Container())
-            : Container(),
+                : Container(),
         widget.itemStatus == "历史单" ? Container() : Container()
       ];
     } else
@@ -1544,8 +1574,9 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
               )
             : Container(),
         widget.itemStatus == "转卡单" &&
-                (_maintenanceWorker.contains(Global.userInfo.SORTB) ||
-                    _engineer.contains(Global.userInfo.SORTB))
+            ((_maintenanceWorker.contains(Global.userInfo.SORTB) ||
+                    _engineer.contains(Global.userInfo.SORTB)) &&
+                widget.order.PERNR1 == Global.userInfo.PERNR)
             ? Align(
                 alignment: Alignment.bottomCenter,
                 child: ButtonBarWidget(
@@ -1564,7 +1595,8 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
               )
             : Container(),
         widget.itemStatus == "转卡单" &&
-                this._monitorOrForeman.contains(Global.userInfo.SORTB)
+                (this._monitorOrForeman.contains(Global.userInfo.SORTB) &&
+                    widget.order.PERNR1 == Global.userInfo.PERNR)
             ? Align(
                 alignment: Alignment.bottomCenter,
                 child: ButtonBarWidget(
@@ -1589,9 +1621,10 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
               )
             : Container(),
         widget.itemStatus == "转卡单" &&
-                (this._equipmentSupervisor.contains(Global.userInfo.SORTB) ||
+            ((this._equipmentSupervisor.contains(Global.userInfo.SORTB) ||
                     _maintenanceManagementPersonnel
-                        .contains(Global.userInfo.SORTB))
+                        .contains(Global.userInfo.SORTB)) &&
+                widget.order.PERNR1 == Global.userInfo.PERNR)
             ? Align(
                 alignment: Alignment.bottomCenter,
                 child: ButtonBarWidget(
@@ -1610,10 +1643,10 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
               )
             : Container(),
         widget.itemStatus == "维修中" &&
-                Global.userInfo.PERNR == widget.order.PERNR1 &&
+                (Global.userInfo.PERNR == widget.order.PERNR1 &&
                 (_maintenanceWorker.contains(Global.userInfo.SORTB) ||
                     _monitorOrForeman.contains(Global.userInfo.SORTB) ||
-                    _engineer.contains(Global.userInfo.SORTB))
+                    _engineer.contains(Global.userInfo.SORTB)))
             ? Align(
                 alignment: Alignment.bottomCenter,
                 child: ButtonBarWidget(
@@ -1654,9 +1687,10 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
               )
             : Container(),
         widget.itemStatus == "等待中" &&
-                (_maintenanceWorker.contains(Global.userInfo.SORTB) ||
+                ((_maintenanceWorker.contains(Global.userInfo.SORTB) ||
                     _monitorOrForeman.contains(Global.userInfo.SORTB) ||
-                    _engineer.contains(Global.userInfo.SORTB))
+                    _engineer.contains(Global.userInfo.SORTB)) &&
+            widget.order.PERNR1 == Global.userInfo.PERNR)
             ? Align(
                 alignment: Alignment.bottomCenter,
                 child: ButtonBarWidget(
@@ -1665,19 +1699,21 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
               )
             : Container(),
         widget.itemStatus == "协助单"
-            ? ((widget.order.APPSTATUS == "呼叫协助" ||
+            && ((widget.order.APPSTATUS == "呼叫协助" ||
                         widget.order.APPSTATUS == "加入") &&
                     (_maintenanceWorker.contains(Global.userInfo.SORTB) ||
                         _monitorOrForeman.contains(Global.userInfo.SORTB) ||
                         _engineer.contains(Global.userInfo.SORTB))
+        && widget.order.PERNR1 != Global.userInfo.PERNR)
                 ? Align(
                     alignment: Alignment.bottomCenter,
                     child: ButtonBarWidget(
-                      button: _acceptButton(),
+                      button: this._helpWorker.contains(Global.userInfo.PERNR)
+                          ? _alreadyAcceptButton()
+                          : _acceptButton(),
                     ),
                   )
-                : Container())
-            : Container(),
+                : Container(),
         widget.itemStatus == "历史单" ? Container() : Container()
       ];
     } else
@@ -1697,8 +1733,9 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
               )
             : Container(),
         widget.itemStatus == "转卡单" &&
-                (_maintenanceWorker.contains(Global.userInfo.SORTB) ||
-                    _engineer.contains(Global.userInfo.SORTB))
+            ((_maintenanceWorker.contains(Global.userInfo.SORTB) ||
+                    _engineer.contains(Global.userInfo.SORTB)) &&
+                widget.order.PERNR1 == Global.userInfo.PERNR)
             ? Align(
                 alignment: Alignment.bottomCenter,
                 child: ButtonBarWidget(
@@ -1717,7 +1754,8 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
               )
             : Container(),
         widget.itemStatus == "转卡单" &&
-                this._monitorOrForeman.contains(Global.userInfo.SORTB)
+                (this._monitorOrForeman.contains(Global.userInfo.SORTB) &&
+                    widget.order.PERNR1 == Global.userInfo.PERNR)
             ? Align(
                 alignment: Alignment.bottomCenter,
                 child: ButtonBarWidget(
@@ -1736,7 +1774,8 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
               )
             : Container(),
         widget.itemStatus == "转卡单" &&
-                (this._equipmentSupervisor.contains(Global.userInfo.SORTB))
+                (this._equipmentSupervisor.contains(Global.userInfo.SORTB) &&
+                    widget.order.PERNR1 == Global.userInfo.PERNR)
             ? Align(
                 alignment: Alignment.bottomCenter,
                 child: ButtonBarWidget(
@@ -1755,8 +1794,8 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
               )
             : Container(),
         widget.itemStatus == "维修中" &&
-                Global.userInfo.PERNR == widget.order.PERNR1 &&
-                (_maintenanceWorker.contains(Global.userInfo.SORTB))
+                (Global.userInfo.PERNR == widget.order.PERNR1 &&
+                (_maintenanceWorker.contains(Global.userInfo.SORTB)))
             ? Align(
                 alignment: Alignment.bottomCenter,
                 child: ButtonBarWidget(
@@ -1803,7 +1842,8 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
               )
             : Container(),
         widget.itemStatus == "等待中" &&
-                (_maintenanceWorker.contains(Global.userInfo.SORTB))
+               ( (_maintenanceWorker.contains(Global.userInfo.SORTB)) &&
+            widget.order.PERNR1 == Global.userInfo.PERNR)
             ? Align(
                 alignment: Alignment.bottomCenter,
                 child: ButtonBarWidget(
@@ -1812,17 +1852,19 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
               )
             : Container(),
         widget.itemStatus == "协助单"
-            ? ((widget.order.APPSTATUS == "呼叫协助" ||
+            && ((widget.order.APPSTATUS == "呼叫协助" ||
                         widget.order.APPSTATUS == "加入") &&
                     (_maintenanceWorker.contains(Global.userInfo.SORTB))
+        && widget.order.PERNR1 != Global.userInfo.PERNR)
                 ? Align(
                     alignment: Alignment.bottomCenter,
                     child: ButtonBarWidget(
-                      button: _acceptButton(),
+                      button: this._helpWorker.contains(Global.userInfo.PERNR)
+                          ? _alreadyAcceptButton()
+                          : _acceptButton(),
                     ),
                   )
-                : Container())
-            : Container(),
+                : Container(),
         widget.itemStatus == "历史单" ? Container() : Container()
       ];
     } else
@@ -1853,14 +1895,14 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
 
   @override
   void initState() {
-    print(!(widget.order.ASTTX == "已完成" ||
-            widget.order.ASTTX == "新工单" ||
-            widget.order.ASTTX == "新建" ||
-            (widget.order.APPSTATUS == "呼叫协助" &&
-                widget.order.PERNR1 != Global.userInfo.PERNR) ||
-            (widget.order.APPSTATUS == "加入" &&
-                widget.order.PERNR1 != Global.userInfo.PERNR)) &&
-        widget.itemStatus != "历史单");
+//    print(!(widget.order.ASTTX == "已完成" ||
+//            widget.order.ASTTX == "新工单" ||
+//            widget.order.ASTTX == "新建" ||
+//            (widget.order.APPSTATUS == "呼叫协助" &&
+//                widget.order.PERNR1 != Global.userInfo.PERNR) ||
+//            (widget.order.APPSTATUS == "加入" &&
+//                widget.order.PERNR1 != Global.userInfo.PERNR)) &&
+//        widget.itemStatus != "历史单");
     this._reportOrderDetailFuture = this._reportOrderDetail();
     _audioPlayerStateSubscription =
         audioPlayer.onPlayerStateChanged.listen((s) {

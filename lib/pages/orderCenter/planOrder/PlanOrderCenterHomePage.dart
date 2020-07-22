@@ -14,11 +14,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'OrderTypeCategoryPage.dart';
 
 class PlanOrderCenterHomePage extends StatefulWidget {
-  PlanOrderCenterHomePage({Key key, @required this.rootContext})
-      : assert(rootContext != null),
-        super(key: key);
-
-  final BuildContext rootContext;
+  PlanOrderCenterHomePage({Key key}):super(key: key);
 
   @override
   State createState() => _PlanOrderCenterHomePageState();
@@ -72,7 +68,7 @@ class _PlanOrderCenterHomePageState extends State<PlanOrderCenterHomePage> {
             (item.APPSTATUS == "接单" ||
                 item.APPSTATUS == "转单" ||
                 (item.APPSTATUS == "呼叫协助") ||
-                (item.APPSTATUS == "加入"))) {
+                (item.APPSTATUS == "加入")) && (isManager || item.PERNR1 == _userInfo.PERNR)) {
           resList.add(item);
         }
       });
@@ -96,7 +92,7 @@ class _PlanOrderCenterHomePageState extends State<PlanOrderCenterHomePage> {
       list.forEach((item) {
         if (item.QMNUM != null &&
             item.QMNUM != '' &&
-            (item.APPSTATUS == "呼叫协助" || item.APPSTATUS == "加入")) {
+            (item.APPSTATUS == "呼叫协助" || item.APPSTATUS == "加入") && item.PERNR1 != _userInfo.PERNR) {
           resList.add(item);
         }
       });
@@ -115,7 +111,7 @@ class _PlanOrderCenterHomePageState extends State<PlanOrderCenterHomePage> {
       this._loading = true;
     });
     return await HttpRequest.historyOrder(this._userInfo.PERNR, this._userInfo.WCTYPE == "是" ? "X" : "", (List<Order> list) {
-      return list.length;
+      return list.where((element) => ["N05", "N06", "N07", "N09", "N10", "N11", "N12", "N19", "N20"].contains(element.ILART)).toList().length;
     }, (err) {
       print(err);
       return 0;
@@ -176,7 +172,7 @@ class _PlanOrderCenterHomePageState extends State<PlanOrderCenterHomePage> {
   void initState() {
     this._userInfo = Global.userInfo;
     this._isManager =
-        this._managerList.any((item) => item == this._userInfo.SORTB);
+        this._managerList.contains(_userInfo.SORTB);
     this._listOrderFuture = this._listOrder();
     setState(() {});
     super.initState();
@@ -235,7 +231,7 @@ class _PlanOrderCenterHomePageState extends State<PlanOrderCenterHomePage> {
                                   ],
                                 ),
                                 onTap: () {
-                                  Navigator.of(widget.rootContext).push(
+                                  Navigator.of(context).push(
                                       new CupertinoPageRoute(
                                           settings:
                                               RouteSettings(name: "repairList"),
@@ -292,7 +288,7 @@ class _PlanOrderCenterHomePageState extends State<PlanOrderCenterHomePage> {
                                   ],
                                 ),
                                 onTap: () {
-                                  Navigator.of(widget.rootContext).push(
+                                  Navigator.of(context).push(
                                       new CupertinoPageRoute(
                                           settings:
                                               RouteSettings(name: "repairList"),
@@ -350,7 +346,7 @@ class _PlanOrderCenterHomePageState extends State<PlanOrderCenterHomePage> {
                                   ],
                                 ),
                                 onTap: () {
-                                  Navigator.of(widget.rootContext).push(
+                                  Navigator.of(context).push(
                                       new CupertinoPageRoute(
                                           settings:
                                               RouteSettings(name: "repairList"),
@@ -408,7 +404,7 @@ class _PlanOrderCenterHomePageState extends State<PlanOrderCenterHomePage> {
                                   ],
                                 ),
                                 onTap: () {
-                                  Navigator.of(widget.rootContext).push(
+                                  Navigator.of(context).push(
                                       new CupertinoPageRoute(
                                           settings:
                                               RouteSettings(name: "repairList"),
@@ -466,7 +462,7 @@ class _PlanOrderCenterHomePageState extends State<PlanOrderCenterHomePage> {
                                   ],
                                 ),
                                 onTap: () {
-                                  Navigator.of(widget.rootContext).push(
+                                  Navigator.of(context).push(
                                       new CupertinoPageRoute(
                                           settings:
                                               RouteSettings(name: "repairList"),
@@ -524,12 +520,12 @@ class _PlanOrderCenterHomePageState extends State<PlanOrderCenterHomePage> {
                                   ],
                                 ),
                                 onTap: () {
-                                  Navigator.of(widget.rootContext).push(
+                                  Navigator.of(context).push(
                                       new CupertinoPageRoute(
                                           settings:
                                               RouteSettings(name: "repairList"),
                                           builder: (BuildContext context) {
-                                            return OrderTypeCategoryPage(
+                                            return OrderListPage(
                                               title: "历史单",
                                             );
                                           })).then((val) {

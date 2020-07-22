@@ -76,6 +76,7 @@ class _RepairOrderHomePageState extends State<RepairOrderHomePage> {
           }
         });
         this._refreshController.refreshCompleted();
+        print(DateTime.now());
         setState(() {
           this._loading = false;
         });
@@ -136,7 +137,7 @@ class _RepairOrderHomePageState extends State<RepairOrderHomePage> {
                                   position: this._list[index].PLTXT ?? '',
                                   device: this._list[index].EQKTX ?? '',
                                   color: this._list[index].COLORS,
-                                  isStop: true,
+                                  isStop: this._list[index].isStop,
                                   order: this._list[index],
                                   onTap: () {
                                     Navigator.of(widget.rootContext).push(
@@ -145,12 +146,13 @@ class _RepairOrderHomePageState extends State<RepairOrderHomePage> {
                                         order: this._list[index],
                                       );
                                     })).then((val) {
-                                      this._listRepairOrder();
+//                                      this._refreshController.requestRefresh();
+//                                      this._listRepairOrder();
                                     });
                                   },
                                 );
                               },
-                              childCount: this._list.length,
+                              childCount: this._list?.length ?? 0 + 1,
                             ),
                             shrinkWrap: false,
                           ),

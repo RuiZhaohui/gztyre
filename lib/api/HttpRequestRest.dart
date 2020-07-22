@@ -2,15 +2,16 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:gztyre/api/model/FunctionPosition.dart';
+import 'package:gztyre/api/model/Materiel.dart';
 import 'package:gztyre/commen/Global.dart';
 
 class HttpRequestRest {
 
   static Dio getHttp() {
     Dio http = new Dio(BaseOptions(
-//        baseUrl: "http://pmapp.gztyre.com:8080", // 生产
-      baseUrl: "http://192.168.6.211:8070", // 开发
-//        baseUrl: "http://127.0.0.1:8070", // 本地
+        baseUrl: "http://pmapp.gztyre.com:8080", // 生产
+//      baseUrl: "http://192.168.6.211:8070", // 开发
+//        baseUrl: "http://localhost:8070", // 本地
         connectTimeout: 300000));
     http.interceptors.add(InterceptorsWrapper(onRequest: (RequestOptions options) {
       if (Global.token != null) {
@@ -264,12 +265,14 @@ class HttpRequestRest {
   static listPosition(String userCode, Function(List<FunctionPosition> functionPositionList) onSuccess,
       Function(DioError err) onError) async {
     try {
+//      print(DateTime.now());
       Response response = await getHttp().get("/api/sap/positions/$userCode");
       print(response.data);
       List list = response.data['data'];
       List<FunctionPosition> functionPositionList = list.map((item) {
         return FunctionPosition.formJson(item);
       }).toList();
+//      print(DateTime.now());
       return await onSuccess(functionPositionList);
     } on DioError catch (e) {
       return await onError(e);
@@ -279,9 +282,22 @@ class HttpRequestRest {
   static isMaterielExist(String code, Function(bool success) onSuccess,
       Function(DioError err) onError) async {
     try {
-      Response response = await getHttp().get("/api/sap/materials/${code}");
+      Response response = await getHttp().get("/api/sap/materials/${code}/exist");
       print(response.data);
       return await onSuccess(response.data['data']);
+    } on DioError catch (e) {
+      return await onError(e);
+    }
+  }
+
+  static getMateriel(String code, Function(Materiel materiel) onSuccess,
+      Function(DioError err) onError) async {
+    try {
+      Response response = await getHttp().get("/api/sap/materials/${code}");
+      print(response.data);
+      if (response.data['data'] == null) {
+        return onSuccess(null);
+      } else return await onSuccess(Materiel.formJson(response.data['data']));
     } on DioError catch (e) {
       return await onError(e);
     }

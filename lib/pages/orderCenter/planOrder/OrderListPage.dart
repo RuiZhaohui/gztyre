@@ -3,13 +3,14 @@ import 'package:gztyre/api/HttpRequest.dart';
 import 'package:gztyre/api/model/Order.dart';
 import 'package:gztyre/api/model/UserInfo.dart';
 import 'package:gztyre/commen/Global.dart';
+import 'package:gztyre/components/OrderCardBlockWidget.dart';
 import 'package:gztyre/components/OrderCardLiteWidget.dart';
 import 'package:gztyre/components/ProgressDialog.dart';
 import 'package:gztyre/pages/orderCenter/planOrder/OrderDetailPage.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class OrderListPage extends StatefulWidget {
-  OrderListPage({Key key, @required this.title, @required this.ilart, @required this.equnr}) : super(key: key);
+  OrderListPage({Key key, @required this.title, this.ilart, this.equnr}) : super(key: key);
   final String title;
   final String ilart;
   final String equnr;
@@ -44,23 +45,23 @@ class _OrderListPageState extends State<OrderListPage> {
 
   bool _isRepairing = false;
 
-//  _listHistoryOrder() async {
-//    this._loading = true;
-//    this._list = [];
-//    return await HttpRequest.historyOrder(this._userInfo.PERNR, this._userInfo.WCTYPE == "是" ? "X" : "", (List<Order> list) {
-//      this._list = list;
-//      this._refreshController.refreshCompleted();
-//      setState(() {
-//        this._loading = false;
-//      });
-//    }, (err) {
-//      print(err);
-//      this._refreshController.refreshFailed();
-//      setState(() {
-//        this._loading = false;
-//      });
-//    });
-//  }
+  _listHistoryOrder() async {
+    this._loading = true;
+    this._list = [];
+    return await HttpRequest.historyOrder(this._userInfo.PERNR, this._userInfo.WCTYPE == "是" ? "X" : "", (List<Order> list) {
+      this._list = list.where((element) => ["N05", "N06", "N07", "N09", "N10", "N11", "N12", "N19", "N20"].contains(element.ILART)).toList();
+      this._refreshController.refreshCompleted();
+      setState(() {
+        this._loading = false;
+      });
+    }, (err) {
+      print(err);
+      this._refreshController.refreshFailed();
+      setState(() {
+        this._loading = false;
+      });
+    });
+  }
 
   _listOrder(bool isManager) async {
     setState(() {
@@ -99,7 +100,7 @@ class _OrderListPageState extends State<OrderListPage> {
       list.forEach((item) {
         if (item.QMNUM != null &&
             item.QMNUM != '' && item.ASTTX == "维修中" &&
-            (item.APPSTATUS == "接单" || item.APPSTATUS == "转单" || item.APPSTATUS == "呼叫协助" || item.APPSTATUS == "加入")) {
+            (item.APPSTATUS == "接单" || item.APPSTATUS == "转单" || item.APPSTATUS == "呼叫协助" || item.APPSTATUS == "加入") && (isManager || item.PERNR1 == _userInfo.PERNR)) {
           this._list.add(item);
         }
       });
@@ -115,7 +116,7 @@ class _OrderListPageState extends State<OrderListPage> {
         list.forEach((item) {
           if (item.QMNUM != null &&
               item.QMNUM != '' &&
-              (item.APPSTATUS == "呼叫协助" || item.APPSTATUS == "加入")) {
+              (item.APPSTATUS == "呼叫协助" || item.APPSTATUS == "加入") && item.PERNR1 != Global.userInfo.PERNR) {
             this._list.add(item);
           }
         });
@@ -140,7 +141,12 @@ class _OrderListPageState extends State<OrderListPage> {
   Future<Null> onHeaderRefresh() async {
 //    this._list = [];
 
-    return await this._listOrder(this._isManager);
+//    return await this._listOrder(this._isManager);
+    if (null == widget.ilart || null == widget.equnr) {
+      return await this._listHistoryOrder();
+    } else {
+      return await this._listOrder(this._isManager);
+    }
   }
 
   @override
@@ -150,7 +156,12 @@ class _OrderListPageState extends State<OrderListPage> {
     _EQUNR = widget.equnr;
     this._userInfo = Global.userInfo;
     this._isManager = this._managerList.any((item) => item == this._userInfo.SORTB);
-    this._listOrderFuture = this._listOrder(this._isManager);
+//    this._listOrderFuture = this._listOrder(this._isManager);
+    if (null == widget.ilart || null == widget.equnr) {
+      this._listOrderFuture = this._listHistoryOrder();
+    } else {
+      this._listOrderFuture = this._listOrder(this._isManager);
+    }
     setState(() {
 
     });
@@ -190,33 +201,62 @@ class _OrderListPageState extends State<OrderListPage> {
                           child: ListView.custom(
                             childrenDelegate: SliverChildBuilderDelegate(
                               (BuildContext context, int index) {
-                                return new OrderCardLiteWidget(
-                                  color: (this._list[index].PERNR1 != _userInfo.PERNR &&
-                                      _managerList.contains(_userInfo.SORTB)) ? "X" : this._list[index].COLORS,
-                                  description: this._list[index].QMTXT ?? '',
-                                  title: this._list[index].QMTXT ?? '',
-                                  level: (this._list[index].COLORS == null || this._list[index].COLORS == "") ? "" :"${this._levelMap[this._list[index].COLORS]}级",
-                                  status: this._list[index].ASTTX ?? '',
-                                  position: this._list[index].PLTXT ?? '',
-                                  device: this._list[index].EQKTX ?? '',
-                                  isStop: true,
-                                  order: this._list[index],
-                                  isHistory: widget.title == "历史单",
-                                  isPlanOrder: true,
-                                  onTap: () {
-                                    Navigator.of(context).push(
-                                        CupertinoPageRoute(
-                                          settings: RouteSettings(name: "orderDetailPage"),
-                                            builder: (BuildContext context) {
-                                      return OrderDetailPage(
-                                          order: this._list[index], itemStatus: widget.title, isRepairing: this._isRepairing,);
-                                    })).then((val) {
-                                      setState(() {
-                                        this._listOrder(this._isManager);
+                                if (this._list[index].ILART == "N08") {
+                                  return new OrderCardBlockWidget(
+                                    color: (this._list[index].PERNR1 != _userInfo.PERNR &&
+                                        _managerList.contains(_userInfo.SORTB)) ? "X" : this._list[index].COLORS,
+                                    description: this._list[index].MAKTX ?? '',
+                                    title: this._list[index].BAUTL ?? '',
+                                    level: (this._list[index].COLORS == null || this._list[index].COLORS == "") ? "" :"${this._levelMap[this._list[index].COLORS]}级",
+                                    status: this._list[index].ASTTX ?? '',
+                                    position: this._list[index].PLTXT ?? '',
+                                    device: this._list[index].EQKTX ?? '',
+                                    isStop: true,
+                                    order: this._list[index],
+                                    isHistory: widget.title == "历史单",
+                                    onTap: () {
+                                      Navigator.of(context).push(
+                                          CupertinoPageRoute(
+                                              settings: RouteSettings(name: "orderDetailPage"),
+                                              builder: (BuildContext context) {
+                                                return OrderDetailPage(
+                                                  order: this._list[index], itemStatus: widget.title, isRepairing: this._isRepairing,);
+                                              })).then((val) {
+                                        setState(() {
+                                          widget.title == "历史单" ? this._listHistoryOrder() : this._listOrder(this._isManager);
+                                        });
                                       });
-                                    });
-                                  },
-                                );
+                                    },
+                                  );
+                                } else {
+                                  return new OrderCardLiteWidget(
+                                    color: (this._list[index].PERNR1 != _userInfo.PERNR &&
+                                        _managerList.contains(_userInfo.SORTB)) ? "X" : this._list[index].COLORS,
+                                    description: this._list[index].QMTXT ?? '',
+                                    title: this._list[index].QMTXT ?? '',
+                                    level: (this._list[index].COLORS == null || this._list[index].COLORS == "") ? "" :"${this._levelMap[this._list[index].COLORS]}级",
+                                    status: this._list[index].ASTTX ?? '',
+                                    position: this._list[index].PLTXT ?? '',
+                                    device: this._list[index].EQKTX ?? '',
+                                    isStop: true,
+                                    order: this._list[index],
+                                    isHistory: widget.title == "历史单",
+                                    isPlanOrder: true,
+                                    onTap: () {
+                                      Navigator.of(context).push(
+                                          CupertinoPageRoute(
+                                              settings: RouteSettings(name: "orderDetailPage"),
+                                              builder: (BuildContext context) {
+                                                return OrderDetailPage(
+                                                  order: this._list[index], itemStatus: widget.title, isRepairing: this._isRepairing,);
+                                              })).then((val) {
+                                        setState(() {
+                                          widget.title == "历史单" ? this._listHistoryOrder() : this._listOrder(this._isManager);
+                                        });
+                                      });
+                                    },
+                                  );
+                                }
                               },
                               childCount: this._list.length,
                             ),

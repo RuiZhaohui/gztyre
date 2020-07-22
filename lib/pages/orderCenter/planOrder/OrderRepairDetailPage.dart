@@ -39,6 +39,9 @@ class _OrderRepairDetailPageState extends State<OrderRepairDetailPage> {
 
   bool _loading = false;
 
+  List<String> _notShowDevice = ["N08"];
+  List<String> _notShowDescription = ["N06", "N08", "N09", "N13"];
+
   _buildTextareaWithPicAndVideoWidget() {
     print({'this.list': this._list.value});
     return TextareaWithPicAndVideoWidget(
@@ -59,9 +62,9 @@ class _OrderRepairDetailPageState extends State<OrderRepairDetailPage> {
       return map['tradeNo'];
     }, (err) async {
       this._resetAPPTRANENO(widget.order);
-      setState(() {
-        this._loading = false;
-      });
+//      setState(() {
+//        this._loading = false;
+//      });
       throw Error();
     });
   }
@@ -77,9 +80,9 @@ class _OrderRepairDetailPageState extends State<OrderRepairDetailPage> {
   }
 
   Future<bool> _repairComplete(Order order, URGRP, URCOD, EQUNR, KTEXT) async {
-    setState(() {
-      this._loading = true;
-    });
+//    setState(() {
+//      this._loading = true;
+//    });
     return await this._getAPPTRADENO(order.QMNUM, order.AUFNR).then((APPTRADENO) async {
       return await HttpRequest.changeOrderStatus(
           Global.userInfo.PERNR,
@@ -94,41 +97,41 @@ class _OrderRepairDetailPageState extends State<OrderRepairDetailPage> {
           null, (res) {
         return true;
       }, (err) {
-        setState(() {
-          this._loading = false;
-        });
+//        setState(() {
+//          this._loading = false;
+//        });
         return false;
       });
     }).catchError((err) {
-      setState(() {
-        this._loading = false;
-      });
+//      setState(() {
+//        this._loading = false;
+//      });
       return false;
     });
   }
 
   Future<bool> _complete(
       Order order, String PERNR) async {
-    setState(() {
-      this._loading = true;
-    });
+//    setState(() {
+//      this._loading = true;
+//    });
     return await this._getAPPTRADENO(order.QMNUM, order.AUFNR).then((APPTRADENO) async {
       return await HttpRequest.completeOrder(
           PERNR, order.AUFNR, "已确认", APPTRADENO, (res) {
-        setState(() {
-          this._loading = false;
-        });
+//        setState(() {
+//          this._loading = false;
+//        });
         return true;
       }, (err) {
-        setState(() {
-          this._loading = false;
-        });
+//        setState(() {
+//          this._loading = false;
+//        });
         return false;
       });
     }).catchError((err) {
-      setState(() {
-        this._loading = false;
-      });
+//      setState(() {
+//        this._loading = false;
+//      });
       return false;
     });
   }
@@ -230,7 +233,7 @@ class _OrderRepairDetailPageState extends State<OrderRepairDetailPage> {
                   child: ListView(
                     shrinkWrap: true,
                     children: <Widget>[
-                      ListItemWidget(
+                      _notShowDevice.contains(widget.order.ILART) ? Container() : ListItemWidget(
                         title: Row(
                           children: <Widget>[
                             ImageIcon(
@@ -276,10 +279,10 @@ class _OrderRepairDetailPageState extends State<OrderRepairDetailPage> {
                           }
                         },
                       ),
-                      widget.order.ILART != "N06" ? Divider(
+                      _notShowDescription.contains(widget.order.ILART) ? Container() :  Divider(
                         height: 1,
-                      ) : Container(),
-                      widget.order.ILART != "N06" ? ListItemWidget(
+                      ),
+                      _notShowDescription.contains(widget.order.ILART) ? Container() :  ListItemWidget(
                         title: Row(
                           children: <Widget>[
                             ImageIcon(
@@ -319,7 +322,7 @@ class _OrderRepairDetailPageState extends State<OrderRepairDetailPage> {
                             ;
                           });
                         },
-                      ) : Container(),
+                      ),
                       widget.order.ILART == "N06" ? Divider(
                         height: 1,
                       ) : Container(),
@@ -368,9 +371,10 @@ class _OrderRepairDetailPageState extends State<OrderRepairDetailPage> {
                         ),
                         color: Color.fromRGBO(76, 129, 235, 1),
                         onPressed: () {
-                          if ((this._device == null ||
-                              this._problemDescription == null ||
-                              this._description.text == "") && widget.order.ILART != "N06") {
+                          bool notHasActionAndDescription = ((this._device == null && !_notShowDevice.contains(widget.order.ILART)) ||
+                              (this._problemDescription == null && !_notShowDescription.contains(widget.order.ILART)) ||
+                              this._description.text == "") && widget.order.ILART != "N06";
+                          if (notHasActionAndDescription) {
                             showCupertinoDialog(
                                 context: context,
                                 builder: (BuildContext context) {
@@ -473,7 +477,7 @@ class _OrderRepairDetailPageState extends State<OrderRepairDetailPage> {
                                                   this._loading = false;
                                                 });
                                                 await HttpRequestRest.pushAlias(
-                                                    [widget.order.PERNR],
+                                                    [Global.userInfo.CPLGR + Global.userInfo.MATYP + widget.order.PERNR],
                                                     "",
                                                     "",
                                                     "${Global.userInfo.ENAME}维修完成",
@@ -533,7 +537,7 @@ class _OrderRepairDetailPageState extends State<OrderRepairDetailPage> {
                                               this._loading = false;
                                             });
                                             await HttpRequestRest.pushAlias(
-                                                [widget.order.PERNR],
+                                                [Global.userInfo.CPLGR + Global.userInfo.MATYP + widget.order.PERNR],
                                                 "",
                                                 "",
                                                 "${Global.userInfo.ENAME}维修完成",
@@ -628,7 +632,7 @@ class _OrderRepairDetailPageState extends State<OrderRepairDetailPage> {
                                         await this._complete(widget.order, Global.userInfo.PERNR).then((success) async {
                                           if (success) {
                                             await HttpRequestRest.pushAlias(
-                                                [widget.order.PERNR],
+                                                [Global.userInfo.CPLGR + Global.userInfo.MATYP + widget.order.PERNR],
                                                 "",
                                                 "",
                                                 "${Global.userInfo.ENAME}维修完成",
@@ -688,7 +692,7 @@ class _OrderRepairDetailPageState extends State<OrderRepairDetailPage> {
                                         });
                                       } else {
                                         await HttpRequestRest.pushAlias(
-                                            [widget.order.PERNR],
+                                            [Global.userInfo.CPLGR + Global.userInfo.MATYP + widget.order.PERNR],
                                             "",
                                             "",
                                             "${Global.userInfo.ENAME}维修完成",

@@ -59,7 +59,7 @@ class _MyAppState extends State<MyApp> {
       Global.jPush.addEventHandler(
           onReceiveNotification: (Map<String, dynamic> message) async {
             print(">>>>>>>>>>>>>>>>>flutter 接收到推送: $message");
-            FlutterRingtonePlayer.playNotification(looping: false);
+            FlutterRingtonePlayer.playNotification(volume: 1.0,looping: false,);
           },
           onOpenNotification: (Map<String, dynamic> message) async {
             FlutterRingtonePlayer.stop();
@@ -68,6 +68,7 @@ class _MyAppState extends State<MyApp> {
     } on PlatformException {
       platformVersion = '平台版本获取失败，请检查！';
     }
+
 
     if (!mounted){
       return;
@@ -84,7 +85,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return CupertinoApp(
-      title: 'Flutter Demo',
+      title: '设备维修',
       theme: CupertinoThemeData(
         primaryColor: Color.fromRGBO(253, 255, 255, 1),
         scaffoldBackgroundColor: Color.fromRGBO(231, 233, 234, 1),

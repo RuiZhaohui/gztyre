@@ -36,21 +36,25 @@ class _OrderTypeCategoryPageState extends State<OrderTypeCategoryPage> {
   String _ASTTX = "";
 
   _listOrder(String ASTTX, String AUART) async {
-    setState(() {
-      this._loading = true;
-    });
+    if (this.mounted) {
+      setState(() {
+        this._loading = true;
+      });
+    }
     this._list = [];
       return await HttpRequest.listPlanOrderType(Global.userInfo.PERNR, _userInfo.WCTYPE == "是" ? "X" : "", ASTTX, AUART, (t) {
-        this._refreshController.refreshCompleted();
-        setState(() {
-          _list = t;
-          this._loading = false;
-        });
+        if (this.mounted) {
+          setState(() {
+            _list = t;
+            this._loading = false;
+          });
+          this._refreshController.refreshCompleted();
+        }
       }, (err) {
-        this._refreshController.refreshFailed();
         setState(() {
           this._loading = false;
         });
+        this._refreshController.refreshFailed();
       });
   }
 

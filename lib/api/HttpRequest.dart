@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:gztyre/api/model/Device.dart';
 import 'package:gztyre/api/model/DeviceTypeDetail.dart';
 import 'package:gztyre/api/model/FunctionPosition.dart';
@@ -19,10 +20,10 @@ import 'package:gztyre/utils/XmlUtils.dart';
 
 class HttpRequest {
   static Dio http = new Dio(BaseOptions(
-//      headers: {"Authorization": "Basic UE1BUFAtRVJQOlBtYXBwKzY2Ng=="}, // 生产
-//    baseUrl: "http://pmerp.gztyre.com:8000/sap/bc/srt/rfc/sap", //生产
-      headers: {"Authorization": "Basic RGV2MDM6MTIzNDU2"}, // 开发
-      baseUrl: "http://61.159.128.211:8005/sap/bc/srt/rfc/sap", //开发
+      headers: {"Authorization": "Basic UE1BUFAtRVJQOlBtYXBwKzY2Ng=="}, // 生产
+    baseUrl: "http://pmerp.gztyre.com:8000/sap/bc/srt/rfc/sap", //生产
+//      headers: {"Authorization": "Basic RGV2MDM6MTIzNDU2"}, // 开发
+//      baseUrl: "http://61.159.128.211:8005/sap/bc/srt/rfc/sap", //开发
       connectTimeout: 30000));
 
   /// 查询用户信息
@@ -72,10 +73,12 @@ class HttpRequest {
         PERNR, CPLGR, MATYP, SORTB, WCTYPE, ASTTX, ItWxfz);
     print(xml);
     try {
+      print(DateTime.now());
       Response response = await http.post(
           "/zpm_search_order/888/zpm_search_order/zpm_search_order",
           data: xml,
           options: Options(contentType: 'text/xml'));
+      print(DateTime.now());
       return await onSuccess(XmlUtils.readOrderXml(response.data));
     } on DioError catch (e) {
       return await onError(e);
@@ -272,7 +275,7 @@ class HttpRequest {
     }
   }
 
-  /// 工单历史
+  /// 工单维修记录
   static repairOrderHistory(
       String AUFNR,
       Function(List<RepairHistory> t) onSuccess,
@@ -378,10 +381,12 @@ class HttpRequest {
         FEGRP, FECOD, FETXT, CPLGR, MATYP, MSAUS, APPTRADENO);
     print(xml);
     try {
+      print(DateTime.now());
       Response response = await http.post(
           "/zpm_create_iw21/888/zpm_create_iw21/zpm_create_iw21",
           data: xml,
           options: Options(contentType: 'text/xml'));
+      print(DateTime.now());
       return await onSuccess(XmlUtils.readReportOrderXml(response.data));
     } on DioError catch (e) {
       return await onError(e);
@@ -605,6 +610,24 @@ class HttpRequest {
           data: xml,
           options: Options(contentType: 'text/xml'));
       return await onSuccess(XmlUtils.readMaterialTemp(response.data));
+    } on DioError catch (e) {
+      return await onError(e);
+    }
+  }
+
+  /// 协助单所有已加入人员查询
+  static listHelpWorker(
+      String AUFNR,
+      Function(List<String>) onSuccess,
+      Function(DioError err) onError) async {
+    var xml = XmlUtils.buildHelpWorker(AUFNR);
+    print(xml);
+    try {
+      Response response = await http.post(
+          "/zpm_search_order_jr_pernr/888/zpm_search_order_jr_pernr/zpm_search_order_jr_pernr",
+          data: xml,
+          options: Options(contentType: 'text/xml'));
+      return await onSuccess(XmlUtils.readHelpWorker(response.data));
     } on DioError catch (e) {
       return await onError(e);
     }

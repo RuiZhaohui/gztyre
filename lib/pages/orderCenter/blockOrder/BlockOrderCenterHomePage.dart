@@ -12,11 +12,7 @@ import 'package:gztyre/pages/orderCenter/blockOrder/OrderListPage.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class BlockOrderCenterHomePage extends StatefulWidget {
-  BlockOrderCenterHomePage({Key key, @required this.rootContext})
-      : assert(rootContext != null),
-        super(key: key);
-
-  final BuildContext rootContext;
+  BlockOrderCenterHomePage({Key key}) :super(key: key);
 
   @override
   State createState() => _BlockOrderCenterHomePageState();
@@ -66,7 +62,7 @@ class _BlockOrderCenterHomePageState extends State<BlockOrderCenterHomePage> {
             (item.APPSTATUS == "接单" ||
                 item.APPSTATUS == "转单" ||
                 (item.APPSTATUS == "呼叫协助") ||
-                (item.APPSTATUS == "加入"))) {
+                (item.APPSTATUS == "加入")) && (isManager || item.PERNR1 == _userInfo.PERNR)) {
           resList.add(item);
         }
       });
@@ -86,7 +82,7 @@ class _BlockOrderCenterHomePageState extends State<BlockOrderCenterHomePage> {
     map.putIfAbsent("协助单", () {
       List<Order> resList = new List();
       list.forEach((item) {
-        if ((item.APPSTATUS == "呼叫协助" || item.APPSTATUS == "加入")) {
+        if ((item.APPSTATUS == "呼叫协助" || item.APPSTATUS == "加入") && item.PERNR1 != _userInfo.PERNR) {
           resList.add(item);
         }
       });
@@ -106,7 +102,7 @@ class _BlockOrderCenterHomePageState extends State<BlockOrderCenterHomePage> {
     });
     return await HttpRequest.historyOrder(this._userInfo.PERNR, this._userInfo.WCTYPE == "是" ? "X" : "", (List<Order> list) {
       print(list);
-      return list.length;
+      return list.where((element) => element.ILART == "N08").toList().length;
     }, (err) {
       print(err);
       return 0;
@@ -122,8 +118,8 @@ class _BlockOrderCenterHomePageState extends State<BlockOrderCenterHomePage> {
       return await HttpRequest.listBlockOrder(this._userInfo.PERNR, null, null, null,
           "X", null, "ZPM4", Global.maintenanceGroup, (List<Order> list) async {
             list.forEach((item) {
-              if (item.QMNUM != null &&
-                  item.QMNUM != '') {
+              if (item.QMNUM == null ||
+                  item.QMNUM == '') {
                 this._list.add(item);
               }
             });
@@ -226,7 +222,7 @@ class _BlockOrderCenterHomePageState extends State<BlockOrderCenterHomePage> {
                                   ],
                                 ),
                                 onTap: () {
-                                  Navigator.of(widget.rootContext).push(
+                                  Navigator.of(context).push(
                                       new CupertinoPageRoute(
                                           settings:
                                               RouteSettings(name: "repairList"),
@@ -283,7 +279,7 @@ class _BlockOrderCenterHomePageState extends State<BlockOrderCenterHomePage> {
                                   ],
                                 ),
                                 onTap: () {
-                                  Navigator.of(widget.rootContext).push(
+                                  Navigator.of(context).push(
                                       new CupertinoPageRoute(
                                           settings:
                                               RouteSettings(name: "repairList"),
@@ -341,7 +337,7 @@ class _BlockOrderCenterHomePageState extends State<BlockOrderCenterHomePage> {
                                   ],
                                 ),
                                 onTap: () {
-                                  Navigator.of(widget.rootContext).push(
+                                  Navigator.of(context).push(
                                       new CupertinoPageRoute(
                                           settings:
                                               RouteSettings(name: "repairList"),
@@ -399,7 +395,7 @@ class _BlockOrderCenterHomePageState extends State<BlockOrderCenterHomePage> {
                                   ],
                                 ),
                                 onTap: () {
-                                  Navigator.of(widget.rootContext).push(
+                                  Navigator.of(context).push(
                                       new CupertinoPageRoute(
                                           settings:
                                               RouteSettings(name: "repairList"),
@@ -457,7 +453,7 @@ class _BlockOrderCenterHomePageState extends State<BlockOrderCenterHomePage> {
                                   ],
                                 ),
                                 onTap: () {
-                                  Navigator.of(widget.rootContext).push(
+                                  Navigator.of(context).push(
                                       new CupertinoPageRoute(
                                           settings:
                                               RouteSettings(name: "repairList"),
@@ -515,7 +511,7 @@ class _BlockOrderCenterHomePageState extends State<BlockOrderCenterHomePage> {
                                   ],
                                 ),
                                 onTap: () {
-                                  Navigator.of(widget.rootContext).push(
+                                  Navigator.of(context).push(
                                       new CupertinoPageRoute(
                                           settings:
                                               RouteSettings(name: "repairList"),

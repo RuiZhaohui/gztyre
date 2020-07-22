@@ -56,23 +56,23 @@ class _RepairTypePageState extends State<RepairTypePage> {
       if (Global.userInfo.WCTYPE == "是") {
         if (_maintenanceWorker.contains(Global.userInfo.SORTB)) {
           this._repairType = list.where((item) {
-            return ["N01", "N07", "N08"].contains(item.ILART);
+            return ["N01", "N07", "N08", "N19"].contains(item.ILART);
           }).toList();
         } else if (_monitorOrForeman.contains(Global.userInfo.SORTB)) {
           this._repairType = list.where((item) {
-            return ["N01", "N08"].contains(item.ILART);
+            return ["N01", "N08", "N13"].contains(item.ILART);
           }).toList();
         } else if (_equipmentSupervisor.contains(Global.userInfo.SORTB)) {
           this._repairType = list.where((item) {
-            return ["N01"].contains(item.ILART);
+            return ["N01", "N13"].contains(item.ILART);
           }).toList();
         } else if (_engineer.contains(Global.userInfo.SORTB)) {
           this._repairType = list.where((item) {
-            return ["N01", "N07", "N08", "N09", "N13"].contains(item.ILART);
+            return ["N01", "N07", "N08", "N09", "N13", "N19"].contains(item.ILART);
           }).toList();
         } else if (_maintenanceManagementPersonnel.contains(Global.userInfo.SORTB)) {
           this._repairType = list.where((item) {
-            return ["N01"].contains(item.ILART);
+            return ["N01", "N13"].contains(item.ILART);
           }).toList();
         } else {
           this._repairType = [];

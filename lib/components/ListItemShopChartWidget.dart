@@ -62,11 +62,11 @@ class _ListItemShopChartWidgetState extends State<ListItemShopChartWidget> {
                   },
                 ),
                 Container(
-                  child: Text(
-                    this._controller.text,
+                  child: CupertinoTextField(
+                    controller: this._controller,
                     textAlign: TextAlign.center,
                   ),
-                  width: 30,
+                  width: 60,
                 ),
                 GestureDetector(
                   child: Icon(

@@ -10,8 +10,8 @@ PODS:
     - Flutter
   - image_picker (0.0.1):
     - Flutter
-  - JCore (2.1.6)
-  - JPush (3.2.8):
+  - JCore (2.3.0)
+  - JPush (3.3.3):
     - JCore (< 3.0.0, >= 2.0.0)
   - jpush_flutter (0.0.2):
     - Flutter
@@ -99,8 +99,8 @@ SPEC CHECKSUMS:
   flutter_plugin_record: 562ded56f3a109d769e72c3ef52ef20d835493d4
   flutter_ringtone_player: 15eba85187230b87b2512f0e1b92225618bc03e7
   image_picker: e3eacd46b94694dde7cf2705955cece853aa1a8f
-  JCore: daebd39538328db0cdcad6c4ed101815c42f84bf
-  JPush: 8ce888d6dedfa417e90c8b6bc87405a16ce2e699
+  JCore: 7fb83e1e75e00df37e9e1e33f3adae79182ad57c
+  JPush: 61b3dc8c2bdefb7c48e7ca283f9fe42e71bfe063
   jpush_flutter: d7e3a79466eb9447fd940233f02661b514f137c6
   path_provider: fb74bd0465e96b594bb3b5088ee4a4e7bb1f2a9d
   shared_preferences: 430726339841afefe5142b9c1f50cb6bd7793e01
