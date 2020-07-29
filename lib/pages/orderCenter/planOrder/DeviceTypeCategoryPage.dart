@@ -44,7 +44,7 @@ class _DeviceTypeCategoryPageState extends State<DeviceTypeCategoryPage> {
       });
     }
     this._list = [];
-    return await HttpRequest.listPlanOrderDeviceType(Global.userInfo.PERNR, _userInfo.WCTYPE == "是" ? "X" : "", ASTTX, AUART, ILART, (t) {
+    return await HttpRequest.listPlanOrderDeviceType(Global.userInfo.PERNR, _userInfo.WCTYPE == "是" ? "X" : "", ASTTX, AUART, ILART, Global.maintenanceGroup, (t) {
       this._refreshController.refreshCompleted();
       if (this.mounted) {
         setState(() {

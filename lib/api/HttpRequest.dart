@@ -143,9 +143,10 @@ class HttpRequest {
       String WCTYPE,
       String ASTTX,
       String AUART,
+      List<String> ItWxfz,
       Function(List<RepairTypeDetail> t) onSuccess,
       Function(DioError err) onError) async {
-    var xml = XmlUtils.buildPlanOrderTypeXml(PERNR, WCTYPE, ASTTX, AUART);
+    var xml = XmlUtils.buildPlanOrderTypeXml(PERNR, WCTYPE, ASTTX, AUART, ItWxfz);
     print(xml);
     try {
       Response response = await http.post(
@@ -165,10 +166,11 @@ class HttpRequest {
       String ASTTX,
       String AUART,
       String ILART,
+      List<String> ItWxfz,
       Function(List<DeviceTypeDetail> t) onSuccess,
       Function(DioError err) onError) async {
     var xml = XmlUtils.buildPlanOrderDeviceTypeXml(
-        PERNR, WCTYPE, ASTTX, AUART, ILART);
+        PERNR, WCTYPE, ASTTX, AUART, ILART, ItWxfz);
     print(xml);
     try {
       Response response = await http.post(
@@ -190,10 +192,11 @@ class HttpRequest {
       String AUART,
       String ILART,
       String EQUNR,
+      List<String> ItWxfz,
       Function(List<Order> t) onSuccess,
       Function(DioError err) onError) async {
     var xml = XmlUtils.buildPlanOrderByDeviceTypeAndOrderTypeXml(
-        PERNR, WCTYPE, ASTTX, AUART, ILART, EQUNR);
+        PERNR, WCTYPE, ASTTX, AUART, ILART, EQUNR, ItWxfz);
     print(xml);
     try {
       Response response = await http.post(

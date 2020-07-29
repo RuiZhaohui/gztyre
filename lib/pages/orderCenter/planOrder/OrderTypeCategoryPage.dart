@@ -42,7 +42,7 @@ class _OrderTypeCategoryPageState extends State<OrderTypeCategoryPage> {
       });
     }
     this._list = [];
-      return await HttpRequest.listPlanOrderType(Global.userInfo.PERNR, _userInfo.WCTYPE == "是" ? "X" : "", ASTTX, AUART, (t) {
+      return await HttpRequest.listPlanOrderType(Global.userInfo.PERNR, _userInfo.WCTYPE == "是" ? "X" : "", ASTTX, AUART, Global.maintenanceGroup, (t) {
         if (this.mounted) {
           setState(() {
             _list = t;

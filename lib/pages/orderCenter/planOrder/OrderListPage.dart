@@ -69,7 +69,7 @@ class _OrderListPageState extends State<OrderListPage> {
     });
     this._list = [];
     return await HttpRequest.listPlanOrderByDeviceTypeAndOrderType(
-        this._userInfo.PERNR, "X", _ASTTX, "ZPM2", _ILART, _EQUNR, (List<Order> list) {
+        this._userInfo.PERNR, "X", _ASTTX, "ZPM2", _ILART, _EQUNR, Global.maintenanceGroup, (List<Order> list) {
       this._isRepairing = false;
       list.forEach((item) {
         if (item.QMNUM != null &&
@@ -100,7 +100,7 @@ class _OrderListPageState extends State<OrderListPage> {
       list.forEach((item) {
         if (item.QMNUM != null &&
             item.QMNUM != '' && item.ASTTX == "维修中" &&
-            (item.APPSTATUS == "接单" || item.APPSTATUS == "转单" || item.APPSTATUS == "呼叫协助" || item.APPSTATUS == "加入") && (isManager || item.PERNR1 == _userInfo.PERNR)) {
+            (item.APPSTATUS == "接单" || item.APPSTATUS == "转单" || item.APPSTATUS == "呼叫协助" || item.APPSTATUS == "加入") && ((isManager && item.ILART != "N06") || item.PERNR1 == _userInfo.PERNR)) {
           this._list.add(item);
         }
       });

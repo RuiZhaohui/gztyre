@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:collection';
 import 'dart:io';
-import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +23,6 @@ import 'package:gztyre/pages/problemReport/DeviceSelectionPage.dart';
 import 'package:gztyre/pages/problemReport/ProblemDescriptionPage.dart';
 import 'package:gztyre/pages/problemReport/RepairTypePage.dart';
 import 'package:gztyre/utils/ListController.dart';
-import 'package:gztyre/utils/screen_utils.dart';
 import 'package:uuid/uuid.dart';
 
 class ProblemReportHomePage extends StatefulWidget {
@@ -156,6 +154,25 @@ class _ProblemReportHomePageState extends State<ProblemReportHomePage> {
             return CupertinoAlertDialog(
               content: Text(
                 "备件编号请以 WX 开头",
+                style: TextStyle(fontSize: 18),
+              ),
+              actions: <Widget>[
+                CupertinoDialogAction(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text("好"),
+                ),
+              ],
+            );
+          });
+    } else if (this._repairType.ILART == "N08" && _searchMaterial == null) {
+      showCupertinoDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return CupertinoAlertDialog(
+              content: Text(
+                "未查询到备件",
                 style: TextStyle(fontSize: 18),
               ),
               actions: <Widget>[
@@ -712,6 +729,25 @@ class _ProblemReportHomePageState extends State<ProblemReportHomePage> {
             return CupertinoAlertDialog(
               content: Text(
                 "备件编号请以 WX 开头",
+                style: TextStyle(fontSize: 18),
+              ),
+              actions: <Widget>[
+                CupertinoDialogAction(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text("好"),
+                ),
+              ],
+            );
+          });
+    } else if (this._repairType.ILART == "N08" && _searchMaterial == null) {
+      showCupertinoDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return CupertinoAlertDialog(
+              content: Text(
+                "未查询到备件",
                 style: TextStyle(fontSize: 18),
               ),
               actions: <Widget>[

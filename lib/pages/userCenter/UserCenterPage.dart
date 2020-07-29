@@ -115,7 +115,11 @@ class _UserCenterPageState extends State<UserCenterPage> {
                       onTap: () {
                         Navigator.of(widget.rootContext).push(CupertinoPageRoute(builder: (BuildContext context) {
                           return UserInfoModifyPage();
-                        }));
+                        })).then((value) {
+                          setState(() {
+
+                          });
+                        });
                       },
                       title: Row(
                         children: <Widget>[
@@ -166,11 +170,19 @@ class _UserCenterPageState extends State<UserCenterPage> {
                         if (Global.maintenanceGroup == null) {
                           Navigator.of(widget.rootContext).push(CupertinoPageRoute(builder: (BuildContext context) {
                             return UserWorkShiftSelectionPage(userName: Global.userInfo.PERNR, selectItem: Global.workShift,);
-                          }));
+                          })).then((value) {
+                            setState(() {
+
+                            });
+                          });
                         } else {
                           Navigator.of(widget.rootContext).push(CupertinoPageRoute(builder: (BuildContext context) {
                             return UserMaintenanceGroupSelectionPage(selectItemList: Global.maintenanceGroup,);
-                          }));
+                          })).then((value) {
+                            setState(() {
+
+                            });
+                          });
                         }
                       },
                       title: Row(
@@ -200,7 +212,7 @@ class _UserCenterPageState extends State<UserCenterPage> {
                       color: Color.fromRGBO(231, 233, 234, 1),
                       child: ButtonBarWidget(
                         button: Container(
-                          height: 22,
+                          height: 26,
                           child:
                           ButtonWidget(
                             padding: EdgeInsets.all(0),

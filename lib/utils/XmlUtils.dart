@@ -370,7 +370,7 @@ class XmlUtils {
     }
   }
 
-  static xml.XmlNode buildPlanOrderTypeXml(String PERNR, String WCTYPE, String ASTTX, String AUART) {
+  static xml.XmlNode buildPlanOrderTypeXml(String PERNR, String WCTYPE, String ASTTX, String AUART, List<String> ItWxfz) {
     var builder = new xml.XmlBuilder();
     builder.element("Envelope",
         attributes: {"xmlns": "http://schemas.xmlsoap.org/soap/envelope/"},
@@ -386,7 +386,13 @@ class XmlUtils {
                 builder.element("Auart", nest: AUART);
               });
               builder.element("EtData", attributes: {"xmlns": ""});
-              builder.element("ItWxfz", attributes: {"xmlns": ""});
+              builder.element("ItWxfz", attributes: {"xmlns": ""}, nest: () {
+                ItWxfz.map((item) {
+                  return builder.element("item", nest: () {
+                    builder.element("Wxfz", nest: item);
+                  });
+                }).toList();
+              });
             });
           });
         });
@@ -409,7 +415,7 @@ class XmlUtils {
     }
   }
 
-  static xml.XmlNode buildPlanOrderDeviceTypeXml(String PERNR, String WCTYPE, String ASTTX, String AUART, String ILART) {
+  static xml.XmlNode buildPlanOrderDeviceTypeXml(String PERNR, String WCTYPE, String ASTTX, String AUART, String ILART, List<String> ItWxfz) {
     var builder = new xml.XmlBuilder();
     builder.element("Envelope",
         attributes: {"xmlns": "http://schemas.xmlsoap.org/soap/envelope/"},
@@ -426,7 +432,13 @@ class XmlUtils {
                 builder.element("Ilart", nest: ILART);
               });
               builder.element("EtData", attributes: {"xmlns": ""});
-              builder.element("ItWxfz", attributes: {"xmlns": ""});
+              builder.element("ItWxfz", attributes: {"xmlns": ""}, nest: () {
+                ItWxfz.map((item) {
+                  return builder.element("item", nest: () {
+                    builder.element("Wxfz", nest: item);
+                  });
+                }).toList();
+              });
             });
           });
         });
@@ -449,7 +461,7 @@ class XmlUtils {
     }
   }
 
-  static xml.XmlNode buildPlanOrderByDeviceTypeAndOrderTypeXml(String PERNR, String WCTYPE, String ASTTX, String AUART, String ILART, String EQUNR) {
+  static xml.XmlNode buildPlanOrderByDeviceTypeAndOrderTypeXml(String PERNR, String WCTYPE, String ASTTX, String AUART, String ILART, String EQUNR, List<String> ItWxfz) {
     var builder = new xml.XmlBuilder();
     builder.element("Envelope",
         attributes: {"xmlns": "http://schemas.xmlsoap.org/soap/envelope/"},
@@ -467,7 +479,13 @@ class XmlUtils {
                 builder.element("Equnr", nest: EQUNR);
               });
               builder.element("ItOrder", attributes: {"xmlns": ""});
-              builder.element("ItWxfz", attributes: {"xmlns": ""});
+              builder.element("ItWxfz", attributes: {"xmlns": ""}, nest: () {
+                ItWxfz.map((item) {
+                  return builder.element("item", nest: () {
+                    builder.element("Wxfz", nest: item);
+                  });
+                }).toList();
+              });
             });
           });
         });

@@ -363,7 +363,7 @@ class _OrderRepairDetailPageState extends State<OrderRepairDetailPage> {
                                     ],
                                   );
                                 });
-                          } else if (notFiveLevel && ["N01"].contains(widget.order.ILART)) {
+                          } else if (notFiveLevel && ["N01"].contains(widget.order.ILART) && _device.deviceType == "E") {
                             showCupertinoDialog(
                                 context: context,
                                 builder: (BuildContext context) {

@@ -1918,8 +1918,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
         widget.itemStatus == "新工单" &&
                 ((this._maintenanceWorker.contains(Global.userInfo.SORTB) ||
                     this._monitorOrForeman.contains(Global.userInfo.SORTB) ||
-                    this._engineer.contains(Global.userInfo.SORTB)) &&
-    widget.order.PERNR == Global.userInfo.PERNR)
+                    this._engineer.contains(Global.userInfo.SORTB)))
             ? Align(
                 alignment: Alignment.bottomCenter,
                 child: ButtonBarWidget(

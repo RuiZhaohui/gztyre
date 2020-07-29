@@ -88,7 +88,7 @@ class _OrderListPageState extends State<OrderListPage> {
       } else if (widget.title == "维修中") {
       list.forEach((item) {
         if (item.ASTTX == "维修中" &&
-            (item.APPSTATUS == "接单" || item.APPSTATUS == "转单" || item.APPSTATUS == "呼叫协助" || item.APPSTATUS == "加入") && (isManager || item.PERNR1 == _userInfo.PERNR)) {
+            (item.APPSTATUS == "接单" || item.APPSTATUS == "转单" || item.APPSTATUS == "呼叫协助" || item.APPSTATUS == "加入") && ((isManager && item.ILART != "N06") || item.PERNR1 == _userInfo.PERNR)) {
           this._list.add(item);
         }
       });

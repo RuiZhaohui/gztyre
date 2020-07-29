@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gztyre/api/HttpRequest.dart';
 import 'package:gztyre/api/HttpRequestRest.dart';
-//import 'package:gztyre/api/model/Device.dart';
 import 'package:gztyre/api/model/Materiel.dart';
 import 'package:gztyre/api/model/SubmitMateriel.dart';
 import 'package:gztyre/components/BottomDragWidget.dart';
@@ -16,14 +15,10 @@ import 'package:gztyre/utils/screen_utils.dart';
 class MaterielPage extends StatefulWidget {
   MaterielPage(
       {Key key,
-//      @required this.device,
       @required this.AUFNR,
-//      @required this.list
       })
       : super(key: key);
-//  final Device device;
   final String AUFNR;
-//  final List<SubmitMateriel> list;
 
   @override
   State createState() => _MaterielPageState();

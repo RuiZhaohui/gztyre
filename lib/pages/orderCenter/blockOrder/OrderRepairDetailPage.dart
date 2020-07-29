@@ -10,11 +10,8 @@ import 'package:gztyre/api/model/ProblemDescription.dart';
 import 'package:gztyre/commen/Global.dart';
 import 'package:gztyre/components/ButtonBarWidget.dart';
 import 'package:gztyre/components/ButtonWidget.dart';
-import 'package:gztyre/components/ListItemWidget.dart';
 import 'package:gztyre/components/ProgressDialog.dart';
 import 'package:gztyre/components/TextareaWithPicAndVideoWidget.dart';
-import 'package:gztyre/pages/problemReport/DeviceSelectionPage.dart';
-import 'package:gztyre/pages/problemReport/ProblemDescriptionPage.dart';
 import 'package:gztyre/utils/ListController.dart';
 import 'package:gztyre/utils/StringUtils.dart';
 

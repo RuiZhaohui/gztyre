@@ -18,7 +18,6 @@ import 'package:gztyre/pages/orderCenter/blockOrder//HelpPage.dart';
 import 'package:gztyre/pages/orderCenter/blockOrder/MaterielPage.dart';
 import 'package:gztyre/pages/orderCenter/blockOrder/OrderRepairDetailPage.dart';
 import 'package:gztyre/pages/orderCenter/blockOrder/WorkerPage.dart';
-import 'package:gztyre/pages/problemReport/DeviceSelectionPage.dart';
 import 'package:gztyre/pages/repairOrder/RepairDetailPage.dart';
 import 'package:gztyre/pages/repairOrder/RepairHistoryPage.dart';
 import 'package:gztyre/pages/userCenter/UserInfoPage.dart';

@@ -62,7 +62,7 @@ class _BlockOrderCenterHomePageState extends State<BlockOrderCenterHomePage> {
             (item.APPSTATUS == "接单" ||
                 item.APPSTATUS == "转单" ||
                 (item.APPSTATUS == "呼叫协助") ||
-                (item.APPSTATUS == "加入")) && (isManager || item.PERNR1 == _userInfo.PERNR)) {
+                (item.APPSTATUS == "加入")) && ((isManager && item.ILART != "N06") || item.PERNR1 == _userInfo.PERNR)) {
           resList.add(item);
         }
       });
