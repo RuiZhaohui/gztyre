@@ -38,10 +38,10 @@ class RepairOrder {
   /// 接单时间
   String ERTIM;
 
-  ///完工日期
+  /// 完工日期
   String AEDAT;
 
-  ///完工时间
+  /// 完工时间
   String AETIM;
 
   /// 是否停机

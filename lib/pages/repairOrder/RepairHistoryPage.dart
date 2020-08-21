@@ -3,9 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:gztyre/api/HttpRequest.dart';
 import 'package:gztyre/api/model/Order.dart';
 import 'package:gztyre/api/model/RepairHistory.dart';
-import 'package:gztyre/api/model/RepairOrder.dart';
 import 'package:gztyre/components/ProgressDialog.dart';
-import 'package:gztyre/components/painter/TimeLinePainter.dart';
 import 'package:gztyre/pages/userCenter/UserInfoPage.dart';
 
 class RepairHistoryPage extends StatefulWidget {
@@ -135,23 +133,7 @@ class _RepairHistoryPageState extends State<RepairHistoryPage> {
                     child: this._repairOrderList.length > 0 ? Padding(
                       padding: EdgeInsets.only(left: 20),
                       child: ListView(
-//                      children: <Widget>[
-//                        Row(
-//                          crossAxisAlignment: CrossAxisAlignment.start,
-//                          children: <Widget>[
-//                            Padding(
-//                              padding: EdgeInsets.only(
-//                                top: 22,
-//                                left: 20,
-//                              ),
-//                              child: Column(
-//                                crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[..._buildList()],
-//                              ),
-//                            ),
-//                          ],
-//                        )
-//                      ],
                       ),
                     ) : Container()),
           ));

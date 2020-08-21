@@ -10,7 +10,6 @@ import 'package:gztyre/components/ListTitleWidget.dart';
 import 'package:gztyre/components/ProgressDialog.dart';
 import 'package:gztyre/components/SearchBar.dart';
 import 'package:gztyre/components/TextButtonWidget.dart';
-import 'package:gztyre/pages/ContainerPage.dart';
 
 class UserWorkShiftSelectionPage extends StatefulWidget {
   UserWorkShiftSelectionPage({Key key, @required this.userName, @required this.selectItem}) : super(key: key);
@@ -178,7 +177,7 @@ class _UserWorkShiftSelectionPageState extends State<UserWorkShiftSelectionPage>
                       var string = jsonEncode(this._historyStringList.toList());
                       print(string);
                       await Global.prefs.setString("historyWorkShift", jsonEncode(this._historyStringList.toList()));
-                      await Navigator.of(context).pop();
+                      Navigator.of(context).pop();
                     }
                   },
                   text: "确定",

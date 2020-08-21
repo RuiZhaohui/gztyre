@@ -319,7 +319,6 @@ class _OrderRepairDetailPageState extends State<OrderRepairDetailPage> {
                             this._selectProblemDescription =
                                 value["selectItem"];
                             setState(() {});
-                            ;
                           });
                         },
                       ),

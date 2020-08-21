@@ -98,6 +98,7 @@ class TCameraWidgetState extends State<CameraWidget> with SingleTickerProviderSt
                     width: widget.radius * 2,
                     height: widget.radius * 2,
                     child: FloatingActionButton(
+                      onPressed: () {},
                       backgroundColor: Color.fromRGBO(218, 211, 200, 1),
                       child: GestureDetector(
                         child: this.longPress ? Container(

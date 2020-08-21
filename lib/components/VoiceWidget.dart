@@ -232,6 +232,7 @@ class _VoiceWidgetState extends State<VoiceWidget> {
         child: Container(
           height: 30,
           child: ButtonWidget(
+            onPressed: () {},
             fontSize: 16,
 //                      minSize: 0.1,
             padding: EdgeInsets.only(left: 50, right: 50),
@@ -249,6 +250,7 @@ class _VoiceWidgetState extends State<VoiceWidget> {
       ) : Container(
         height: 30,
         child: ButtonWidget(
+          onPressed: () {},
           fontSize: 16,
 //                      minSize: 0.1,
           padding: EdgeInsets.only(left: 50, right: 50),

@@ -7,7 +7,6 @@ import 'package:gztyre/components/DividerBetweenIconListItem.dart';
 import 'package:gztyre/components/ListItemWidget.dart';
 import 'package:gztyre/components/ProgressDialog.dart';
 import 'package:gztyre/components/UserInfoWidget.dart';
-import 'package:gztyre/pages/userCenter/UserInfoModifyPage.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class UserInfoPage extends StatefulWidget {

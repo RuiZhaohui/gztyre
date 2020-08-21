@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:gztyre/api/model/Device.dart';
 import 'package:gztyre/api/model/FunctionPosition.dart';
 import 'package:gztyre/api/model/Materiel.dart';
 import 'package:gztyre/commen/Global.dart';
@@ -9,10 +11,9 @@ class HttpRequestRest {
 
   static Dio getHttp() {
     Dio http = new Dio(BaseOptions(
-        baseUrl: "http://pmapp.gztyre.com:8080", // 生产
-//      baseUrl: "http://192.168.6.211:8070", // 开发
-//        baseUrl: "http://localhost:8070", // 本地
-        connectTimeout: 300000));
+      baseUrl: Global.url,
+      connectTimeout: 60 * 1000,
+        ));
     http.interceptors.add(InterceptorsWrapper(onRequest: (RequestOptions options) {
       if (Global.token != null) {
         options.headers.addEntries([
@@ -282,7 +283,7 @@ class HttpRequestRest {
   static isMaterielExist(String code, Function(bool success) onSuccess,
       Function(DioError err) onError) async {
     try {
-      Response response = await getHttp().get("/api/sap/materials/${code}/exist");
+      Response response = await getHttp().get("/api/sap/materials/$code/exist");
       print(response.data);
       return await onSuccess(response.data['data']);
     } on DioError catch (e) {
@@ -290,14 +291,63 @@ class HttpRequestRest {
     }
   }
 
-  static getMateriel(String code, Function(Materiel materiel) onSuccess,
+  static getMateriel(String code, Function(List<Materiel> materielList) onSuccess,
       Function(DioError err) onError) async {
     try {
-      Response response = await getHttp().get("/api/sap/materials/${code}");
+      Response response = await getHttp().get("/api/sap/materials/$code");
       print(response.data);
       if (response.data['data'] == null) {
         return onSuccess(null);
-      } else return await onSuccess(Materiel.formJson(response.data['data']));
+      } else {
+        List list = response.data['data'];
+//        list.forEach((element) {element.toString();});
+        return await onSuccess(list.map((e) => Materiel.formJson(e)).toList());
+      }
+    } on DioError catch (e) {
+      return await onError(e);
+    }
+  }
+
+  /// 查询版本
+  static getVersion(String product, Function(String version) onSuccess,
+      Function(DioError err) onError) async {
+    try {
+      Response response = await getHttp().get("/api/sap/version/$product");
+      if (response.data["data"] == null) {
+        return await onError(new DioError());
+      } else {
+        return await onSuccess(response.data["data"]);
+      }
+    } on DioError catch (e) {
+      return await onError(e);
+    }
+  }
+
+  /// 查询设备等级
+  static getDeviceLevel(String deviceCode, Function(int level) onSuccess,
+      Function(DioError err) onError) async {
+    try {
+      Response response = await getHttp().get("/api/sap/devices/$deviceCode/level");
+      if (response.data["data"] == null) {
+        return await onError(new DioError());
+      } else {
+        return await onSuccess(response.data['data']);
+      }
+    } on DioError catch (e) {
+      return await onError(e);
+    }
+  }
+
+  /// 查询设备
+  static getDevice(String deviceCode, Function(Device device) onSuccess,
+      Function(DioError err) onError) async {
+    try {
+      Response response = await getHttp().get("/api/sap/devices/deviceCode/$deviceCode");
+      if (response.data["data"] == null) {
+        return await onError(new DioError());
+      } else {
+        return await onSuccess(Device.formJson(new Map<String, dynamic>.from(response.data['data'])));
+      }
     } on DioError catch (e) {
       return await onError(e);
     }

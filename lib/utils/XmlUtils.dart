@@ -1,9 +1,7 @@
-import 'dart:math';
 
 import 'package:dio/dio.dart';
 import 'package:gztyre/api/model/Device.dart';
 import 'package:gztyre/api/model/DeviceTypeDetail.dart';
-import 'package:gztyre/api/model/FunctionPositionWithDevice.dart';
 import 'package:gztyre/api/model/Materiel.dart';
 import 'package:gztyre/api/model/Order.dart';
 import 'package:gztyre/api/model/ProblemDescription.dart';
@@ -16,7 +14,7 @@ import 'package:gztyre/api/model/SubmitMateriel.dart';
 import 'package:gztyre/api/model/UserInfo.dart';
 import 'package:gztyre/api/model/WorkShift.dart';
 import 'package:gztyre/api/model/Worker.dart';
-import 'package:xml/xml.dart' as xml;
+import 'package:xml/xml.dart';
 
 class XmlUtils {
   static final XmlUtils _singleton = XmlUtils();
@@ -27,8 +25,8 @@ class XmlUtils {
 
 //  static Xml2Json myTransformer = Xml2Json();
 
-  static xml.XmlNode buildUserInfoXml(String userId) {
-    var builder = new xml.XmlBuilder();
+  static XmlNode buildUserInfoXml(String userId) {
+    var builder = new XmlBuilder();
     builder.element("Envelope",
         attributes: {"xmlns": "http://schemas.xmlsoap.org/soap/envelope/"},
         nest: () {
@@ -42,11 +40,11 @@ class XmlUtils {
         });
       });
     });
-    return builder.build();
+    return builder.buildDocument();
   }
 
   static UserInfo readUserInfoXml(String stringXml) {
-    var document = xml.parse(stringXml);
+    var document = XmlDocument.parse(stringXml);
     UserInfo userInfo = new UserInfo();
     userInfo.PERNR = document.findAllElements("Pernr").first.text;
     userInfo.ENAME = document.findAllElements("Ename").first.text;
@@ -63,55 +61,8 @@ class XmlUtils {
     return userInfo;
   }
 
-  static xml.XmlNode buildFunctionPositionXml(String PERNR) {
-    var builder = new xml.XmlBuilder();
-    builder.element("Envelope",
-        attributes: {"xmlns": "http://schemas.xmlsoap.org/soap/envelope/"},
-        nest: () {
-      builder.element("Body", nest: () {
-        builder.element("ZpmSearchTplnr", attributes: {
-          "xmlns": "urn:sap-com:document:sap:soap:functions:mc-style"
-        }, nest: () {
-          builder.element("EtData", attributes: {"xmlns": ""});
-          builder.element("Pernr", attributes: {"xmlns": ""}, nest: PERNR);
-        });
-      });
-    });
-    return builder.build();
-  }
-
-  static List<FunctionPositionWithDevice> readFunctionPositionXml(
-      String stringXml) {
-    var document = xml.parse(stringXml);
-    List<FunctionPositionWithDevice> list =
-        document.findAllElements("item").map((e) {
-      FunctionPositionWithDevice functionPositionWithDevice =
-          new FunctionPositionWithDevice();
-      functionPositionWithDevice.TPLNR = e.findAllElements("Tplnr").first.text;
-      functionPositionWithDevice.PLTXT = e.findAllElements("Pltxt").first.text;
-      functionPositionWithDevice.TPLNR2 =
-          e.findAllElements("Tplnr2").first.text;
-      functionPositionWithDevice.PLTXT2 =
-          e.findAllElements("Pltxt2").first.text;
-      functionPositionWithDevice.EQUNR3 =
-          e.findAllElements("Equnr3").first.text;
-      functionPositionWithDevice.EQKTX3 =
-          e.findAllElements("Eqktx3").first.text;
-      functionPositionWithDevice.EQUNR4 =
-          e.findAllElements("Equnr4").first.text;
-      functionPositionWithDevice.EQKTX4 =
-          e.findAllElements("Eqktx4").first.text;
-      functionPositionWithDevice.EQUNR5 =
-          e.findAllElements("Equnr5").first.text;
-      functionPositionWithDevice.EQKTX5 =
-          e.findAllElements("Eqktx5").first.text;
-      return functionPositionWithDevice;
-    }).toList();
-    return list;
-  }
-
-  static xml.XmlNode buildWorkShiftXml(String PERNR) {
-    var builder = new xml.XmlBuilder();
+  static XmlNode buildWorkShiftXml(String PERNR) {
+    var builder = new XmlBuilder();
     builder.element("Envelope",
         attributes: {"xmlns": "http://schemas.xmlsoap.org/soap/envelope/"},
         nest: () {
@@ -124,11 +75,11 @@ class XmlUtils {
         });
       });
     });
-    return builder.build();
+    return builder.buildDocument();
   }
 
   static List<WorkShift> readWorkShiftXml(String stringXml) {
-    var document = xml.parse(stringXml);
+    var document = XmlDocument.parse(stringXml);
     if (document.findAllElements("MType").first.text == "E") {
       return new List();
     }
@@ -141,9 +92,9 @@ class XmlUtils {
     return list;
   }
 
-  static xml.XmlNode buildOrderXml(String PERNR, String CPLGR, String MATYP,
+  static XmlNode buildOrderXml(String PERNR, String CPLGR, String MATYP,
       String SORTB, String WCTYPE, String ASTTX, List<String> ItWxfz) {
-    var builder = new xml.XmlBuilder();
+    var builder = new XmlBuilder();
     builder.element("Envelope",
         attributes: {"xmlns": "http://schemas.xmlsoap.org/soap/envelope/"},
         nest: () {
@@ -170,11 +121,11 @@ class XmlUtils {
         });
       });
     });
-    return builder.build();
+    return builder.buildDocument();
   }
 
   static List<Order> readOrderXml(String stringXml) {
-    var document = xml.parse(stringXml);
+    var document = XmlDocument.parse(stringXml);
    try {
      List<Order> list = document.findAllElements("item").map((e) {
        Order order = new Order();
@@ -216,9 +167,9 @@ class XmlUtils {
    }
   }
 
-  static xml.XmlNode buildNoPlanOrderXml(String PERNR, String CPLGR, String MATYP,
+  static XmlNode buildNoPlanOrderXml(String PERNR, String CPLGR, String MATYP,
       String SORTB, String WCTYPE, String ASTTX, String AUART, List<String> ItWxfz) {
-    var builder = new xml.XmlBuilder();
+    var builder = new XmlBuilder();
     builder.element("Envelope",
         attributes: {"xmlns": "http://schemas.xmlsoap.org/soap/envelope/"},
         nest: () {
@@ -246,11 +197,11 @@ class XmlUtils {
             });
           });
         });
-    return builder.build();
+    return builder.buildDocument();
   }
 
   static List<Order> readNoPlanOrderXml(String stringXml) {
-    var document = xml.parse(stringXml);
+    var document = XmlDocument.parse(stringXml);
     try {
       List<Order> list = document.findAllElements("item").map((e) {
         Order order = new Order();
@@ -285,6 +236,7 @@ class XmlUtils {
         order.ERDAT3 = e.findElements("Erdat3").first.text;
         order.ERTIM3 = e.findElements("Ertim3").first.text;
         order.NPLDA = e.findAllElements("Nplda").first.text;
+        order.isStop = e.findAllElements("Msaus").first.text == "X";
         return order;
       }).toList();
       return list;
@@ -293,9 +245,9 @@ class XmlUtils {
     }
   }
 
-  static xml.XmlNode buildPlanOrderXml(String PERNR, String CPLGR, String MATYP,
+  static XmlNode buildPlanOrderXml(String PERNR, String CPLGR, String MATYP,
       String SORTB, String WCTYPE, String ASTTX, String AUART, List<String> ItWxfz) {
-    var builder = new xml.XmlBuilder();
+    var builder = new XmlBuilder();
     builder.element("Envelope",
         attributes: {"xmlns": "http://schemas.xmlsoap.org/soap/envelope/"},
         nest: () {
@@ -323,11 +275,11 @@ class XmlUtils {
             });
           });
         });
-    return builder.build();
+    return builder.buildDocument();
   }
 
   static List<Order> readPlanOrderXml(String stringXml) {
-    var document = xml.parse(stringXml);
+    var document = XmlDocument.parse(stringXml);
     try {
       List<Order> list = document.findAllElements("item").map((e) {
         Order order = new Order();
@@ -362,6 +314,7 @@ class XmlUtils {
         order.ERDAT3 = e.findElements("Erdat3").first.text;
         order.ERTIM3 = e.findElements("Ertim3").first.text;
         order.NPLDA = e.findAllElements("Nplda").first.text;
+        order.isStop = e.findAllElements("Msaus").first.text == "X";
         return order;
       }).toList();
       return list;
@@ -370,8 +323,8 @@ class XmlUtils {
     }
   }
 
-  static xml.XmlNode buildPlanOrderTypeXml(String PERNR, String WCTYPE, String ASTTX, String AUART, List<String> ItWxfz) {
-    var builder = new xml.XmlBuilder();
+  static XmlNode buildPlanOrderTypeXml(String PERNR, String WCTYPE, String ASTTX, String AUART, List<String> ItWxfz) {
+    var builder = new XmlBuilder();
     builder.element("Envelope",
         attributes: {"xmlns": "http://schemas.xmlsoap.org/soap/envelope/"},
         nest: () {
@@ -396,11 +349,11 @@ class XmlUtils {
             });
           });
         });
-    return builder.build();
+    return builder.buildDocument();
   }
 
   static List<RepairTypeDetail> readPlanOrderTypeXml(String stringXml) {
-    var document = xml.parse(stringXml);
+    var document = XmlDocument.parse(stringXml);
     try {
       List<RepairTypeDetail> list = document.findAllElements("item").map((e) {
         RepairTypeDetail order = new RepairTypeDetail();
@@ -415,8 +368,8 @@ class XmlUtils {
     }
   }
 
-  static xml.XmlNode buildPlanOrderDeviceTypeXml(String PERNR, String WCTYPE, String ASTTX, String AUART, String ILART, List<String> ItWxfz) {
-    var builder = new xml.XmlBuilder();
+  static XmlNode buildPlanOrderDeviceTypeXml(String PERNR, String WCTYPE, String ASTTX, String AUART, String ILART, List<String> ItWxfz) {
+    var builder = new XmlBuilder();
     builder.element("Envelope",
         attributes: {"xmlns": "http://schemas.xmlsoap.org/soap/envelope/"},
         nest: () {
@@ -442,11 +395,11 @@ class XmlUtils {
             });
           });
         });
-    return builder.build();
+    return builder.buildDocument();
   }
 
   static List<DeviceTypeDetail> readPlanOrderDeviceTypeXml(String stringXml) {
-    var document = xml.parse(stringXml);
+    var document = XmlDocument.parse(stringXml);
     try {
       List<DeviceTypeDetail> list = document.findAllElements("item").map((e) {
         DeviceTypeDetail order = new DeviceTypeDetail();
@@ -461,8 +414,8 @@ class XmlUtils {
     }
   }
 
-  static xml.XmlNode buildPlanOrderByDeviceTypeAndOrderTypeXml(String PERNR, String WCTYPE, String ASTTX, String AUART, String ILART, String EQUNR, List<String> ItWxfz) {
-    var builder = new xml.XmlBuilder();
+  static XmlNode buildPlanOrderByDeviceTypeAndOrderTypeXml(String PERNR, String WCTYPE, String ASTTX, String AUART, String ILART, String EQUNR, List<String> ItWxfz) {
+    var builder = new XmlBuilder();
     builder.element("Envelope",
         attributes: {"xmlns": "http://schemas.xmlsoap.org/soap/envelope/"},
         nest: () {
@@ -489,11 +442,11 @@ class XmlUtils {
             });
           });
         });
-    return builder.build();
+    return builder.buildDocument();
   }
 
   static List<Order> readPlanOrderByDeviceTypeAndOrderTypeXml(String stringXml) {
-    var document = xml.parse(stringXml);
+    var document = XmlDocument.parse(stringXml);
     try {
       List<Order> list = document.findAllElements("item").map((e) {
         Order order = new Order();
@@ -528,6 +481,7 @@ class XmlUtils {
         order.ERDAT3 = e.findElements("Erdat3").first.text;
         order.ERTIM3 = e.findElements("Ertim3").first.text;
         order.NPLDA = e.findAllElements("Nplda").first.text;
+        order.isStop = e.findAllElements("Msaus").first.text == "X";
         return order;
       }).toList();
       return list;
@@ -536,9 +490,9 @@ class XmlUtils {
     }
   }
 
-  static xml.XmlNode buildAssisantOrderXml(String PERNR, String CPLGR, String MATYP,
+  static XmlNode buildAssisantOrderXml(String PERNR, String CPLGR, String MATYP,
       String SORTB, String WCTYPE, String ASTTX, String AUART, List<String> ItWxfz) {
-    var builder = new xml.XmlBuilder();
+    var builder = new XmlBuilder();
     builder.element("Envelope",
         attributes: {"xmlns": "http://schemas.xmlsoap.org/soap/envelope/"},
         nest: () {
@@ -566,11 +520,11 @@ class XmlUtils {
             });
           });
         });
-    return builder.build();
+    return builder.buildDocument();
   }
 
   static List<Order> readAssisantOrderXml(String stringXml) {
-    var document = xml.parse(stringXml);
+    var document = XmlDocument.parse(stringXml);
     try {
       List<Order> list = document.findAllElements("item").map((e) {
         Order order = new Order();
@@ -605,6 +559,7 @@ class XmlUtils {
         order.ERDAT3 = e.findElements("Erdat3").first.text;
         order.ERTIM3 = e.findElements("Ertim3").first.text;
         order.NPLDA = e.findAllElements("Nplda").first.text;
+        order.isStop = e.findAllElements("Msaus").first.text == "X";
         return order;
       }).toList();
       return list;
@@ -613,9 +568,9 @@ class XmlUtils {
     }
   }
 
-  static xml.XmlNode buildBlockOrderXml(String PERNR, String CPLGR, String MATYP,
+  static XmlNode buildBlockOrderXml(String PERNR, String CPLGR, String MATYP,
       String SORTB, String WCTYPE, String ASTTX, String AUART, List<String> ItWxfz) {
-    var builder = new xml.XmlBuilder();
+    var builder = new XmlBuilder();
     builder.element("Envelope",
         attributes: {"xmlns": "http://schemas.xmlsoap.org/soap/envelope/"},
         nest: () {
@@ -643,11 +598,11 @@ class XmlUtils {
             });
           });
         });
-    return builder.build();
+    return builder.buildDocument();
   }
 
   static List<Order> readBlockOrderXml(String stringXml) {
-    var document = xml.parse(stringXml);
+    var document = XmlDocument.parse(stringXml);
     try {
       List<Order> list = document.findAllElements("item").map((e) {
         Order order = new Order();
@@ -682,6 +637,7 @@ class XmlUtils {
         order.ERDAT3 = e.findElements("Erdat3").first.text;
         order.ERTIM3 = e.findElements("Ertim3").first.text;
         order.NPLDA = e.findAllElements("Nplda").first.text;
+        order.isStop = e.findAllElements("Msaus").first.text == "X";
         return order;
       }).toList();
       return list;
@@ -690,8 +646,8 @@ class XmlUtils {
     }
   }
 
-  static xml.XmlNode buildRepairTypeXml() {
-    var builder = new xml.XmlBuilder();
+  static XmlNode buildRepairTypeXml() {
+    var builder = new XmlBuilder();
     builder.element("Envelope",
         attributes: {"xmlns": "http://schemas.xmlsoap.org/soap/envelope/"},
         nest: () {
@@ -703,11 +659,11 @@ class XmlUtils {
         });
       });
     });
-    return builder.build();
+    return builder.buildDocument();
   }
 
-  static xml.XmlNode buildReportOrderDetailXml(String QMNUM) {
-    var builder = new xml.XmlBuilder();
+  static XmlNode buildReportOrderDetailXml(String QMNUM) {
+    var builder = new XmlBuilder();
     builder.element("Envelope",
         attributes: {"xmlns": "http://schemas.xmlsoap.org/soap/envelope/"},
         nest: () {
@@ -719,11 +675,11 @@ class XmlUtils {
         });
       });
     });
-    return builder.build();
+    return builder.buildDocument();
   }
 
   static ReportOrder readReportOrderDetailXml(String stringXml) {
-    var document = xml.parse(stringXml);
+    var document = XmlDocument.parse(stringXml);
     ReportOrder order = new ReportOrder();
     order.PERNR = document.findAllElements("Pernr").first.text;
     order.KTEXT = document.findAllElements("Ktext").first.text;
@@ -743,14 +699,15 @@ class XmlUtils {
     order.PLTXT = document.findAllElements("Pltxt").first.text;
     order.ASTXT = document.findAllElements("Astxt").first.text;
     order.MSAUS =
-        document.findAllElements("Msaus").first.text == "X" ? true : false;
+        document.findAllElements("Msaus").first.text == "X";
     order.ERDAT = document.findAllElements("Erdat").first.text;
     order.ERTIM = document.findAllElements("Ertim").first.text;
+    order.EQTYP = document.findAllElements("Eqtyp").first.text;
     return order;
   }
 
-  static xml.XmlNode buildRepairOrderHistoryXml(String AUFNR) {
-    var builder = new xml.XmlBuilder();
+  static XmlNode buildRepairOrderHistoryXml(String AUFNR) {
+    var builder = new XmlBuilder();
     builder.element("Envelope",
         attributes: {"xmlns": "http://schemas.xmlsoap.org/soap/envelope/"},
         nest: () {
@@ -764,11 +721,11 @@ class XmlUtils {
         });
       });
     });
-    return builder.build();
+    return builder.buildDocument();
   }
 
   static List<RepairHistory> readRepairOrderHistoryXml(String stringXml) {
-    var document = xml.parse(stringXml);
+    var document = XmlDocument.parse(stringXml);
     List<RepairHistory> list = new List();
     try {
       document
@@ -822,8 +779,8 @@ class XmlUtils {
     }
   }
 
-  static xml.XmlNode buildRepairOrderDetailXml(String AUFNR) {
-    var builder = new xml.XmlBuilder();
+  static XmlNode buildRepairOrderDetailXml(String AUFNR) {
+    var builder = new XmlBuilder();
     builder.element("Envelope",
         attributes: {"xmlns": "http://schemas.xmlsoap.org/soap/envelope/"},
         nest: () {
@@ -836,11 +793,11 @@ class XmlUtils {
         });
       });
     });
-    return builder.build();
+    return builder.buildDocument();
   }
 
   static repair.RepairOrder readRepairOrderDetailXml(String stringXml) {
-    var document = xml.parse(stringXml);
+    var document = XmlDocument.parse(stringXml);
     repair.RepairOrder order = new repair.RepairOrder();
     try {
       var infoDom = document.findAllElements("ItInfo").first;
@@ -887,8 +844,8 @@ class XmlUtils {
     }
   }
 
-  static xml.XmlNode buildOtherDeviceXml(String AUFNR) {
-    var builder = new xml.XmlBuilder();
+  static XmlNode buildOtherDeviceXml(String AUFNR) {
+    var builder = new XmlBuilder();
     builder.element("Envelope",
         attributes: {"xmlns": "http://schemas.xmlsoap.org/soap/envelope/"},
         nest: () {
@@ -902,11 +859,11 @@ class XmlUtils {
             });
           });
         });
-    return builder.build();
+    return builder.buildDocument();
   }
 
   static List<Device> readOtherDeviceXml(String stringXml) {
-    var document = xml.parse(stringXml);
+    var document = XmlDocument.parse(stringXml);
     List<Device> list = new List();
     var deviceDom = document.findAllElements("ItEqunr").first;
     try {
@@ -923,7 +880,7 @@ class XmlUtils {
   }
 
   static List<RepairType> readRepairTypeXml(String stringXml) {
-    var document = xml.parse(stringXml);
+    var document = XmlDocument.parse(stringXml);
     try {
       if (document.findAllElements("MType").first.text == "E") {
         return new List();
@@ -940,8 +897,8 @@ class XmlUtils {
     return list;
   }
 
-  static xml.XmlNode buildProblemDescriptionXml(String Katalogart) {
-    var builder = new xml.XmlBuilder();
+  static XmlNode buildProblemDescriptionXml(String Katalogart) {
+    var builder = new XmlBuilder();
     builder.element("Envelope",
         attributes: {"xmlns": "http://schemas.xmlsoap.org/soap/envelope/"},
         nest: () {
@@ -955,11 +912,11 @@ class XmlUtils {
         });
       });
     });
-    return builder.build();
+    return builder.buildDocument();
   }
 
   static List<ProblemDescription> readProblemDescriptionXml(String stringXml) {
-    var document = xml.parse(stringXml);
+    var document = XmlDocument.parse(stringXml);
     if (document.findAllElements("MType").first.text == "E") {
       return new List();
     }
@@ -989,7 +946,7 @@ class XmlUtils {
     return list;
   }
 
-  static xml.XmlNode buildReportOrderXml(
+  static XmlNode buildReportOrderXml(
       String PERNR,
       String INGRP,
       String ILART,
@@ -1002,7 +959,7 @@ class XmlUtils {
       String MATYP,
       String MSAUS,
       String APPTRADENO) {
-    var builder = new xml.XmlBuilder();
+    var builder = new XmlBuilder();
     builder.element("Envelope",
         attributes: {"xmlns": "http://schemas.xmlsoap.org/soap/envelope/"},
         nest: () {
@@ -1028,11 +985,11 @@ class XmlUtils {
         });
       });
     });
-    return builder.build();
+    return builder.buildDocument();
   }
 
   static Map<String, String> readReportOrderXml(String stringXml) {
-    var document = xml.parse(stringXml);
+    var document = XmlDocument.parse(stringXml);
     try {
       if (document.findAllElements("Type").first.text == "E") {
         throw DioError(error: document.findAllElements("MessageV1").first.text);
@@ -1063,7 +1020,7 @@ class XmlUtils {
     return map;
   }
 
-  static xml.XmlNode buildRepairOrderXml(
+  static XmlNode buildRepairOrderXml(
       String PERNR,
       String INGRP,
       String ILART,
@@ -1079,7 +1036,7 @@ class XmlUtils {
       String APPTRADENO,
       String BAUTL,
       int Gamng) {
-    var builder = new xml.XmlBuilder();
+    var builder = new XmlBuilder();
     builder.element("Envelope",
         attributes: {"xmlns": "http://schemas.xmlsoap.org/soap/envelope/"},
         nest: () {
@@ -1108,11 +1065,11 @@ class XmlUtils {
         });
       });
     });
-    return builder.build();
+    return builder.buildDocument();
   }
 
   static String readRepairOrderXml(String stringXml) {
-    var document = xml.parse(stringXml);
+    var document = XmlDocument.parse(stringXml);
     try {
       if (document.findAllElements("Type").any((element) => element.text == "E")) {
         throw DioError(error: document.findAllElements("MessageV1").first.text);
@@ -1125,7 +1082,7 @@ class XmlUtils {
     }
   }
 
-  static xml.XmlNode buildChangeOrderXml(
+  static XmlNode buildChangeOrderXml(
       String PERNR,
       String QMNUM,
       String AUFNR,
@@ -1136,7 +1093,7 @@ class XmlUtils {
       String EQUNR,
       String KTEXT,
       List<Worker> list) {
-    var builder = new xml.XmlBuilder();
+    var builder = new XmlBuilder();
     builder.element("Envelope",
         attributes: {"xmlns": "http://schemas.xmlsoap.org/soap/envelope/"},
         nest: () {
@@ -1168,11 +1125,11 @@ class XmlUtils {
         });
       });
     });
-    return builder.build();
+    return builder.buildDocument();
   }
 
   static bool readChangeOrderXml(String stringXml) {
-    var document = xml.parse(stringXml);
+    var document = XmlDocument.parse(stringXml);
     try {
       bool flag = false;
       document.findAllElements("MType").forEach((item) {
@@ -1187,10 +1144,10 @@ class XmlUtils {
     }
   }
 
-  static xml.XmlNode buildOuterRepairXml(
+  static XmlNode buildOuterRepairXml(
       String AUFNR,
       String PERNR) {
-    var builder = new xml.XmlBuilder();
+    var builder = new XmlBuilder();
     builder.element("Envelope",
         attributes: {"xmlns": "http://schemas.xmlsoap.org/soap/envelope/"},
         nest: () {
@@ -1203,11 +1160,11 @@ class XmlUtils {
             });
           });
         });
-    return builder.build();
+    return builder.buildDocument();
   }
 
   static bool readOuterRepairXml(String stringXml) {
-    var document = xml.parse(stringXml);
+    var document = XmlDocument.parse(stringXml);
     try {
       bool flag = false;
       document.findAllElements("MType").forEach((item) {
@@ -1222,9 +1179,9 @@ class XmlUtils {
     }
   }
 
-  static xml.XmlNode buildCompleteOrderXml(
+  static XmlNode buildCompleteOrderXml(
       String PERNR, String AUFNR, String APPSTATUS, String APPTRADENO) {
-    var builder = new xml.XmlBuilder();
+    var builder = new XmlBuilder();
     builder.element("Envelope",
         attributes: {"xmlns": "http://schemas.xmlsoap.org/soap/envelope/"},
         nest: () {
@@ -1242,11 +1199,11 @@ class XmlUtils {
         });
       });
     });
-    return builder.build();
+    return builder.buildDocument();
   }
 
   static bool readCompleteOrderXml(String stringXml) {
-    var document = xml.parse(stringXml);
+    var document = XmlDocument.parse(stringXml);
     try {
       if (document.findAllElements("MType").first.text == "E") throw DioError();
 //      forEach((item) {
@@ -1258,8 +1215,8 @@ class XmlUtils {
     }
   }
 
-  static xml.XmlNode buildSearchBomXml(String EQUNR) {
-    var builder = new xml.XmlBuilder();
+  static XmlNode buildSearchBomXml(String EQUNR) {
+    var builder = new XmlBuilder();
     builder.element("Envelope",
         attributes: {"xmlns": "http://schemas.xmlsoap.org/soap/envelope/"},
         nest: () {
@@ -1274,11 +1231,11 @@ class XmlUtils {
         });
       });
     });
-    return builder.build();
+    return builder.buildDocument();
   }
 
   static List<Materiel> readSearchBomXml(String stringXml) {
-    var document = xml.parse(stringXml);
+    var document = XmlDocument.parse(stringXml);
 //    if (document.findAllElements("EtMatnr").first.document == null) {
 //      return new List();
 //    }
@@ -1354,8 +1311,8 @@ class XmlUtils {
     return materielList;
   }
 
-  static xml.XmlNode buildWorkerXml(String PERNR) {
-    var builder = new xml.XmlBuilder();
+  static XmlNode buildWorkerXml(String PERNR) {
+    var builder = new XmlBuilder();
     builder.element("Envelope",
         attributes: {"xmlns": "http://schemas.xmlsoap.org/soap/envelope/"},
         nest: () {
@@ -1368,11 +1325,11 @@ class XmlUtils {
         });
       });
     });
-    return builder.build();
+    return builder.buildDocument();
   }
 
-  static xml.XmlNode buildWorkerByWCPLGRXml(String QMNUM, String WCPLGR) {
-    var builder = new xml.XmlBuilder();
+  static XmlNode buildWorkerByWCPLGRXml(String QMNUM, String WCPLGR) {
+    var builder = new XmlBuilder();
     builder.element("Envelope",
         attributes: {"xmlns": "http://schemas.xmlsoap.org/soap/envelope/"},
         nest: () {
@@ -1386,11 +1343,11 @@ class XmlUtils {
             });
           });
         });
-    return builder.build();
+    return builder.buildDocument();
   }
 
   static List<Worker> readWorkerXml(String stringXml) {
-    var document = xml.parse(stringXml);
+    var document = XmlDocument.parse(stringXml);
     if (document.findAllElements("MType").first.text == "E") {
       return new List();
     }
@@ -1413,9 +1370,9 @@ class XmlUtils {
     return list;
   }
 
-  static xml.XmlNode buildAddMaterielXml(
+  static XmlNode buildAddMaterielXml(
       String AUFNR, String MATNR, String MAKTX, int MENGE, String EQUNR) {
-    var builder = new xml.XmlBuilder();
+    var builder = new XmlBuilder();
     builder.element("Envelope",
         attributes: {"xmlns": "http://schemas.xmlsoap.org/soap/envelope/"},
         nest: () {
@@ -1432,11 +1389,11 @@ class XmlUtils {
         });
       });
     });
-    return builder.build();
+    return builder.buildDocument();
   }
 
   static bool readAddMaterielXml(String stringXml) {
-    var document = xml.parse(stringXml);
+    var document = XmlDocument.parse(stringXml);
     bool flag = false;
     try {
       document.findAllElements("MType").forEach((item) {
@@ -1452,9 +1409,9 @@ class XmlUtils {
     }
   }
 
-  static xml.XmlNode buildHistoryOrder(
+  static XmlNode buildHistoryOrder(
       String PERNR, String WCTYPE) {
-    var builder = new xml.XmlBuilder();
+    var builder = new XmlBuilder();
     builder.element("Envelope",
         attributes: {"xmlns": "http://schemas.xmlsoap.org/soap/envelope/"},
         nest: () {
@@ -1468,11 +1425,11 @@ class XmlUtils {
             });
           });
         });
-    return builder.build();
+    return builder.buildDocument();
   }
 
   static List<Order> readHistoryOrder(String stringXml) {
-    var document = xml.parse(stringXml);
+    var document = XmlDocument.parse(stringXml);
     List<Order> list = document.findAllElements("item").map((e) {
       Order order = new Order();
       order.PERNR = e.findElements("Pernr").first.text;
@@ -1501,14 +1458,15 @@ class XmlUtils {
       order.ERTIM2 = e.findElements("Ertim2").first.text;
       order.ERDAT3 = e.findElements("Erdat3").first.text;
       order.ERTIM3 = e.findElements("Ertim3").first.text;
+      order.isStop = e.findAllElements("Msaus").first.text == "X";
       return order;
     }).toList();
     return list;
   }
 
-  static xml.XmlNode buildMaterialTemp(
+  static XmlNode buildMaterialTemp(
       String AUFNR) {
-    var builder = new xml.XmlBuilder();
+    var builder = new XmlBuilder();
     builder.element("Envelope",
         attributes: {"xmlns": "http://schemas.xmlsoap.org/soap/envelope/"},
         nest: () {
@@ -1521,11 +1479,11 @@ class XmlUtils {
             });
           });
         });
-    return builder.build();
+    return builder.buildDocument();
   }
 
   static List<SubmitMateriel> readMaterialTemp(String stringXml) {
-    var document = xml.parse(stringXml);
+    var document = XmlDocument.parse(stringXml);
     List<SubmitMateriel> list = document.findAllElements("item").map((e) {
       SubmitMateriel submitMateriel = new SubmitMateriel();
       submitMateriel.AUFNR = e.findElements("Aufnr").first.text;
@@ -1539,9 +1497,9 @@ class XmlUtils {
   }
 
 
-  static xml.XmlNode buildHelpWorker(
+  static XmlNode buildHelpWorker(
       String AUFNR) {
-    var builder = new xml.XmlBuilder();
+    var builder = new XmlBuilder();
     builder.element("Envelope",
         attributes: {"xmlns": "http://schemas.xmlsoap.org/soap/envelope/"},
         nest: () {
@@ -1554,11 +1512,11 @@ class XmlUtils {
             });
           });
         });
-    return builder.build();
+    return builder.buildDocument();
   }
 
   static List<String> readHelpWorker(String stringXml) {
-    var document = xml.parse(stringXml);
+    var document = XmlDocument.parse(stringXml);
     List<String> list = document.findAllElements("item").map((e) {
       return e.findElements("Pernr").first.text;
     }).toList();

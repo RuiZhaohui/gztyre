@@ -45,7 +45,6 @@ class _TextareaWithPicAndVideoWidgetState
   Future<void> _initializeVideoPlayerFuture;
   AudioPlayer audioPlayer;
   var icon = Icon(Icons.play_arrow);
-  var _audioPlayerStateSubscription;
   bool _hasRecord = false;
 
 
@@ -288,7 +287,6 @@ class _TextareaWithPicAndVideoWidgetState
   @override
   void dispose() {
     if (this._controller != null) this._controller.dispose();
-    this._audioPlayerStateSubscription = null;
 //    widget.textEditingController.dispose();
     super.dispose();
   }
@@ -297,7 +295,7 @@ class _TextareaWithPicAndVideoWidgetState
   @override
   void initState() {
     audioPlayer = new AudioPlayer();
-    _audioPlayerStateSubscription = audioPlayer.onPlayerStateChanged.listen((s) {
+    audioPlayer.onPlayerStateChanged.listen((s) {
       if (s == AudioPlayerState.PLAYING) {
         setState(() => icon = Icon(Icons.pause));
       } else {
@@ -380,6 +378,7 @@ class _TextareaWithPicAndVideoWidgetState
                     ) : Container(
                       height: 30,
                       child: ButtonWidget(
+                        onPressed: () {},
                         fontSize: 16,
 //                      minSize: 0.1,
                         padding: EdgeInsets.only(left: 50, right: 50),

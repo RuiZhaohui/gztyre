@@ -1,9 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 import 'package:gztyre/api/model/Device.dart';
 import 'package:gztyre/api/model/DeviceTypeDetail.dart';
-import 'package:gztyre/api/model/FunctionPosition.dart';
-import 'package:gztyre/api/model/FunctionPositionWithDevice.dart';
 import 'package:gztyre/api/model/Materiel.dart';
 import 'package:gztyre/api/model/Order.dart';
 import 'package:gztyre/api/model/ProblemDescription.dart';
@@ -16,23 +13,39 @@ import 'package:gztyre/api/model/SubmitMateriel.dart';
 import 'package:gztyre/api/model/UserInfo.dart';
 import 'package:gztyre/api/model/WorkShift.dart';
 import 'package:gztyre/api/model/Worker.dart';
+import 'package:gztyre/commen/Global.dart';
 import 'package:gztyre/utils/XmlUtils.dart';
 
 class HttpRequest {
-  static Dio http = new Dio(BaseOptions(
-      headers: {"Authorization": "Basic UE1BUFAtRVJQOlBtYXBwKzY2Ng=="}, // 生产
-    baseUrl: "http://pmerp.gztyre.com:8000/sap/bc/srt/rfc/sap", //生产
-//      headers: {"Authorization": "Basic RGV2MDM6MTIzNDU2"}, // 开发
-//      baseUrl: "http://61.159.128.211:8005/sap/bc/srt/rfc/sap", //开发
-      connectTimeout: 30000));
+
+  static Dio getHttp() {
+    Dio http = new Dio(BaseOptions(
+      headers: Global.secret,
+      baseUrl: Global.sapUrl,
+      connectTimeout: 60 * 1000,));
+    http.interceptors.add(InterceptorsWrapper(onRequest: (RequestOptions options) {
+      print('请求地址为：' + options.path);
+      print('请求参数为：' + options.data.toString());
+      print('开始时间为：' + DateTime.now().toString());
+      // Do something before request is sent
+      return options; //continue
+    }, onResponse: (Response response) {
+      print('结束时间为：' + DateTime.now().toString());
+      // Do something with response data
+      return response; // continue
+    }, onError: (DioError e) {
+      // Do something with response error
+      return e; //continue
+    }));
+    return http;
+  }
 
   /// 查询用户信息
   static searchUserInfo(String userId, Function(UserInfo t) onSuccess,
       Function(DioError err) onError) async {
     var xml = XmlUtils.buildUserInfoXml(userId);
-    print(xml);
     try {
-      Response response = await http.post(
+      Response response = await getHttp().post(
           "/zpm_search_pernr/888/zpm_search_pernr/zpm_search_pernr",
           data: xml,
           options: Options(contentType: 'text/xml'));
@@ -46,9 +59,8 @@ class HttpRequest {
   static listWorkShift(String PERNR, Function(List<WorkShift> t) onSuccess,
       Function(DioError err) onError) async {
     var xml = XmlUtils.buildWorkShiftXml(PERNR);
-    print(xml);
     try {
-      Response response = await http.post(
+      Response response = await getHttp().post(
           "/zpm_search_ingrp/888/zpm_search_ingrp/zpm_search_ingrp",
           data: xml,
           options: Options(contentType: 'text/xml'));
@@ -71,10 +83,9 @@ class HttpRequest {
       Function(DioError err) onError) async {
     var xml = XmlUtils.buildOrderXml(
         PERNR, CPLGR, MATYP, SORTB, WCTYPE, ASTTX, ItWxfz);
-    print(xml);
     try {
       print(DateTime.now());
-      Response response = await http.post(
+      Response response = await getHttp().post(
           "/zpm_search_order/888/zpm_search_order/zpm_search_order",
           data: xml,
           options: Options(contentType: 'text/xml'));
@@ -99,9 +110,8 @@ class HttpRequest {
       Function(DioError err) onError) async {
     var xml = XmlUtils.buildNoPlanOrderXml(
         PERNR, CPLGR, MATYP, SORTB, WCTYPE, ASTTX, AUART, ItWxfz);
-    print(xml);
     try {
-      Response response = await http.post(
+      Response response = await getHttp().post(
           "/zpm_search_order_zpm1/888/zpm_search_order_zpm1/zpm_search_order_zpm1",
           data: xml,
           options: Options(contentType: 'text/xml'));
@@ -125,9 +135,8 @@ class HttpRequest {
       Function(DioError err) onError) async {
     var xml = XmlUtils.buildPlanOrderXml(
         PERNR, CPLGR, MATYP, SORTB, WCTYPE, ASTTX, AUART, ItWxfz);
-    print(xml);
     try {
-      Response response = await http.post(
+      Response response = await getHttp().post(
           "/zpm_search_order_zpm2/888/zpm_search_order_zpm2/zpm_search_order_zpm2",
           data: xml,
           options: Options(contentType: 'text/xml'));
@@ -147,9 +156,8 @@ class HttpRequest {
       Function(List<RepairTypeDetail> t) onSuccess,
       Function(DioError err) onError) async {
     var xml = XmlUtils.buildPlanOrderTypeXml(PERNR, WCTYPE, ASTTX, AUART, ItWxfz);
-    print(xml);
     try {
-      Response response = await http.post(
+      Response response = await getHttp().post(
           "/zpm_search_jh_order/888/zpm_search_jh_order/zpm_search_jh_order",
           data: xml,
           options: Options(contentType: 'text/xml'));
@@ -171,9 +179,8 @@ class HttpRequest {
       Function(DioError err) onError) async {
     var xml = XmlUtils.buildPlanOrderDeviceTypeXml(
         PERNR, WCTYPE, ASTTX, AUART, ILART, ItWxfz);
-    print(xml);
     try {
-      Response response = await http.post(
+      Response response = await getHttp().post(
           "/zpm_search_jh_equ_order/888/zpm_search_jh_equ_order/zpm_search_jh_equ_order",
           data: xml,
           options: Options(contentType: 'text/xml'));
@@ -197,9 +204,8 @@ class HttpRequest {
       Function(DioError err) onError) async {
     var xml = XmlUtils.buildPlanOrderByDeviceTypeAndOrderTypeXml(
         PERNR, WCTYPE, ASTTX, AUART, ILART, EQUNR, ItWxfz);
-    print(xml);
     try {
-      Response response = await http.post(
+      Response response = await getHttp().post(
           "/zpm_search_jhwx_order/888/zpm_search_jhwx_order/zpm_search_jhwx_order",
           data: xml,
           options: Options(contentType: 'text/xml'));
@@ -224,9 +230,8 @@ class HttpRequest {
       Function(DioError err) onError) async {
     var xml = XmlUtils.buildAssisantOrderXml(
         PERNR, CPLGR, MATYP, SORTB, WCTYPE, ASTTX, AUART, ItWxfz);
-    print(xml);
     try {
-      Response response = await http.post(
+      Response response = await getHttp().post(
           "/zpm_search_order_zpm3/888/zpm_search_order_zpm3/zpm_search_order_zpm3",
           data: xml,
           options: Options(contentType: 'text/xml'));
@@ -250,9 +255,8 @@ class HttpRequest {
       Function(DioError err) onError) async {
     var xml = XmlUtils.buildBlockOrderXml(
         PERNR, CPLGR, MATYP, SORTB, WCTYPE, ASTTX, AUART, ItWxfz);
-    print(xml);
     try {
-      Response response = await http.post(
+      Response response = await getHttp().post(
           "/zpm_search_order_zpm4/888/zpm_search_order_zpm4/zpm_search_order_zpm4",
           data: xml,
           options: Options(contentType: 'text/xml'));
@@ -266,9 +270,8 @@ class HttpRequest {
   static reportOrderDetail(String QMNUM, Function(ReportOrder t) onSuccess,
       Function(DioError err) onError) async {
     var xml = XmlUtils.buildReportOrderDetailXml(QMNUM);
-    print(xml);
     try {
-      Response response = await http.post(
+      Response response = await getHttp().post(
           "/zpm_search_ordermess/888/zpm_search_ordermess/zpm_search_ordermess",
           data: xml,
           options: Options(contentType: 'text/xml'));
@@ -284,9 +287,8 @@ class HttpRequest {
       Function(List<RepairHistory> t) onSuccess,
       Function(DioError err) onError) async {
     var xml = XmlUtils.buildRepairOrderHistoryXml(AUFNR);
-    print(xml);
     try {
-      Response response = await http.post(
+      Response response = await getHttp().post(
           "/zpm_search_wxrec/888/zpm_search_wxrec/zpm_search_wxrec",
           data: xml,
           options: Options(contentType: 'text/xml'));
@@ -302,9 +304,8 @@ class HttpRequest {
       Function(prefix0.RepairOrder t) onSuccess,
       Function(DioError err) onError) async {
     var xml = XmlUtils.buildRepairOrderDetailXml(AUFNR);
-    print(xml);
     try {
-      Response response = await http.post(
+      Response response = await getHttp().post(
           "/zpm_search_info/888/zpm_search_info/zpm_search_info",
           data: xml,
           options: Options(contentType: 'text/xml'));
@@ -318,9 +319,8 @@ class HttpRequest {
   static otherDevice(String AUFNR, Function(List<Device> t) onSuccess,
       Function(DioError err) onError) async {
     var xml = XmlUtils.buildOtherDeviceXml(AUFNR);
-    print(xml);
     try {
-      Response response = await http.post(
+      Response response = await getHttp().post(
           "/zpm_search_info/888/zpm_search_info/zpm_search_info",
           data: xml,
           options: Options(contentType: 'text/xml'));
@@ -334,9 +334,8 @@ class HttpRequest {
   static listRepairType(Function(List<RepairType> t) onSuccess,
       Function(DioError err) onError) async {
     var xml = XmlUtils.buildRepairTypeXml();
-    print(xml);
     try {
-      Response response = await http.post(
+      Response response = await getHttp().post(
           "/zpm_search_ilart/888/zpm_search_ilart/zpm_search_ilart",
           data: xml,
           options: Options(contentType: 'text/xml'));
@@ -352,9 +351,8 @@ class HttpRequest {
       Function(List<ProblemDescription> t) onSuccess,
       Function(DioError err) onError) async {
     var xml = XmlUtils.buildProblemDescriptionXml(type);
-    print(xml);
     try {
-      Response response = await http.post(
+      Response response = await getHttp().post(
           "/zpm_search_katalogart/888/zpm_search_katalogart/zpm_search_katalogart",
           data: xml,
           options: Options(contentType: 'text/xml'));
@@ -382,10 +380,9 @@ class HttpRequest {
       Function(DioError err) onError) async {
     var xml = XmlUtils.buildReportOrderXml(PERNR, INGRP, ILART, EQUNR, TPLNR,
         FEGRP, FECOD, FETXT, CPLGR, MATYP, MSAUS, APPTRADENO);
-    print(xml);
     try {
       print(DateTime.now());
-      Response response = await http.post(
+      Response response = await getHttp().post(
           "/zpm_create_iw21/888/zpm_create_iw21/zpm_create_iw21",
           data: xml,
           options: Options(contentType: 'text/xml'));
@@ -431,9 +428,8 @@ class HttpRequest {
         APPTRADENO,
         BAUTL,
         GAMNG);
-    print(xml);
     try {
-      Response response = await http.post(
+      Response response = await getHttp().post(
           "/zpm_create_order/888/zpm_create_order/zpm_create_order",
           data: xml,
           options: Options(contentType: 'text/xml'));
@@ -461,9 +457,8 @@ class HttpRequest {
       Function(DioError err) onError) async {
     var xml = XmlUtils.buildChangeOrderXml(PERNR, QMNUM, AUFNR, APPSTATUS,
         APPTRADENO, URGRP, URCOD, EQUNR, KTEXT, list);
-    print(xml);
     try {
-      Response response = await http.post(
+      Response response = await getHttp().post(
           "/zpm_change_order_status/888/zpm_change_order_status/zpm_change_order_status",
           data: xml,
           options: Options(contentType: 'text/xml'));
@@ -477,9 +472,8 @@ class HttpRequest {
   static outerRepair(String AUFNR, String PERNR, Function(bool t) onSuccess,
       Function(DioError err) onError) async {
     var xml = XmlUtils.buildOuterRepairXml(AUFNR, PERNR);
-    print(xml);
     try {
-      Response response = await http.post(
+      Response response = await getHttp().post(
           "/zpm_change_ww/888/zpm_change_ww/zpm_change_ww",
           data: xml,
           options: Options(contentType: 'text/xml'));
@@ -499,9 +493,8 @@ class HttpRequest {
       Function(DioError err) onError) async {
     var xml =
         XmlUtils.buildCompleteOrderXml(PERNR, AUFNR, APPSTATUS, APPTRADENO);
-    print(xml);
     try {
-      Response response = await http.post(
+      Response response = await getHttp().post(
           "/zpm_order_confirm/888/zpm_order_confirm/zpm_order_confirm",
           data: xml,
           options: Options(contentType: 'text/xml'));
@@ -515,9 +508,8 @@ class HttpRequest {
   static searchBom(String EQUNR, Function(List<Materiel> t) onSuccess,
       Function(DioError err) onError) async {
     var xml = XmlUtils.buildSearchBomXml(EQUNR);
-    print(xml);
     try {
-      Response response = await http.post(
+      Response response = await getHttp().post(
           "/zpm_search_bom/888/zpm_search_bom/zpm_search_bom",
           data: xml,
           options: Options(contentType: 'text/xml'));
@@ -531,9 +523,8 @@ class HttpRequest {
   static searchWorker(String PERNR, Function(List<Worker> t) onSuccess,
       Function(DioError err) onError) async {
     var xml = XmlUtils.buildWorkerXml(PERNR);
-    print(xml);
     try {
-      Response response = await http.post(
+      Response response = await getHttp().post(
           "/zpm_search_wcg/888/zpm_search_wcg/zpm_search_wcg",
           data: xml,
           options: Options(contentType: 'text/xml'));
@@ -550,9 +541,8 @@ class HttpRequest {
       Function(List<Worker> t) onSuccess,
       Function(DioError err) onError) async {
     var xml = XmlUtils.buildWorkerByWCPLGRXml(QMNUM, WCPLGR);
-    print(xml);
     try {
-      Response response = await http.post(
+      Response response = await getHttp().post(
           "/zpm_search_wcgqy/888/zpm_search_wcgqy/zpm_search_wcgqy",
           data: xml,
           options: Options(contentType: 'text/xml'));
@@ -572,9 +562,8 @@ class HttpRequest {
       Function(bool) onSuccess,
       Function(DioError err) onError) async {
     var xml = XmlUtils.buildAddMaterielXml(AUFNR, MATNR, MAKTX, MENGE, EQUNR);
-    print(xml);
     try {
-      Response response = await http.post(
+      Response response = await getHttp().post(
           "/zpm_change_components/888/zpm_change_components/zpm_change_components",
           data: xml,
           options: Options(contentType: 'text/xml'));
@@ -588,9 +577,8 @@ class HttpRequest {
   static historyOrder(String PERNR, String WCTYPE,
       Function(List<Order>) onSuccess, Function(DioError err) onError) async {
     var xml = XmlUtils.buildHistoryOrder(PERNR, WCTYPE);
-    print(xml);
     try {
-      Response response = await http.post(
+      Response response = await getHttp().post(
           "/zpm_search_order_history/888/zpm_search_order_history/zpm_search_order_history",
           data: xml,
           options: Options(contentType: 'text/xml'));
@@ -606,9 +594,8 @@ class HttpRequest {
       Function(List<SubmitMateriel>) onSuccess,
       Function(DioError err) onError) async {
     var xml = XmlUtils.buildMaterialTemp(AUFNR);
-    print(xml);
     try {
-      Response response = await http.post(
+      Response response = await getHttp().post(
           "/zpm_search_wxrec_temp/888/zpm_search_wxrec_temp/zpm_search_wxrec_temp",
           data: xml,
           options: Options(contentType: 'text/xml'));
@@ -624,9 +611,8 @@ class HttpRequest {
       Function(List<String>) onSuccess,
       Function(DioError err) onError) async {
     var xml = XmlUtils.buildHelpWorker(AUFNR);
-    print(xml);
     try {
-      Response response = await http.post(
+      Response response = await getHttp().post(
           "/zpm_search_order_jr_pernr/888/zpm_search_order_jr_pernr/zpm_search_order_jr_pernr",
           data: xml,
           options: Options(contentType: 'text/xml'));

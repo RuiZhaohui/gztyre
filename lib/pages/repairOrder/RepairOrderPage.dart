@@ -5,7 +5,6 @@ import 'package:gztyre/api/HttpRequestRest.dart';
 import 'package:gztyre/api/model/Order.dart';
 import 'package:gztyre/api/model/RepairOrder.dart';
 import 'package:gztyre/api/model/ReportOrder.dart';
-import 'package:gztyre/api/model/UserInfo.dart';
 import 'package:gztyre/commen/Global.dart';
 import 'package:gztyre/components/ButtonBarWidget.dart';
 import 'package:gztyre/components/ButtonWidget.dart';
@@ -14,12 +13,10 @@ import 'package:gztyre/components/ListItemWidget.dart';
 import 'package:gztyre/components/OrderInfoWidget.dart';
 import 'package:gztyre/components/ProgressDialog.dart';
 import 'package:gztyre/pages/ContainerPage.dart';
-import 'package:gztyre/pages/orderCenter/planOrder/WorkerPage.dart';
 import 'package:gztyre/pages/repairOrder/RepairDetailPage.dart';
 import 'package:gztyre/pages/repairOrder/RepairHistoryPage.dart';
 import 'package:gztyre/pages/repairOrder/RepairOrderDetailPage.dart';
 import 'package:gztyre/utils/StringUtils.dart';
-import 'package:gztyre/utils/screen_utils.dart';
 
 class RepairOrderPage extends StatefulWidget {
   RepairOrderPage({Key key, @required this.order}) : super(key: key);
@@ -34,7 +31,6 @@ class RepairOrderPage extends StatefulWidget {
 
 class _RepairOrderPageState extends State<RepairOrderPage> {
   bool _loading = false;
-  UserInfo _userInfo;
   var _reportOrderDetailFuture;
   ReportOrder _reportOrder = new ReportOrder();
   RepairOrder _repairOrder;
@@ -146,26 +142,14 @@ class _RepairOrderPageState extends State<RepairOrderPage> {
 
   Future<bool> _complete(
       Order order, ReportOrder reportOrder, String PERNR) async {
-//    setState(() {
-//      this._loading = true;
-//    });
     return await this._getAPPTRADENO(order.QMNUM, order.AUFNR).then((APPTRADENO) async {
       return await HttpRequest.completeOrder(
           PERNR, order.AUFNR, "已确认", APPTRADENO, (res) {
-//        setState(() {
-//          this._loading = false;
-//        });
         return true;
       }, (err) {
-//        setState(() {
-//          this._loading = false;
-//        });
         return false;
       });
     }).catchError((err) {
-//      setState(() {
-//        this._loading = false;
-//      });
       return false;
     });
   }
@@ -179,33 +163,18 @@ class _RepairOrderPageState extends State<RepairOrderPage> {
         .then((APPTRADENO) async {
       return await HttpRequest.changeOrderStatus(null, null, widget.order.AUFNR,
           "再维修", APPTRADENO, '', '', widget.order.EQUNR, null, null, (res) {
-//        setState(() {
-//          this._loading = false;
-//        });
         return true;
       }, (err) {
-//        setState(() {
-//          this._loading = false;
-//        });
         return false;
       });
     }).catchError((err) {
-//      setState(() {
-//        this._loading = false;
-//      });
       return false;
     });
   }
 
   Future<bool> _transToNextWorkShift(
       ReportOrder reportOrder, String PERNR) async {
-//    setState(() {
-//      this._loading = true;
-//    });
     if (reportOrder == null) {
-//      setState(() {
-//        this._loading = false;
-//      });
       return false;
     } else {
       return await this
@@ -222,44 +191,26 @@ class _RepairOrderPageState extends State<RepairOrderPage> {
             reportOrder.EQUNR,
             null,
             null, (res) {
-//          setState(() {
-//            this._loading = false;
-//          });
           return true;
         }, (err) {
-//          setState(() {
-//            this._loading = false;
-//          });
           return false;
         });
       }).catchError((err) {
-//        setState(() {
-//          this._loading = false;
-//        });
         return false;
       });
     }
   }
 
-  Future<String> _isExist(username) async {
-//    setState(() {
-//      this._loading = true;
-//    });
+  Future<Map> _isExist(username) async {
     return await HttpRequestRest.exist(username, (isExist) async {
-//      setState(() {
-//        this._loading = false;
-//      });
       if (isExist) {
         return await HttpRequestRest.searchUser(username, (data) {
-          return data["werks"];
+          return data;
         }, (err) => null);
       } else {
         return null;
       }
     }, (err) {
-//      setState(() {
-//        this._loading = false;
-//      });
       return null;
     });
   }
@@ -473,10 +424,19 @@ class _RepairOrderPageState extends State<RepairOrderPage> {
     );
   }
 
-  Widget _transferToNextWorkShiftButton() {
+  bool _isSameArea(Map data) {
+    if (data == null) return false;
+    if (Global.userInfo.MATYP == "A1") {
+      return data["matyp"] == Global.userInfo.MATYP;
+    } else if (Global.userInfo.MATYP == "A2") {
+      return data["matyp"] == Global.userInfo.MATYP && data["cplgr"] == Global.userInfo.CPLGR;
+    } else return false;
+  }
+
+  Widget _transferToNextWorkShiftButton(String buttonText, String popText) {
     return ButtonWidget(
       padding: EdgeInsets.only(left: 0, right: 0),
-      child: Text('转接班人',
+      child: Text(buttonText,
           style: TextStyle(color: Color.fromRGBO(76, 129, 235, 1))),
       color: Color.fromRGBO(76, 129, 235, 1),
       onPressed: () {
@@ -488,7 +448,7 @@ class _RepairOrderPageState extends State<RepairOrderPage> {
             builder: (BuildContext contextA) {
               return CupertinoAlertDialog(
                 content: CupertinoTextField(
-                  placeholder: "输入接班人工号",
+                  placeholder: popText,
                   controller: this._controller,
                 ),
                 actions: <Widget>[
@@ -509,15 +469,12 @@ class _RepairOrderPageState extends State<RepairOrderPage> {
                         this._loading = true;
                       });
                       this._isExist(this._controller.text).then((value) {
-                        if (value != null && value == Global.userInfo.WERKS) {
+                        if (_isSameArea(value)) {
                           this
                               ._transToNextWorkShift(
-                                  this._reportOrder, this._controller.text)
+                                  this._reportOrder, this._controller.text.trim())
                               .then((success) async {
                             if (success) {
-                              setState(() {
-                                this._loading = false;
-                              });
                               await HttpRequestRest.pushAlias(
                                   [Global.userInfo.CPLGR + Global.userInfo.MATYP + _controller.text],
                                   "",
@@ -526,6 +483,9 @@ class _RepairOrderPageState extends State<RepairOrderPage> {
                                   [],
                                   (success) {},
                                   (err) {});
+                              setState(() {
+                                _loading = false;
+                              });
                               showCupertinoDialog(
                                   context: context,
                                   builder: (BuildContext context) {
@@ -537,7 +497,15 @@ class _RepairOrderPageState extends State<RepairOrderPage> {
                                       actions: <Widget>[
                                         CupertinoDialogAction(
                                           onPressed: () {
-                                            Navigator.of(context).pop();
+                                            Navigator.of(context).pushAndRemoveUntil(
+                                                CupertinoPageRoute(
+                                                    builder: (BuildContext context) {
+                                                      return ContainerPage(
+                                                        rootContext: context,
+                                                      );
+                                                    }), (route) {
+                                              return true;
+                                            });
                                           },
                                           child: Text("好"),
                                         ),
@@ -612,7 +580,7 @@ class _RepairOrderPageState extends State<RepairOrderPage> {
             ? Align(
                 alignment: Alignment.bottomCenter,
                 child: ButtonBarWidget(
-                  button: _transferToNextWorkShiftButton(),
+                  button: _transferToNextWorkShiftButton("转接班人", "请输入接班人工号"),
                 ),
               )
             : Container(),
@@ -631,7 +599,7 @@ class _RepairOrderPageState extends State<RepairOrderPage> {
                             Expanded(
                               child: Padding(
                                 padding: EdgeInsets.only(left: 10, right: 10),
-                                child: _transferToNextWorkShiftButton(),
+                                child: _transferToNextWorkShiftButton("转接班人", "请输入接班人工号"),
                               ),
                             ),
                             Expanded(
@@ -655,8 +623,7 @@ class _RepairOrderPageState extends State<RepairOrderPage> {
               )
             : Container(),
         (widget.order.ASTTX == "已完工") &&
-                (_maintenanceWorker.contains(Global.userInfo.SORTB) ||
-                    _monitorOrForeman.contains(Global.userInfo.SORTB))
+                (Global.userInfo.WCTYPE == "是")
             ? Align(
                 alignment: Alignment.bottomCenter,
                 child: Container(
@@ -704,7 +671,7 @@ class _RepairOrderPageState extends State<RepairOrderPage> {
             ? Align(
                 alignment: Alignment.bottomCenter,
                 child: ButtonBarWidget(
-                  button: _transferToNextWorkShiftButton(),
+                  button: _transferToNextWorkShiftButton("转接班人", "请输入接班人工号"),
                 ),
               )
             : Container(),
@@ -723,7 +690,7 @@ class _RepairOrderPageState extends State<RepairOrderPage> {
                             Expanded(
                               child: Padding(
                                 padding: EdgeInsets.only(left: 10, right: 10),
-                                child: _transferToNextWorkShiftButton(),
+                                child: _transferToNextWorkShiftButton("转接班人", "请输入接班人工号"),
                               ),
                             ),
                             Expanded(
@@ -766,7 +733,7 @@ class _RepairOrderPageState extends State<RepairOrderPage> {
             ? Align(
                 alignment: Alignment.bottomCenter,
                 child: ButtonBarWidget(
-                  button: _transferToNextWorkShiftButton(),
+                  button: _transferToNextWorkShiftButton("转接班人", "请输入接班人工号"),
                 ),
               )
             : Container(),
@@ -790,7 +757,7 @@ class _RepairOrderPageState extends State<RepairOrderPage> {
                             Expanded(
                               child: Padding(
                                 padding: EdgeInsets.only(left: 10, right: 10),
-                                child: _transferToNextWorkShiftButton(),
+                                child: _transferToNextWorkShiftButton("转接班人", "请输入接班人工号"),
                               ),
                             ),
                             Expanded(
@@ -870,7 +837,7 @@ class _RepairOrderPageState extends State<RepairOrderPage> {
             ? Align(
                 alignment: Alignment.bottomCenter,
                 child: ButtonBarWidget(
-                  button: _transferToNextWorkShiftButton(),
+                  button: _transferToNextWorkShiftButton("转接班人", "请输入接班人工号"),
                 ),
               )
             : Container(),
@@ -890,7 +857,7 @@ class _RepairOrderPageState extends State<RepairOrderPage> {
                             Expanded(
                               child: Padding(
                                 padding: EdgeInsets.only(left: 10, right: 10),
-                                child: _transferToNextWorkShiftButton(),
+                                child: _transferToNextWorkShiftButton("转接班人", "请输入接班人工号"),
                               ),
                             ),
                             Expanded(
@@ -930,7 +897,7 @@ class _RepairOrderPageState extends State<RepairOrderPage> {
             ? Align(
                 alignment: Alignment.bottomCenter,
                 child: ButtonBarWidget(
-                  button: _transferToNextWorkShiftButton(),
+                  button: _transferToNextWorkShiftButton("转接班人", "请输入接班人工号"),
                 ),
               )
             : Container(),
@@ -951,7 +918,7 @@ class _RepairOrderPageState extends State<RepairOrderPage> {
                             Expanded(
                               child: Padding(
                                 padding: EdgeInsets.only(left: 10, right: 10),
-                                child: _transferToNextWorkShiftButton(),
+                                child: _transferToNextWorkShiftButton("转接班人", "请输入接班人工号"),
                               ),
                             ),
                             Expanded(
@@ -986,7 +953,7 @@ class _RepairOrderPageState extends State<RepairOrderPage> {
             ? Align(
                 alignment: Alignment.bottomCenter,
                 child: ButtonBarWidget(
-                  button: _transferToNextWorkShiftButton(),
+                  button: _transferToNextWorkShiftButton("转生产验收", "请输入验收人工号"),
                 ),
               )
             : Container(),
@@ -1005,7 +972,7 @@ class _RepairOrderPageState extends State<RepairOrderPage> {
                             Expanded(
                               child: Padding(
                                 padding: EdgeInsets.only(left: 10, right: 10),
-                                child: _transferToNextWorkShiftButton(),
+                                child: _transferToNextWorkShiftButton("转生产验收", "请输入验收人工号"),
                               ),
                             ),
                             Expanded(
@@ -1044,7 +1011,7 @@ class _RepairOrderPageState extends State<RepairOrderPage> {
                             Expanded(
                               child: Padding(
                                 padding: EdgeInsets.only(left: 10, right: 10),
-                                child: _transferToNextWorkShiftButton(),
+                                child: _transferToNextWorkShiftButton("转生产验收", "请输入验收人工号"),
                               ),
                             ),
                             (_engineer.contains(Global.userInfo.SORTB)) ? Expanded(
@@ -1053,7 +1020,7 @@ class _RepairOrderPageState extends State<RepairOrderPage> {
                                 child: _reRepairButton(),
                               ),
                             ) : Container(),
-                            !widget.order.isStop ? Expanded(
+                            (!widget.order.isStop || _reportOrder.EQTYP != "E") ? Expanded(
                               child: Padding(
                                 padding: EdgeInsets.only(left: 10, right: 10),
                                 child: _completeButton(),
@@ -1067,39 +1034,6 @@ class _RepairOrderPageState extends State<RepairOrderPage> {
                 ),
               )
             : Container(),
-        (widget.order.ASTTX == "已完工") &&
-            widget.order.isStop
-            ? Align(
-          alignment: Alignment.bottomCenter,
-          child: Container(
-            height: 80,
-            child: ButtonBarWidget(
-              button: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Expanded(
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 10, right: 10),
-                          child: _transferToNextWorkShiftButton(),
-                        ),
-                      ),
-                      (_engineer.contains(Global.userInfo.SORTB)) ? Expanded(
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 10, right: 10),
-                          child: _reRepairButton(),
-                        ),
-                      ) : Container(),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-        )
-            : Container(),
       ];
     } else
       return [];
@@ -1112,16 +1046,16 @@ class _RepairOrderPageState extends State<RepairOrderPage> {
                 widget.order.ASTTX == "新工单" ||
                 widget.order.ASTTX == "维修中" ||
                 widget.order.ASTTX == "等待中") &&
-                    (_engineer.contains(Global.userInfo.SORTB))
+                    (_engineer.contains(Global.userInfo.SORTB) || _monitorOrForeman.contains(Global.userInfo.SORTB))
             ? Align(
                 alignment: Alignment.bottomCenter,
                 child: ButtonBarWidget(
-                  button: _transferToNextWorkShiftButton(),
+                  button: _transferToNextWorkShiftButton("转接班人", "请输入接班人工号"),
                 ),
               )
             : Container(),
         (widget.order.ASTTX == "已完工") &&
-                (_engineer.contains(Global.userInfo.SORTB))
+                (_engineer.contains(Global.userInfo.SORTB) || _monitorOrForeman.contains(Global.userInfo.SORTB))
             ? Align(
                 alignment: Alignment.bottomCenter,
                 child: Container(
@@ -1136,7 +1070,7 @@ class _RepairOrderPageState extends State<RepairOrderPage> {
                             Expanded(
                               child: Padding(
                                 padding: EdgeInsets.only(left: 10, right: 10),
-                                child: _transferToNextWorkShiftButton(),
+                                child: _transferToNextWorkShiftButton("转接班人", "请输入接班人工号"),
                               ),
                             ),
                             Expanded(
@@ -1181,7 +1115,7 @@ class _RepairOrderPageState extends State<RepairOrderPage> {
             ? Align(
                 alignment: Alignment.bottomCenter,
                 child: ButtonBarWidget(
-                  button: _transferToNextWorkShiftButton(),
+                  button: _transferToNextWorkShiftButton("转接班人", "请输入接班人工号"),
                 ),
               )
             : Container(),
@@ -1200,7 +1134,7 @@ class _RepairOrderPageState extends State<RepairOrderPage> {
                             Expanded(
                               child: Padding(
                                 padding: EdgeInsets.only(left: 10, right: 10),
-                                child: _transferToNextWorkShiftButton(),
+                                child: _transferToNextWorkShiftButton("转接班人", "请输入接班人工号"),
                               ),
                             ),
                             Expanded(
@@ -1243,7 +1177,7 @@ class _RepairOrderPageState extends State<RepairOrderPage> {
             ? Align(
                 alignment: Alignment.bottomCenter,
                 child: ButtonBarWidget(
-                  button: _transferToNextWorkShiftButton(),
+                  button: _transferToNextWorkShiftButton("转接班人", "请输入接班人工号"),
                 ),
               )
             : Container(),
@@ -1267,7 +1201,7 @@ class _RepairOrderPageState extends State<RepairOrderPage> {
                             Expanded(
                               child: Padding(
                                 padding: EdgeInsets.only(left: 10, right: 10),
-                                child: _transferToNextWorkShiftButton(),
+                                child: _transferToNextWorkShiftButton("转接班人", "请输入接班人工号"),
                               ),
                             ),
                             Expanded(
@@ -1335,7 +1269,7 @@ class _RepairOrderPageState extends State<RepairOrderPage> {
             ? Align(
           alignment: Alignment.bottomCenter,
           child: ButtonBarWidget(
-            button: _transferToNextWorkShiftButton(),
+            button: _transferToNextWorkShiftButton("转生产验收", "请输入验收人工号"),
           ),
         )
             : Container(),
@@ -1354,7 +1288,7 @@ class _RepairOrderPageState extends State<RepairOrderPage> {
                       Expanded(
                         child: Padding(
                           padding: EdgeInsets.only(left: 10, right: 10),
-                          child: _transferToNextWorkShiftButton(),
+                          child: _transferToNextWorkShiftButton("转生产验收", "请输入验收人工号"),
                         ),
                       ),
                       Expanded(
@@ -1393,7 +1327,7 @@ class _RepairOrderPageState extends State<RepairOrderPage> {
                       Expanded(
                         child: Padding(
                           padding: EdgeInsets.only(left: 10, right: 10),
-                          child: _transferToNextWorkShiftButton(),
+                          child: _transferToNextWorkShiftButton("转生产验收", "请输入验收人工号"),
                         ),
                       ),
                       _engineer.contains(Global.userInfo.SORTB) ? Expanded(
@@ -1402,7 +1336,7 @@ class _RepairOrderPageState extends State<RepairOrderPage> {
                           child: _reRepairButton(),
                         ),
                       ) : Container(),
-                      !widget.order.isStop ? Expanded(
+                      (!widget.order.isStop || _reportOrder.EQTYP != "E") ? Expanded(
                         child: Padding(
                           padding: EdgeInsets.only(left: 10, right: 10),
                           child: _completeButton(),
@@ -1431,7 +1365,7 @@ class _RepairOrderPageState extends State<RepairOrderPage> {
             ? Align(
           alignment: Alignment.bottomCenter,
           child: ButtonBarWidget(
-            button: _transferToNextWorkShiftButton(),
+            button: _transferToNextWorkShiftButton("转接班人", "请输入接班人工号"),
           ),
         )
             : Container(),
@@ -1450,7 +1384,7 @@ class _RepairOrderPageState extends State<RepairOrderPage> {
                       Expanded(
                         child: Padding(
                           padding: EdgeInsets.only(left: 10, right: 10),
-                          child: _transferToNextWorkShiftButton(),
+                          child: _transferToNextWorkShiftButton("转接班人", "请输入接班人工号"),
                         ),
                       ),
                       Expanded(
@@ -1531,7 +1465,6 @@ class _RepairOrderPageState extends State<RepairOrderPage> {
   @override
   void initState() {
     widget.order.isStop = widget.order.isStop ?? false;
-    this._userInfo = Global.userInfo;
     this._reportOrderDetailFuture = this._orderDetail();
     super.initState();
   }

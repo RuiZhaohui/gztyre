@@ -1262,8 +1262,8 @@ class _ProblemReportHomePageState extends State<ProblemReportHomePage> {
     var _timer;
     _timer = Timer(Duration(seconds: 1), () {
       if (_bautl.text != null && _bautl.text != '') {
-        HttpRequestRest.getMateriel(_bautl.text, (materiel) {
-          _searchMaterial = materiel;
+        HttpRequestRest.getMateriel(_bautl.text.trim(), (materielList) {
+          _searchMaterial = materielList.first;
         }, (err) {
           print('error');
         });
@@ -1273,9 +1273,9 @@ class _ProblemReportHomePageState extends State<ProblemReportHomePage> {
       _timer.cancel();
       _timer = Timer(Duration(seconds: 1), () {
         if (_bautl.text != null && _bautl.text != '') {
-          HttpRequestRest.getMateriel(_bautl.text, (materiel) {
+          HttpRequestRest.getMateriel(_bautl.text.trim(), (materielList) {
             setState(() {
-              _searchMaterial = materiel;
+              _searchMaterial = materielList.first;
             });
           }, (err) {
             print('error');

@@ -1,19 +1,13 @@
-import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:gztyre/api/HttpRequest.dart';
 import 'package:gztyre/api/HttpRequestRest.dart';
 import 'package:gztyre/api/model/Device.dart';
 import 'package:gztyre/api/model/FunctionPosition.dart';
 import 'package:gztyre/commen/Global.dart';
-import 'package:gztyre/components/ListItemSelectWidget.dart';
 import 'package:gztyre/components/ListItemWidget.dart';
-import 'package:gztyre/components/ListTitleWidget.dart';
 import 'package:gztyre/components/ProgressDialog.dart';
 import 'package:gztyre/components/SearchBar.dart';
 import 'package:gztyre/components/TextButtonWidget.dart';
-import 'package:gztyre/pages/orderCenter/MaterielPage.dart';
 import 'package:gztyre/pages/problemReport/ChildrenDeviceSelectionPage.dart';
 import 'package:gztyre/pages/problemReport/ChildrenPositonSelectionPage.dart';
 
@@ -41,7 +35,6 @@ class _DeviceSelectionPageState extends State<DeviceSelectionPage> {
   bool _loading = false;
 
   List<FunctionPosition> _position = [];
-  List<FunctionPosition> _tempPosition = [];
   List<Device> _allList = [];
 
   var _listPositionAndDeviceFuture;
@@ -53,7 +46,7 @@ class _DeviceSelectionPageState extends State<DeviceSelectionPage> {
     HttpRequestRest.listPosition(Global.userInfo.PERNR,
         (List<FunctionPosition> list) {
       this._position = list;
-      this._tempPosition.addAll(list);
+//      this._tempPosition.addAll(list);
       setState(() {
         this._loading = false;
       });
@@ -199,7 +192,7 @@ class _DeviceSelectionPageState extends State<DeviceSelectionPage> {
 
   findDeviceByKeywordInDeviceList(List<Device> list, String keyword, List<Device> deviceList) {
     deviceList.forEach((item) {
-      if (item.deviceName.indexOf(keyword) > -1) {
+      if (item.deviceName.indexOf(keyword) > -1 || item.deviceCode.indexOf(keyword) > -1) {
         list.add(item);
       }
       if (item.children.length > 0) {

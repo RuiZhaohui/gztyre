@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gztyre/api/model/Device.dart';
@@ -180,7 +178,6 @@ class _ChildrenDeviceSelectionPageState
           color: Color.fromRGBO(94, 102, 111, 1),
         ),
         middle: Text(
-          /// todo 改为父位置名称
           "选择设备",
           style: TextStyle(fontWeight: FontWeight.w500),
         ),

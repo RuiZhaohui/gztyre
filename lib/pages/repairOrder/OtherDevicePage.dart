@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gztyre/api/HttpRequest.dart';
 import 'package:gztyre/api/model/Device.dart';
-import 'package:gztyre/api/model/Order.dart';
 import 'package:gztyre/components/ListItemWidget.dart';
 import 'package:gztyre/components/ProgressDialog.dart';
 

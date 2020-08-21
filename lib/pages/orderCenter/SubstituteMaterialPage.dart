@@ -1,9 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:gztyre/api/model/Materiel.dart';
-import 'package:gztyre/components/ListItemShopChartWidget.dart';
 import 'package:gztyre/components/ListItemWidget.dart';
-import 'package:gztyre/components/SearchBar.dart';
-import 'package:gztyre/pages/orderCenter/MaterielDetailPage.dart';
 import 'package:gztyre/pages/orderCenter/SubstituteMaterialDetailPage.dart';
 
 class SubstituteMaterialPage extends StatefulWidget {

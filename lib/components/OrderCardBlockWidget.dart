@@ -120,6 +120,8 @@ class _OrderCardBlockWidgetState extends State<OrderCardBlockWidget> {
                       child: Text("负责人：${(widget.order.KTEXT1 == null || widget.order.KTEXT1.length == 0) ? "暂无" : widget.order.KTEXT1}", style: TextStyle(color: Color.fromRGBO(0, 0, 0, 0.45),
                         fontSize: 12,),),
                     ) : Container(),
+                    Text(widget.order.isStop ? '已停机' : '未停机', style: TextStyle(color: Color.fromRGBO(0, 0, 0, 0.45),
+                        fontSize: 12,),),
                   ],
                 ),
               ),

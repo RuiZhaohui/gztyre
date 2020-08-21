@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gztyre/api/model/UserInfo.dart';
-import 'package:gztyre/utils/screen_utils.dart';
 
 class UserInfoWidget extends StatelessWidget {
 

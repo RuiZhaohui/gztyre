@@ -3,5 +3,4 @@ class RepairType {
   String ILART;
   /// 维修类型名称
   String ILATX;
-  String MTYPE;
 }

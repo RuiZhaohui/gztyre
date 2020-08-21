@@ -11,21 +11,6 @@ class OrderInfoWidget extends StatelessWidget {
   final RepairOrder repairOrder;
   final Order order;
 
-//  DateTime _reportTime;
-//  DateTime _acceptTime;
-//  DateTime _completeTime;
-  String _accept = '无';
-  String _complete = '无';
-
-//  DateTime _getDateTime(String date, String time) {
-//    int year = int.parse(date.substring(0, 4));
-//    int month = int.parse(date.substring(5, 7));
-//    int day = int.parse(date.substring(8, 10));
-//    int hour = int.parse(time.substring(0, 2));
-//    int minute = int.parse(time.substring(3, 5));
-//    int second = int.parse(time.substring(6, 8));
-//    return DateTime(year, month, day, hour, minute, second);
-//  }
 
   String _getTime(String date, String time) {
     return "${date.substring(2, 10)} ${time.substring(0, 5)}";
@@ -33,25 +18,21 @@ class OrderInfoWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String _accept = '无';
+    String _complete = '无';
 
-//    if (order.ERDAT == "0000-00-00") {
-//      this._reportTime = null;
-//    } else {
-//      this._reportTime =
-//          this._getDateTime(order.ERDAT, order.ERTIM);
-//    }
     if (order.ERDAT2 == "0000-00-00") {
-      this._accept = "无";
+      _accept = "无";
     } else {
-      this._accept =
+      _accept =
           this._getTime(order.ERDAT2, order.ERTIM2);
     }
     if (order.ERDAT3 == "0000-00-00" ||
         order.ERDAT3 + order.ERTIM3 ==
             order.ERDAT2 + order.ERTIM2) {
-      this._complete = "无";
+      _complete = "无";
     } else {
-      this._complete =
+      _complete =
           this._getTime(order.ERDAT3, order.ERTIM3);
     }
 

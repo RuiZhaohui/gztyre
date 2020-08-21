@@ -3,7 +3,6 @@ import 'package:gztyre/api/model/Materiel.dart';
 import 'package:gztyre/components/ButtonBarWidget.dart';
 import 'package:gztyre/components/ButtonWidget.dart';
 import 'package:gztyre/components/ListItemSelectWidget.dart';
-import 'package:gztyre/components/ListItemWidget.dart';
 
 class MaterielCompanyPage extends StatefulWidget {
   MaterielCompanyPage({Key key, this.list}) : super(key: key);

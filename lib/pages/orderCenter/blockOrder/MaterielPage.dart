@@ -4,6 +4,7 @@ import 'package:gztyre/api/HttpRequest.dart';
 import 'package:gztyre/api/HttpRequestRest.dart';
 import 'package:gztyre/api/model/Materiel.dart';
 import 'package:gztyre/api/model/SubmitMateriel.dart';
+import 'package:gztyre/commen/Global.dart';
 import 'package:gztyre/components/BottomDragWidget.dart';
 import 'package:gztyre/components/ListItemShopChartWidget.dart';
 import 'package:gztyre/components/ListItemWidget.dart';
@@ -33,9 +34,9 @@ class _MaterielPageState extends State<MaterielPage> {
   TextEditingController _editSearchMaterielController =
       new TextEditingController();
 
-  Future<Materiel> _getMateriel(String code) async {
-    return await HttpRequestRest.getMateriel(code, (materiel) {
-      return materiel;
+  Future<List<Materiel>> _getMateriel(String code) async {
+    return await HttpRequestRest.getMateriel(code, (materielList) {
+      return materielList;
     }, (err) {
       return null;
     });
@@ -111,13 +112,13 @@ class _MaterielPageState extends State<MaterielPage> {
           ],
         ),
         number: list[i].MENGE,
-        onTap: (val) {
-          list[i].MENGE = val;
-        },
         onDelete: () {
           setState(() {
             list.removeAt(i);
           });
+        },
+        onChange: (val) {
+          list[i].MENGE = val;
         },
       );
       widgetList.add(listItem);
@@ -155,16 +156,8 @@ class _MaterielPageState extends State<MaterielPage> {
   @override
   void initState() {
     super.initState();
-//    if (widget.list != null) {
-//      this._requireMaterielList = widget.list;
-//    }
     this._loading = false;
     setState(() {});
-//    HttpRequest.searchBom(widget.device.deviceCode, (list) {
-////      print(list);
-//    }, (err) {
-////      print(err);
-//    });
     this._listMaterielFuture = this._listMateriels();
   }
 
@@ -296,10 +289,14 @@ class _MaterielPageState extends State<MaterielPage> {
                                             ._getMateriel(
                                             submitMateriel
                                                 .MATNR)
-                                            .then((materiel) {
-                                          if (materiel != null) {
-                                            submitMateriel.MATNR = materiel.MATNR;
-                                            submitMateriel.MAKTX = materiel.MAKTX;
+                                            .then((materielList) {
+                                          if (materielList.length > 0) {
+                                            Materiel temp = materielList.firstWhere((element) => element.WERKS == Global.userInfo.WERKS);
+                                            if (temp == null) {
+                                              temp = materielList.first;
+                                            }
+                                            submitMateriel.MAKTX = temp.MAKTX;
+                                            submitMateriel.MATNR = temp.MATNR;
                                             this
                                                 ._requireMaterielList
                                                 .add(

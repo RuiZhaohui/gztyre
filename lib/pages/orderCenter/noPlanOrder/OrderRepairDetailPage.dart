@@ -79,9 +79,7 @@ class _OrderRepairDetailPageState extends State<OrderRepairDetailPage> {
   }
 
   Future<bool> _repairComplete(Order order, URGRP, URCOD, EQUNR, KTEXT) async {
-//    setState(() {
-//      this._loading = true;
-//    });
+
     return await this._getAPPTRADENO(order.QMNUM, order.AUFNR).then((APPTRADENO) async {
       return await HttpRequest.changeOrderStatus(
           Global.userInfo.PERNR,
@@ -96,41 +94,23 @@ class _OrderRepairDetailPageState extends State<OrderRepairDetailPage> {
           null, (res) {
         return true;
       }, (err) {
-//        setState(() {
-//          this._loading = false;
-//        });
         return false;
       });
     }).catchError((err) {
-//      setState(() {
-//        this._loading = false;
-//      });
       return false;
     });
   }
 
   Future<bool> _complete(
       Order order, String PERNR) async {
-//    setState(() {
-//      this._loading = true;
-//    });
     return await this._getAPPTRADENO(order.QMNUM, order.AUFNR).then((APPTRADENO) async {
       return await HttpRequest.completeOrder(
           PERNR, order.AUFNR, "已确认", APPTRADENO, (res) {
-//        setState(() {
-//          this._loading = false;
-//        });
         return true;
       }, (err) {
-//        setState(() {
-//          this._loading = false;
-//        });
         return false;
       });
     }).catchError((err) {
-//      setState(() {
-//        this._loading = false;
-//      });
       return false;
     });
   }
@@ -190,6 +170,17 @@ class _OrderRepairDetailPageState extends State<OrderRepairDetailPage> {
     });
   }
 
+  Future<int> _getLevel(String deviceCode) async {
+    return await HttpRequestRest.getDeviceLevel(deviceCode, (level) {
+      return level;
+    }, (err) {
+      throw new Error();
+    });
+  }
+
+  Future<Device> _getDevice(String deviceCode) async {
+    return await HttpRequestRest.getDevice(deviceCode, (device) => device, (err) => throw new Error());
+  }
 
   @override
   void dispose() {
@@ -339,11 +330,13 @@ class _OrderRepairDetailPageState extends State<OrderRepairDetailPage> {
                               TextStyle(color: Color.fromRGBO(76, 129, 235, 1)),
                         ),
                         color: Color.fromRGBO(76, 129, 235, 1),
-                        onPressed: () {
+                        onPressed: () async {
                           bool notHasActionAndDescription = ((this._device == null && !_notShowDevice.contains(widget.order.ILART)) ||
                               (this._problemDescription == null && !_notShowDescription.contains(widget.order.ILART)) ||
                               this._description.text == "") && widget.order.ILART != "N06";
-                          bool notFiveLevel = this._device.deviceCode.split("-").length < 5;
+                          _device = await _getDevice(_device.deviceCode);
+                          int level = await _getLevel(_device.deviceCode);
+                          bool notFiveLevel = _device.deviceName == null || level < 5;
                           if (notHasActionAndDescription) {
                             showCupertinoDialog(
                                 context: context,
@@ -363,7 +356,7 @@ class _OrderRepairDetailPageState extends State<OrderRepairDetailPage> {
                                     ],
                                   );
                                 });
-                          } else if (notFiveLevel && ["N01"].contains(widget.order.ILART) && _device.deviceType == "E") {
+                          } else if (notFiveLevel && ["N01"].contains(widget.order.ILART) && (_device.deviceType == "E")) {
                             showCupertinoDialog(
                                 context: context,
                                 builder: (BuildContext context) {

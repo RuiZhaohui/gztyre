@@ -8,6 +8,7 @@ import 'package:gztyre/api/HttpRequestRest.dart';
 import 'package:gztyre/api/model/Device.dart';
 import 'package:gztyre/api/model/Materiel.dart';
 import 'package:gztyre/api/model/SubmitMateriel.dart';
+import 'package:gztyre/commen/Global.dart';
 import 'package:gztyre/components/BottomDragWidget.dart';
 import 'package:gztyre/components/ListItemShopChartWidget.dart';
 import 'package:gztyre/components/ListItemWidget.dart';
@@ -39,19 +40,10 @@ class _MaterielPageState extends State<MaterielPage> {
   TextEditingController _editMaterielController = new TextEditingController();
   TextEditingController _editSearchMaterielController =
       new TextEditingController();
-  Materiel _searchMaterial;
 
-  Future<bool> _isMaterielExist(String code) async {
-    return await HttpRequestRest.isMaterielExist(code, (success) {
-      return success;
-    }, (err) {
-      return false;
-    });
-  }
-
-  Future<Materiel> _getMateriel(String code) async {
-    return await HttpRequestRest.getMateriel(code, (materiel) {
-      return materiel;
+  Future<List<Materiel>> _getMateriel(String code) async {
+    return await HttpRequestRest.getMateriel(code, (materielList) {
+      return materielList;
     }, (err) {
       return null;
     });
@@ -119,13 +111,13 @@ class _MaterielPageState extends State<MaterielPage> {
           ],
         ),
         number: list[i].MENGE,
-        onTap: (val) {
-          list[i].MENGE = val;
-        },
         onDelete: () {
           setState(() {
             list.removeAt(i);
           });
+        },
+        onChange: (val) {
+            list[i].MENGE = val;
         },
       );
       widgetList.add(listItem);
@@ -177,11 +169,6 @@ class _MaterielPageState extends State<MaterielPage> {
     }
     this._loading = true;
     setState(() {});
-//    HttpRequest.searchBom(widget.device.deviceCode, (list) {
-////      print(list);
-//    }, (err) {
-////      print(err);
-//    });
     this._listMaterielFuture = this._listMateriels(widget.device.deviceCode);
   }
 
@@ -347,11 +334,15 @@ class _MaterielPageState extends State<MaterielPage> {
                                                       this
                                                           ._getMateriel(
                                                           submitMateriel
-                                                              .MATNR)
-                                                          .then((materiel) {
-                                                        if (materiel != null) {
-                                                          submitMateriel.MAKTX = materiel.MAKTX;
-                                                          submitMateriel.MATNR = materiel.MATNR;
+                                                              .MATNR.trim())
+                                                          .then((materielList) {
+                                                        if (materielList.length > 0) {
+                                                          Materiel temp = materielList.firstWhere((element) => element.WERKS == Global.userInfo.WERKS);
+                                                          if (temp == null) {
+                                                            temp = materielList.first;
+                                                          }
+                                                          submitMateriel.MAKTX = temp.MAKTX;
+                                                          submitMateriel.MATNR = temp.MATNR;
                                                           this
                                                               ._requireMaterielList
                                                               .add(

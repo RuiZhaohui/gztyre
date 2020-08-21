@@ -17,7 +17,7 @@ class Global {
   static String token = "";
   static String username = "";
   static String password = "";
-  static String JPUSH_APP_KEY = "ac58b959ac802cd39ed20fbb";
+  static String JPUSH_APP_KEY = "157d1e078648f63c8c6c9030";
   static JPush jPush;
 
   // 是否为release版
@@ -30,7 +30,19 @@ class Global {
   // 支持音频格式
   static List<String> audioType = ["wav", "mp3"];
 
-//  static Profile profile = Profile();
+  // 环境
+  // 生产后台
+  static String url = "http://pmapp.gztyre.com:8080";
+  static String sapUrl = "http://pmerp.gztyre.com:8000/sap/bc/srt/rfc/sap";
+  static Map<String, String> secret = {"Authorization": "Basic UE1BUFAtRVJQOlBtYXBwKzY2Ng=="};
+  static String type = "prod";
+  static String version = "20200821v2";
+  // 开发后台
+//  static String url = "http://192.168.6.211:8070";
+//  static String sapUrl = "http://61.159.128.211:8005/sap/bc/srt/rfc/sap";
+//  static Map<String, String> secret = {"Authorization": "Basic RGV2MDM6MTIzNDU2"};
+//  static String version = "20200805";
+//  static String type = "dev";
 
   //初始化全局信息，会在APP启动时执行
   static Future init() async {

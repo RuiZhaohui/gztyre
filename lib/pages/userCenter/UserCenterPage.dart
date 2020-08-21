@@ -1,5 +1,10 @@
+import 'dart:io';
+import 'dart:ui';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:gztyre/api/HttpRequestRest.dart';
 import 'package:gztyre/commen/Global.dart';
 import 'package:gztyre/components/ButtonBarWidget.dart';
 import 'package:gztyre/components/ButtonWidget.dart';
@@ -11,7 +16,7 @@ import 'package:gztyre/pages/userCenter/PasswordModifyPage.dart';
 import 'package:gztyre/pages/userCenter/UserInfoModifyPage.dart';
 import 'package:gztyre/pages/userCenter/UserMaintenanceGroupSelectionPage.dart';
 import 'package:gztyre/pages/userCenter/UserWorkShiftSelectionPage.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:ota_update/ota_update.dart';
 
 
 class UserCenterPage extends StatefulWidget {
@@ -29,7 +34,7 @@ class UserCenterPage extends StatefulWidget {
 
 class _UserCenterPageState extends State<UserCenterPage> {
   String _password = "";
-
+  OtaEvent _currentEvent;
 
   Widget _showPasswordWidget() {
     return GestureDetector(
@@ -51,11 +56,40 @@ class _UserCenterPageState extends State<UserCenterPage> {
     );
   }
 
+  Future<void> tryOtaUpdate(version) async {
+    print('${Global.url}/api/downloadFile/${Global.type}-release-$version.apk');
+
+    try {
+      //LINK CONTAINS APK OF FLUTTER HELLO WORLD FROM FLUTTER SDK EXAMPLES
+      OtaUpdate()
+          .execute(
+        '${Global.url}/api/downloadFile/${Global.type}-release-$version.apk',
+        destinationFilename: '${Global.type}-release-$version.apk',
+      )
+          .listen(
+            (OtaEvent event) {
+          setState(() => _currentEvent = event);
+        },
+      );
+    } catch (e) {
+      print('Failed to make OTA update. Details: $e');
+    }
+  }
+
+
+
 
   @override
   void initState() {
     Global.password == null ? this._password = null : this._password = "********";
     super.initState();
+  }
+
+
+  @override
+  void dispose() {
+    IsolateNameServer.removePortNameMapping('downloader_send_port');
+    super.dispose();
   }
 
   @override
@@ -208,6 +242,109 @@ class _UserCenterPageState extends State<UserCenterPage> {
                     Container(
                       height: 10,
                     ),
+                    ListItemWidget(
+                      onTap: () async {
+                        await HttpRequestRest.getVersion("gztyre",
+                                (version) {
+                                  if (version != Global.version) {
+                                    showCupertinoDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return CupertinoAlertDialog(
+                                            content: Text(
+                                              "有新版本：$version",
+                                              style: TextStyle(fontSize: 18),
+                                            ),
+                                            actions: <Widget>[
+                                              CupertinoDialogAction(
+                                                onPressed: () {
+                                                  setState(() {
+                                                  });
+                                                  Navigator.of(context).pop();
+                                                },
+                                                child: Text("取消"),
+                                              ),
+                                              CupertinoDialogAction(
+                                                onPressed: () async {
+                                                  if (Platform.isAndroid) {
+                                                    this.tryOtaUpdate(version);
+                                                  }
+                                                  Navigator.of(context).pop();
+                                                  Fluttertoast.showToast(
+                                                      msg: "下载已开始，请从通知栏查看下载进度",
+                                                      toastLength: Toast.LENGTH_SHORT,
+                                                      gravity: ToastGravity.BOTTOM,
+                                                      timeInSecForIosWeb: 1,
+                                                      backgroundColor: Colors.blue,
+                                                      textColor: Colors.white,
+                                                      fontSize: 16.0
+                                                  );
+                                                },
+                                                child: Text("更新"),
+                                              ),
+                                            ],
+                                          );
+                                        });
+                                  } else {
+                                    showCupertinoDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return CupertinoAlertDialog(
+                                            content: Text(
+                                              "已是最新版本",
+                                              style: TextStyle(fontSize: 18),
+                                            ),
+                                            actions: <Widget>[
+                                              CupertinoDialogAction(
+                                                onPressed: () {
+                                                  setState(() {
+                                                  });
+                                                  Navigator.of(context).pop();
+                                                },
+                                                child: Text("好"),
+                                              ),
+                                            ],
+                                          );
+                                        });
+                                  }
+                                }, (err) {
+                              showCupertinoDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return CupertinoAlertDialog(
+                                      content: Text(
+                                        "检查更新失败",
+                                        style: TextStyle(fontSize: 18),
+                                      ),
+                                      actions: <Widget>[
+                                        CupertinoDialogAction(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: Text("好"),
+                                        ),
+                                      ],
+                                    );
+                                  });
+                            });
+                      },
+                      title: Row(
+                        children: <Widget>[
+                          Padding(
+                            padding: EdgeInsets.only(right: 5),
+                            child: Icon(Icons.update, color: Colors.cyan,),
+                          ),
+                          Text(
+                            "检查更新",
+                            style: TextStyle(fontSize: 16),
+                          )
+                        ],
+                      ),
+                      actionArea: Text("当前版本：${Global.type + Global.version}        ", style: TextStyle(color: Colors.grey),),
+                    ),
+                    Container(
+                      height: 10,
+                    ),
                     Container(
                       color: Color.fromRGBO(231, 233, 234, 1),
                       child: ButtonBarWidget(
@@ -237,7 +374,6 @@ class _UserCenterPageState extends State<UserCenterPage> {
             ),
           ],
         ),
-
       ),
     );
   }

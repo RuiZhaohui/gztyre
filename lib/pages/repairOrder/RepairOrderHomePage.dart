@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gztyre/api/HttpRequest.dart';
-import 'package:gztyre/api/HttpRequestRest.dart';
 import 'package:gztyre/api/model/Order.dart';
 import 'package:gztyre/api/model/UserInfo.dart';
 import 'package:gztyre/commen/Global.dart';
@@ -50,6 +49,7 @@ class _RepairOrderHomePageState extends State<RepairOrderHomePage> {
           this._list.add(item);
         }
       });
+      _list = sortList(_list);
       setState(() {
         this._loading = false;
       });
@@ -61,6 +61,31 @@ class _RepairOrderHomePageState extends State<RepairOrderHomePage> {
       });
       return false;
     });
+  }
+
+  List<Order> sortList(List<Order> list) {
+    List<Order> completeList = list.where((element) => element.ASTTX == "已完工").toList();
+    List<Order> repairingList = list.where((element) => element.ASTTX == "维修中").toList();
+    List<Order> waitingList = list.where((element) => element.ASTTX == "等待中").toList();
+    List<Order> newList = list.where((element) => element.ASTTX == "新建" || element.ASTTX == "新工单").toList();
+    list.removeWhere((element) => element.ASTTX == "已完工" || element.ASTTX == "维修中" || element.ASTTX == "等待中" || element.ASTTX == "新建" || element.ASTTX == "新工单");
+    completeList.sort((Order o1, Order o2) {
+      return int.parse(o1.ILART.substring(1)) - int.parse(o2.ILART.substring(1));
+    });
+    repairingList.sort((Order o1, Order o2) {
+      return int.parse(o1.ILART.substring(1)) - int.parse(o2.ILART.substring(1));
+    });
+    waitingList.sort((Order o1, Order o2) {
+      return int.parse(o1.ILART.substring(1)) - int.parse(o2.ILART.substring(1));
+    });
+    newList.sort((Order o1, Order o2) {
+      return int.parse(o1.ILART.substring(1)) - int.parse(o2.ILART.substring(1));
+    });
+    completeList.addAll(repairingList);
+    completeList.addAll(waitingList);
+    completeList.addAll(newList);
+    completeList.addAll(list);
+    return completeList;
   }
 
   Future<Null> onHeaderRefresh() {
@@ -75,6 +100,7 @@ class _RepairOrderHomePageState extends State<RepairOrderHomePage> {
             this._list.add(item);
           }
         });
+        _list = sortList(_list);
         this._refreshController.refreshCompleted();
         print(DateTime.now());
         setState(() {

@@ -28,7 +28,6 @@ class _RepairOrderDetailPageState extends State<RepairOrderDetailPage> {
   List _imgList = [];
   String _video;
   String _audio;
-  var _audioPlayerStateSubscription;
 
 
   AudioPlayer audioPlayer = new AudioPlayer();
@@ -225,7 +224,7 @@ class _RepairOrderDetailPageState extends State<RepairOrderDetailPage> {
   @override
   void initState() {
     this._getPicFuture = this._getPic();
-    _audioPlayerStateSubscription = audioPlayer.onPlayerStateChanged.listen((s) {
+    audioPlayer.onPlayerStateChanged.listen((s) {
       if (s == AudioPlayerState.PLAYING) {
         setState(() => icon = Icon(Icons.pause));
       } else {

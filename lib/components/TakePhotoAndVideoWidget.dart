@@ -4,7 +4,6 @@ import 'package:camera/camera.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gztyre/components/ButtonWidget.dart';
-import 'package:gztyre/components/painter/AddPicPainter.dart';
 import 'package:gztyre/components/BottomUpAction.dart';
 import 'package:gztyre/components/CameraWidget.dart';
 import 'package:image_picker/image_picker.dart';
@@ -38,8 +37,8 @@ class _TakePhotoAndVideoWidget extends State<TakePhotoAndVideoWidget> {
     this.firstCamera = cameras.first;
   }
 
-  Future<File> getImageFromGallery() async {
-    return await ImagePicker.pickImage(source: ImageSource.gallery);
+  Future<PickedFile> getImageFromGallery() async {
+    return await ImagePicker().getImage(source: ImageSource.gallery);
   }
 
 
@@ -96,6 +95,7 @@ class _TakePhotoAndVideoWidget extends State<TakePhotoAndVideoWidget> {
       child: Container(
         height: 30,
         child: ButtonWidget(
+          onPressed: () {},
           fontSize: 16,
 //                      minSize: 0.1,
           padding: EdgeInsets.only(left: 50, right: 50),

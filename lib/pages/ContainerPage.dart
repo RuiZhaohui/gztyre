@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gztyre/commen/Global.dart';
 import 'package:gztyre/components/TabBarIcon.dart';
+import 'package:gztyre/pages/login/LoginPage.dart';
 import 'package:gztyre/pages/orderCenter/OrderCategory.dart';
 import 'package:gztyre/pages/problemReport/ProblemReportHomePage.dart';
 import 'package:gztyre/pages/repairOrder/RepairOrderHomePage.dart';
@@ -22,33 +23,23 @@ class ContainerPage extends StatefulWidget {
 
 class _ContainerPageState extends State<ContainerPage> {
   var pages;
-  int _selectIndex;
 
   @override
   void initState() {
     super.initState();
     pages = _buildPages();
-//    this._selectIndex = widget.selectIndex;
     setState(() {
 
     });
   }
 
   List<Widget> _buildPages() {
-//    if (isWork) {
       return [
         new RepairOrderHomePage(rootContext: widget.rootContext),
         new ProblemReportHomePage(rootContext: widget.rootContext),
         new OrderCategory(rootContext: widget.rootContext,),
         new UserCenterPage(rootContext: widget.rootContext),
       ];
-//    } else {
-//      return [
-//        new RepairOrderHomePage(rootContext: widget.rootContext),
-//        new ProblemReportHomePage(rootContext: widget.rootContext),
-//        new UserCenterPage(rootContext: widget.rootContext),
-//      ];
-//    }
   }
 
   Widget _buildTabBar() {
@@ -101,48 +92,6 @@ class _ContainerPageState extends State<ContainerPage> {
           ),
         ),
       ]);
-//    } else {
-//      return CupertinoTabBar(
-//        onTap: (int index) {
-//          setState(() {
-//            this._selectIndex = index;
-//          });
-//        },
-//          items: <BottomNavigationBarItem>[
-//        BottomNavigationBarItem(
-//            icon: TabBarIcon(
-//              image: AssetImage("assets/images/icon/icon_repair.png"),
-//              title: "我的报修单",
-//            ),
-//            activeIcon: TabBarIcon(
-//              image: AssetImage("assets/images/icon/icon_repair.png"),
-//              title: "我的报修单",
-//              isActive: true,
-//            )),
-//        BottomNavigationBarItem(
-//          icon: TabBarIcon(
-//            image: AssetImage("assets/images/icon/icon_report.png"),
-//            title: "故障上报",
-//          ),
-//          activeIcon: TabBarIcon(
-//            image: AssetImage("assets/images/icon/icon_report.png"),
-//            title: "故障上报",
-//            isActive: true,
-//          ),
-//        ),
-//        BottomNavigationBarItem(
-//          icon: TabBarIcon(
-//            image: AssetImage("assets/images/icon/icon_user.png"),
-//            title: "个人中心",
-//          ),
-//          activeIcon: TabBarIcon(
-//            image: AssetImage("assets/images/icon/icon_user.png"),
-//            title: "个人中心",
-//            isActive: true,
-//          ),
-//        ),
-//      ]);
-//    }
   }
 
   Widget _buildPage(int i) {
@@ -154,9 +103,14 @@ class _ContainerPageState extends State<ContainerPage> {
   @override
   Widget build(BuildContext context) {
     if (!['A1', 'A2'].contains(Global.userInfo.MATYP)) {
-      return new Center(
-        child: Text("参数错误"),
-      );
+      Global.logout();
+      Navigator.of(context).pushAndRemoveUntil(
+          CupertinoPageRoute(
+              builder: (BuildContext context) {
+                return LoginPage();
+              }), (route) {
+        return true;
+      });
     }
     return CupertinoTabScaffold(
         tabBar: _buildTabBar(),

@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:gztyre/api/HttpRequest.dart';
 import 'package:gztyre/api/HttpRequestRest.dart';
 import 'package:gztyre/api/model/UserInfo.dart';
@@ -12,7 +11,6 @@ import 'package:gztyre/pages/login/DefaultPasswordAndPhoneNumberChangePage.dart'
 import 'package:gztyre/pages/login/MaintenanceGroupSelectionPage.dart';
 import 'package:gztyre/pages/login/WorkShiftSelectionPage.dart';
 import 'package:gztyre/utils/screen_utils.dart';
-import 'package:jpush_flutter/jpush_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
@@ -29,7 +27,6 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController _passwordController = new TextEditingController();
   bool _rememberUsername = true;
   bool _rememberPassword = true;
-  GlobalKey _formKey = new GlobalKey<FormState>();
   bool _loading = false;
 
   @override
@@ -63,7 +60,7 @@ class _LoginPageState extends State<LoginPage> {
     return await prefs.get(key);
   }
 
-  _set(String key, String value) async {
+  Future<void> _set(String key, String value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString(key, value);
   }

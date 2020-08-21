@@ -38,7 +38,7 @@ class _MyAppState extends State<MyApp> {
   Future<void> initPlatformState() async {
 
     Global.jPush.getRegistrationID().then((rid) {
-      print('---->rid:${rid}');
+      print('---->rid:$rid');
     });
 
     if (Platform.isIOS) {
@@ -52,7 +52,6 @@ class _MyAppState extends State<MyApp> {
           NotificationSettingsIOS(sound: true, alert: true, badge: true)
       );
     }
-    String platformVersion;
 
     try {
       /*监听响应方法的编写*/
@@ -66,7 +65,7 @@ class _MyAppState extends State<MyApp> {
       }
       );
     } on PlatformException {
-      platformVersion = '平台版本获取失败，请检查！';
+      print('平台版本获取失败，请检查！');
     }
 
 

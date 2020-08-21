@@ -22,6 +22,7 @@ class _MaintenanceGroupSelectionPageState
     if (_managerList.contains(Global.userInfo.SORTB)) {
       this.list = ['管理人员'];
     } else this.list = ['跟班维修', '常早班维修', '工装维修'];
+    super.initState();
   }
 
   @override

@@ -59,6 +59,9 @@ class ReportOrder {
   /// 是否停机
   bool MSAUS;
 
+  // 设备类型
+  String EQTYP;
+
   ReportOrder();
 
   ReportOrder.formJson(Map<String, dynamic> json)
@@ -75,7 +78,8 @@ class ReportOrder {
         ASTXT = json["ASTXT"],
         ERDAT = json["ERDAT"],
         ERTIM = json["ERTIM"],
-        MSAUS = json["MSAUS"];
+        MSAUS = json["MSAUS"],
+        EQTYP = json["EQTYP"];
 
   Map<String, dynamic> toJson() => <String, dynamic>{
         "PERNR": PERNR,
@@ -91,6 +95,7 @@ class ReportOrder {
         "ASTXT": ASTXT,
         "ERDAT": ERDAT,
         "ERTIM": ERTIM,
-        "MSAUS": MSAUS
+        "MSAUS": MSAUS,
+        "EQTYP": EQTYP
       };
 }

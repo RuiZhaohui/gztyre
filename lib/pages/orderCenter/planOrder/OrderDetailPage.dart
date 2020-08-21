@@ -56,17 +56,11 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
   AudioPlayer audioPlayer = new AudioPlayer();
   var icon = Icon(Icons.play_arrow);
 
-  var _audioPlayerStateSubscription;
-
   List<String> _maintenanceWorker = ["A01", "A02", "A03"];
   List<String> _monitorOrForeman = ["A04", "A05"];
   List<String> _equipmentSupervisor = ["A06"];
   List<String> _engineer = ["A07"];
   List<String> _maintenanceManagementPersonnel = ["A08"];
-
-//  List<String> _distributeList = ["A04", "A05"];
-//  List<String> _outerRepairList = ["A06"];
-//  List<String> _normalList = ["A01", "A02", "A03", "A07", "A08"];
 
   playNet(path) async {
     await audioPlayer.play(path);
@@ -1188,6 +1182,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
 
   Widget _alreadyAcceptButton() {
     return ButtonWidget(
+      onPressed: () {},
       padding: EdgeInsets.only(left: 0, right: 0),
       child: Text(
         '已接受',
@@ -2246,7 +2241,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                           Expanded(
                             child: Padding(
                               padding: EdgeInsets.only(left: 10, right: 10),
-                              child: _addMaterielButton(),
+                              child: _callHelpButton(),
                             ),
                           ),
                           Expanded(
@@ -2265,12 +2260,49 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                             Expanded(
                               child: Padding(
                                 padding: EdgeInsets.only(left: 10, right: 10),
+                                child: _addMaterielButton(),
+                              ),
+                            ),
+                            Expanded(
+                              child: Padding(
+                                padding: EdgeInsets.only(left: 10, right: 10),
                                 child: _repairButton(),
                               ),
                             ),
                           ],
                         ),
                       ),
+//                      Row(
+//                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                        children: <Widget>[
+//                          Expanded(
+//                            child: Padding(
+//                              padding: EdgeInsets.only(left: 10, right: 10),
+//                              child: _addMaterielButton(),
+//                            ),
+//                          ),
+//                          Expanded(
+//                            child: Padding(
+//                              padding: EdgeInsets.only(left: 10, right: 10),
+//                              child: _waitButton(),
+//                            ),
+//                          ),
+//                        ],
+//                      ),
+//                      Padding(
+//                        padding: EdgeInsets.only(top: 10),
+//                        child: Row(
+//                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                          children: <Widget>[
+//                            Expanded(
+//                              child: Padding(
+//                                padding: EdgeInsets.only(left: 10, right: 10),
+//                                child: _repairButton(),
+//                              ),
+//                            ),
+//                          ],
+//                        ),
+//                      ),
                     ],
                   ),
                 ),
@@ -3091,8 +3123,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
   @override
   void initState() {
     this._reportOrderDetailFuture = this._reportOrderDetail();
-    _audioPlayerStateSubscription =
-        audioPlayer.onPlayerStateChanged.listen((s) {
+    audioPlayer.onPlayerStateChanged.listen((s) {
       if (s == AudioPlayerState.PLAYING) {
         setState(() => icon = Icon(Icons.pause));
       } else {
@@ -3137,8 +3168,8 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                   widget.order.PERNR1 !=
                                       Global.userInfo.PERNR)) &&
                           widget.itemStatus != "历史单" &&
-                          widget.order.PERNR1 == Global.userInfo.PERNR &&
-                          ((widget.order.ILART == "N05" && (_maintenanceWorker.contains(Global.userInfo.SORTB) || _monitorOrForeman.contains(Global.userInfo.SORTB) || _engineer.contains(Global.userInfo.SORTB))) ||
+                          ((widget.order.ILART == "N05" && (_maintenanceWorker.contains(Global.userInfo.SORTB) || _monitorOrForeman.contains(Global.userInfo.SORTB) || _engineer.contains(Global.userInfo.SORTB)) &&
+                              (widget.order.PERNR1 == Global.userInfo.PERNR || _engineer.contains(Global.userInfo.SORTB))) ||
                               (widget.order.ILART == "N06" &&
                                   (_maintenanceWorker.contains(Global.userInfo.SORTB) ||
                                       _monitorOrForeman
@@ -3150,15 +3181,20 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                       _monitorOrForeman
                                           .contains(Global.userInfo.SORTB) ||
                                       _engineer
-                                          .contains(Global.userInfo.SORTB))) ||
+                                          .contains(Global.userInfo.SORTB)) &&
+                                  widget.order.PERNR1 == Global.userInfo.PERNR) ||
                               (widget.order.ILART == "N09" &&
                                   (_maintenanceWorker.contains(Global.userInfo.SORTB) ||
                                       _monitorOrForeman
                                           .contains(Global.userInfo.SORTB) ||
-                                      _engineer.contains(Global.userInfo.SORTB))) ||
-                              (widget.order.ILART == "N10" && "A03" == Global.userInfo.SORTB) ||
-                              (widget.order.ILART == "N11" && (_maintenanceWorker.contains(Global.userInfo.SORTB) || _monitorOrForeman.contains(Global.userInfo.SORTB) || _engineer.contains(Global.userInfo.SORTB))) ||
-                              (widget.order.ILART == "N12" && (_maintenanceWorker.contains(Global.userInfo.SORTB) || _monitorOrForeman.contains(Global.userInfo.SORTB))))
+                                      _engineer.contains(Global.userInfo.SORTB)) &&
+                                  widget.order.PERNR1 == Global.userInfo.PERNR) ||
+                              (widget.order.ILART == "N10" && "A03" == Global.userInfo.SORTB &&
+                                  widget.order.PERNR1 == Global.userInfo.PERNR) ||
+                              (widget.order.ILART == "N11" && (_maintenanceWorker.contains(Global.userInfo.SORTB) || _monitorOrForeman.contains(Global.userInfo.SORTB) || _engineer.contains(Global.userInfo.SORTB)) &&
+                                  widget.order.PERNR1 == Global.userInfo.PERNR) ||
+                              (widget.order.ILART == "N12" && (_maintenanceWorker.contains(Global.userInfo.SORTB) || _monitorOrForeman.contains(Global.userInfo.SORTB)) &&
+                                  widget.order.PERNR1 == Global.userInfo.PERNR))
                       ? _transferCardButton()
                       : null,
                 ),

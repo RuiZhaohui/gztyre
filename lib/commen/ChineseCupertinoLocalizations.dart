@@ -18,7 +18,7 @@ class ChineseCupertinoLocalizations implements CupertinoLocalizations {
 
   @override
   String tabSemanticsLabel({int tabIndex, int tabCount}) {
-
+    return null;
   }
 
   @override
@@ -134,7 +134,7 @@ class ChineseCupertinoLocalizations implements CupertinoLocalizations {
 
   @override
   String get modalBarrierDismissLabel {
-
+    return null;
   }
 }
 

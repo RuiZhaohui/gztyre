@@ -6,10 +6,10 @@ typedef OnDeleteCallBack();
 
 class ListItemShopChartWidget extends StatefulWidget {
   ListItemShopChartWidget(
-      {Key key, @required this.onTap, @required this.onDelete, @required this.title, this.height, this.number})
+      {Key key, @required this.onDelete, @required this.onChange, @required this.title, this.height, this.number})
       : super(key: key);
 
-  final OnChangeCallBack onTap;
+  final OnChangeCallBack onChange;
   final OnDeleteCallBack onDelete;
   final Widget title;
   final double height;
@@ -29,6 +29,14 @@ class _ListItemShopChartWidgetState extends State<ListItemShopChartWidget> {
   @override
   void initState() {
     widget.number == null ? this._controller.text = "0" : this._controller.text = widget.number.toString();
+    this._controller.addListener(() {
+        try {
+          widget.onChange(int.parse(this._controller.text));
+        } catch (e) {
+          this._controller.text = '0';
+        }
+    });
+    super.initState();
   }
 
   @override
@@ -57,7 +65,6 @@ class _ListItemShopChartWidgetState extends State<ListItemShopChartWidget> {
                       this._controller.text =
                           (int.parse(this._controller.text) - 1).toString();
                       setState(() {});
-                      widget.onTap(int.parse(this._controller.text));
                     }
                   },
                 ),
@@ -77,7 +84,6 @@ class _ListItemShopChartWidgetState extends State<ListItemShopChartWidget> {
                     this._controller.text =
                         (int.parse(this._controller.text) + 1).toString();
                     setState(() {});
-                    widget.onTap(int.parse(this._controller.text));
                   },
                 ),
                 GestureDetector(

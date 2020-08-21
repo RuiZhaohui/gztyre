@@ -110,9 +110,6 @@ class _BottomUpActionState extends State<BottomUpAction> {
 
     var borderRadius;
     var margin;
-    var border;
-    var borderAll = Border.all(color: borderColor, width: 0.5);
-    var borderSide = BorderSide(color: borderColor, width: 0.5);
     var isFirst = false;
     var isLast = false;
 
@@ -120,24 +117,20 @@ class _BottomUpActionState extends State<BottomUpAction> {
     if (widget.list.length == 1) {
       borderRadius = BorderRadius.circular(circular);
       margin = EdgeInsets.only(bottom: 10, left: 10, right: 10);
-      border = borderAll;
     } else if (widget.list.length > 1) {
       /// 第一个元素
       if (index == 0) {
         isFirst = true;
         borderRadius = BorderRadius.only(topLeft: Radius.circular(circular), topRight: Radius.circular(circular));
         margin = EdgeInsets.only(left: 10, right: 10,);
-        border = Border(top: borderSide, left: borderSide, right: borderSide);
       } else if (index == itemCount - 2) {
         isLast = true;
         /// 最后一个元素
         borderRadius = BorderRadius.only(bottomLeft: Radius.circular(circular), bottomRight: Radius.circular(circular));
         margin = EdgeInsets.only( left: 10, right: 10);
-        border = Border(bottom: borderSide, left: borderSide, right: borderSide);
       } else {
         /// 其他位置元素
         margin = EdgeInsets.only(left: 10, right: 10);
-        border = Border(left: borderSide, right: borderSide);
       }
     }
     var isFirstOrLast = isFirst || isLast;

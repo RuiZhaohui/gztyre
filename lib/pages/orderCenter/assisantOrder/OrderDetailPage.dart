@@ -56,8 +56,6 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
   AudioPlayer audioPlayer = new AudioPlayer();
   var icon = Icon(Icons.play_arrow);
 
-  var _audioPlayerStateSubscription;
-
   List<String> _maintenanceWorker = ["A01", "A02", "A03"];
   List<String> _monitorOrForeman = ["A04", "A05"];
   List<String> _equipmentSupervisor = ["A06"];
@@ -1122,6 +1120,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
 
   Widget _alreadyAcceptButton() {
     return ButtonWidget(
+      onPressed: () {},
       padding: EdgeInsets.only(left: 0, right: 0),
       child: Text(
         '已接受',
@@ -1379,8 +1378,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
   @override
   void initState() {
     this._reportOrderDetailFuture = this._reportOrderDetail();
-    _audioPlayerStateSubscription =
-        audioPlayer.onPlayerStateChanged.listen((s) {
+    audioPlayer.onPlayerStateChanged.listen((s) {
       if (s == AudioPlayerState.PLAYING) {
         setState(() => icon = Icon(Icons.pause));
       } else {

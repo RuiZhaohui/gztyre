@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:gztyre/api/model/Device.dart';
 
 class FunctionPosition {

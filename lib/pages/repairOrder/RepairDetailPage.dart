@@ -31,15 +31,11 @@ class _RepairDetailPageState extends State<RepairDetailPage> {
   RepairOrder _repairOrder = new RepairOrder();
   var _repairOrderFuture;
 
-  var _getPicFuture;
   VideoPlayerController _controller;
   Future<void> _initializeVideoPlayerFuture;
   List _imgList = [];
   String _video;
-  String _addDesc;
-  String _desc;
   String _audio;
-  var _audioPlayerStateSubscription;
 
 
   AudioPlayer audioPlayer = new AudioPlayer();
@@ -70,10 +66,6 @@ class _RepairDetailPageState extends State<RepairDetailPage> {
       if (res != null && res["audio"] != null && res["audio"].length > 0) {
         this._audio = res["audio"];
         this._imgList.add(this._audio);
-      }
-      if (res != null) {
-        this._addDesc = res["addDesc"];
-        this._desc = res["desc"];
       }
       setState(() {
         this._loading = false;
@@ -283,7 +275,7 @@ class _RepairDetailPageState extends State<RepairDetailPage> {
     this._repairOrderFuture = this._repairOrderDetail(widget.order).then((val) {
       if (val) this._getPic();
     });
-    _audioPlayerStateSubscription = audioPlayer.onPlayerStateChanged.listen((s) {
+    audioPlayer.onPlayerStateChanged.listen((s) {
       if (s == AudioPlayerState.PLAYING) {
         setState(() => icon = Icon(Icons.pause));
       } else {
@@ -395,11 +387,6 @@ class _RepairDetailPageState extends State<RepairDetailPage> {
                     },) : Container()
                   ],
                 ),
-//        child: Column(
-//          children: <Widget>[
-//            ListTitleWidget(title: "维修部件",)
-//          ],
-//        ),
               ),
             ));
       },

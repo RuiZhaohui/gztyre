@@ -94,6 +94,8 @@ class _UserInfoModifyPageState extends State<UserInfoModifyPage> {
                           if (this._phoneNumberController.text == null ||
                               this._phoneNumberController.text == "") {
                             _buildError("请输入手机号");
+                          } else if (this._phoneNumberController.text.trim().length != 11) {
+                            _buildError("手机号必须11位");
                           } else {
                             this._loading = true;
                             HttpRequestRest.update(

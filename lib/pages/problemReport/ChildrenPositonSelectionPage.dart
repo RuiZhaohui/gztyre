@@ -21,8 +21,6 @@ class ChildrenPositionSelectionPage extends StatefulWidget {
 
 class _ChildrenPositionSelectionPageState extends State<ChildrenPositionSelectionPage> {
 
-  Device _selectItem;
-
   List<Widget> createWidgetList(List<FunctionPosition> list) {
 
     List<Widget> itemList = [];
@@ -39,7 +37,6 @@ class _ChildrenPositionSelectionPageState extends State<ChildrenPositionSelectio
                 return ChildrenPositionSelectionPage(position: list[i].children, selectItem: widget.selectItem, isAddMaterial: widget.isAddMaterial, AUFNR: widget.AUFNR,);
               })).then((val) {
                 if (val["isOk"]) {
-                  this._selectItem = val["item"];
                   Navigator.of(context).pop(val);
                 }
               });
@@ -48,7 +45,6 @@ class _ChildrenPositionSelectionPageState extends State<ChildrenPositionSelectio
                 return ChildrenDeviceSelectionPage(device: list[i].deviceChildren, selectItem: widget.selectItem, isAddMaterial: widget.isAddMaterial, AUFNR: widget.AUFNR,);
               })).then((val) {
                 if (val["isOk"]) {
-                  this._selectItem = val["item"];
                   Navigator.of(context).pop(val);
                 }
               });
@@ -68,7 +64,6 @@ class _ChildrenPositionSelectionPageState extends State<ChildrenPositionSelectio
                 return ChildrenPositionSelectionPage(position: list[i].children, selectItem: widget.selectItem, isAddMaterial: widget.isAddMaterial, AUFNR: widget.AUFNR,);
               })).then((val) {
                 if (val["isOk"]) {
-                  this._selectItem = val["item"];
                   Navigator.of(context).pop(val);
                 }
               });
@@ -77,7 +72,6 @@ class _ChildrenPositionSelectionPageState extends State<ChildrenPositionSelectio
                 return ChildrenDeviceSelectionPage(device: list[i].deviceChildren, selectItem: widget.selectItem, isAddMaterial: widget.isAddMaterial, AUFNR: widget.AUFNR,);
               })).then((val) {
                 if (val["isOk"]) {
-                  this._selectItem = val["item"];
                   Navigator.of(context).pop(val);
                 }
               });
@@ -101,7 +95,6 @@ class _ChildrenPositionSelectionPageState extends State<ChildrenPositionSelectio
         return ChildrenPositionSelectionPage(position: position.children, selectItem: widget.selectItem, isAddMaterial: widget.isAddMaterial, AUFNR: widget.AUFNR,);
       })).then((val) {
         if (val["isOk"]) {
-          this._selectItem = val["item"];
           Navigator.of(context).pop(val);
         }
       });
@@ -111,7 +104,6 @@ class _ChildrenPositionSelectionPageState extends State<ChildrenPositionSelectio
         return ChildrenDeviceSelectionPage(device: position.deviceChildren, selectItem: widget.selectItem, isAddMaterial: widget.isAddMaterial, AUFNR: widget.AUFNR,);
       })).then((val) {
         if (val["isOk"]) {
-          this._selectItem = val["item"];
           Navigator.of(context).pop(val);
         }
       });
@@ -121,7 +113,6 @@ class _ChildrenPositionSelectionPageState extends State<ChildrenPositionSelectio
 
   @override
   void initState() {
-    this._selectItem = widget.selectItem;
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       _autoChangePage(widget.position);
